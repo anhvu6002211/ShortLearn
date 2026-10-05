@@ -1,0 +1,22 @@
+{
+  "name": "shortlearn-api-gateway",
+  "version": "1.0.0",
+  "description": "API Gateway for ShortLearn platform",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "check": "node --check src/server.js && node --check src/controllers/authController.js && node --check src/controllers/subtitleController.js && node --check src/controllers/vocabController.js && node --check src/controllers/learningInsightsController.js && node --check src/middleware/authenticateJwt.js && node --check src/routes/authRoutes.js && node --check src/routes/learningRoutes.js && node --check src/services/authCryptoService.js && node --check src/services/otpDeliveryService.js && node --check src/services/fsrsService.js && node --check src/services/learningInsightsService.js && node --check src/utils/authValidation.js && node --check src/utils/validation.js && node --check src/config/db.js && node --check src/config/redis.js && node --check src/config/rabbitmq.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.12.0",
+    "redis": "^4.7.0"
+  }
+}

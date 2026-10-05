@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <defs>
+    <linearGradient id="videoBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#181824"/>
+      <stop offset="50%" stop-color="#2a2238"/>
+      <stop offset="100%" stop-color="#0d111a"/>
+    </linearGradient>
+    <linearGradient id="dockBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background / Device Frame -->
+  <rect width="390" height="844" fill="#000000"/>
+
+  <!-- Status Bar (Android) -->
+  <g id="StatusBar">
+    <text x="24" y="32" fill="#FFFFFF" font-family="-apple-system, Roboto, sans-serif" font-size="13" font-weight="600">11:42</text>
+    <g transform="translate(320, 20)">
+      <!-- Signal -->
+      <path d="M0 12 L4 12 L4 8 L8 8 L8 4 L12 4 L12 0 L16 0 L16 12 Z" fill="#FFFFFF"/>
+      <!-- Wifi -->
+      <path d="M22 2 A12 12 0 0 1 34 2 M24 6 A8 8 0 0 1 32 6 M27 10 A3 3 0 0 1 29 10" stroke="#FFFFFF" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- Battery -->
+      <rect x="42" y="2" width="18" height="10" rx="2" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+      <rect x="44" y="4" width="12" height="6" rx="1" fill="#4ADE80"/>
+      <rect x="61" y="5" width="2" height="4" rx="0.5" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- Video Area (Simulated Shorts Video) -->
+  <g id="VideoArea">
+    <rect x="0" y="44" width="390" height="538" fill="url(#videoBg)"/>
+    
+    <!-- Video Content Placeholder Graphic -->
+    <circle cx="195" cy="240" r="60" fill="#38BDF8" fill-opacity="0.15"/>
+    <polygon points="185,215 220,240 185,265" fill="#38BDF8"/>
+    
+    <!-- Top Action Buttons -->
+    <circle cx="355" cy="80" r="18" fill="#38BDF8" filter="url(#shadow)"/>
+    <text x="355" y="86" fill="#082F49" font-family="sans-serif" font-size="22" font-weight="700" text-anchor="middle">＋</text>
+
+    <!-- Shorts Engagement Sidebar (Right side) -->
+    <g id="SidebarActions" transform="translate(340, 320)">
+      <!-- Like -->
+      <circle cx="18" cy="18" r="18" fill="#000000" fill-opacity="0.35"/>
+      <path d="M18 10 C14 5, 8 11, 18 20 C28 11, 22 5, 18 10 Z" fill="#FFFFFF"/>
+      <text x="18" y="46" fill="#FFFFFF" font-family="sans-serif" font-size="11" font-weight="600" text-anchor="middle">2.9K</text>
+
+      <!-- Comments -->
+      <g transform="translate(0, 56)">
+        <circle cx="18" cy="18" r="18" fill="#000000" fill-opacity="0.35"/>
+        <path d="M11 12 C11 10, 25 10, 25 12 C25 18, 17 18, 15 20 L15 18 L13 18 C11 18, 11 16, 11 12 Z" fill="#FFFFFF"/>
+        <text x="18" y="46" fill="#FFFFFF" font-family="sans-serif" font-size="11" font-weight="600" text-anchor="middle">16</text>
+      </g>
+
+      <!-- Share -->
+      <g transform="translate(0, 112)">
+        <circle cx="18" cy="18" r="18" fill="#000000" fill-opacity="0.35"/>
+        <path d="M14 16 L22 10 L22 14 C26 14, 28 17, 28 22 C26 19, 24 18, 22 18 L22 22 Z" fill="#FFFFFF"/>
+        <text x="18" y="46" fill="#FFFFFF" font-family="sans-serif" font-size="10" font-weight="600" text-anchor="middle">Chia sẻ</text>
+      </g>
+    </g>
+
+    <!-- Video Creator Meta & Progress Bar -->
+    <g transform="translate(16, 490)">
+      <circle cx="14" cy="14" r="14" fill="#6366F1"/>
+      <text x="36" y="16" fill="#FFFFFF" font-family="sans-serif" font-size="13" font-weight="700">@c7hexa.footyx</text>
+      <rect x="145" y="4" width="76" height="24" rx="12" fill="#FFFFFF"/>
+      <text x="183" y="20" fill="#000000" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">Subscribe</text>
+      <text x="2" y="42" fill="#F8FAFC" font-family="sans-serif" font-size="13" font-weight="500">Neymar &amp; Yamal Silenced the Crowd! ⚽🔥</text>
+    </g>
+
+    <!-- Red Playback Progress -->
+    <rect x="0" y="579" width="390" height="3" fill="#334155"/>
+    <rect x="0" y="579" width="280" height="3" fill="#EF4444"/>
+    <circle cx="280" cy="580.5" r="4" fill="#EF4444"/>
+  </g>
+
+  <!-- Language Reactor Subtitle Dock -->
+  <g id="LanguageReactorDock" transform="translate(0, 582)">
+    <rect width="390" height="190" fill="#191B1E"/>
+    <rect width="390" height="2" fill="#38BDF8" fill-opacity="0.35"/>
+
+    <!-- English words use the same compact token treatment as the React Native overlay. -->
+    <g id="InteractiveSubtitle" transform="translate(12, 20)" fill="#F4F5F7" font-family="Roboto, Arial, sans-serif" font-size="16" font-weight="600">
+      <text x="0" y="21">This</text>
+      <text x="38" y="21" fill="#FF9D42">fast</text>
+      <text x="72" y="21">and</text>
+      <text x="106" y="21">accurate</text>
+    </g>
+    <rect x="10" y="66" width="370" height="1" fill="#393D42"/>
+
+    <!-- Vietnamese translation -->
+    <text x="12" y="104" fill="#E7E9ED" font-family="Roboto, Arial, sans-serif" font-size="14" font-weight="600">Nhanh chóng và chuẩn xác này</text>
+    <rect x="10" y="132" width="370" height="1" fill="#393D42"/>
+
+    <!-- Subtitle controls mirror the YouTube implementation. -->
+    <g id="SubtitleControls" transform="translate(10, 145)" font-family="Roboto, Arial, sans-serif" font-size="11" font-weight="700" text-anchor="middle">
+      <rect x="0" y="0" width="82" height="32" rx="6" fill="#292C31"/>
+      <text x="41" y="20" fill="#C7CBD1">↻ Lại câu</text>
+
+      <rect x="88" y="0" width="108" height="32" rx="6" fill="#292C31"/>
+      <text x="142" y="20" fill="#C7CBD1">⏸ Pause: TẮT</text>
+
+      <rect x="202" y="0" width="84" height="32" rx="6" fill="#292C31"/>
+      <text x="244" y="20" fill="#C7CBD1">Câu tiếp ❯</text>
+
+      <rect x="292" y="0" width="78" height="32" rx="6" fill="#292C31" stroke="#FF9D42" stroke-width="1"/>
+      <text x="331" y="20" fill="#FFB46F">Short ❯❯</text>
+    </g>
+  </g>
+
+  <!-- Bottom Navigation Bar -->
+  <g id="BottomNav" transform="translate(0, 772)">
+    <rect width="390" height="72" fill="#0B0F19" stroke="#1E293B" stroke-width="1"/>
+
+    <!-- Close button for nav -->
+    <rect x="350" y="-12" width="28" height="18" rx="6" fill="#0B0F19" stroke="#334155" stroke-width="1"/>
+    <text x="364" y="0" fill="#94A3B8" font-family="sans-serif" font-size="13" font-weight="700" text-anchor="middle">×</text>
+
+    <!-- Tab 1: Shorts (Active) -->
+    <g transform="translate(20, 10)">
+      <rect width="110" height="50" fill="transparent"/>
+      <text x="55" y="22" font-size="20" text-anchor="middle">🎬</text>
+      <text x="55" y="42" fill="#38BDF8" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">Shorts</text>
+    </g>
+
+    <!-- Tab 2: Saved items -->
+    <g transform="translate(140, 10)">
+      <rect width="110" height="50" fill="transparent"/>
+      <text x="55" y="22" font-size="20" text-anchor="middle">🔖</text>
+      <circle cx="68" cy="10" r="7" fill="#EF4444"/>
+      <text x="68" y="14" fill="#FFFFFF" font-family="sans-serif" font-size="9" font-weight="900" text-anchor="middle">1</text>
+      <text x="55" y="42" fill="#64748B" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">Đã lưu</text>
+    </g>
+
+    <!-- Tab 3: Account -->
+    <g transform="translate(260, 10)">
+      <rect width="110" height="50" fill="transparent"/>
+      <text x="55" y="22" font-size="20" text-anchor="middle">👤</text>
+      <text x="55" y="42" fill="#64748B" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">Tài khoản</text>
+    </g>
+  </g>
+</svg>

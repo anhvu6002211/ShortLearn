@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <defs>
+    <linearGradient id="ttVideoBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#03090D"/>
+      <stop offset="0.55" stop-color="#0B272B"/>
+      <stop offset="1" stop-color="#35081B"/>
+    </linearGradient>
+    <radialGradient id="ttCyanHalo">
+      <stop offset="0" stop-color="#25F4EE" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#25F4EE" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ttRoseHalo">
+      <stop offset="0" stop-color="#FE2C55" stop-opacity="0.68"/>
+      <stop offset="1" stop-color="#FE2C55" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ttProgress" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#25F4EE"/>
+      <stop offset="1" stop-color="#FE2C55"/>
+    </linearGradient>
+    <linearGradient id="ttAvatar" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#25F4EE"/>
+      <stop offset="1" stop-color="#FE2C55"/>
+    </linearGradient>
+    <filter id="ttShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+  </defs>
+
+  <rect width="390" height="844" rx="28" fill="#000000"/>
+
+  <!-- Status bar -->
+  <g id="StatusBar" font-family="Roboto, Arial, sans-serif" fill="#FFFFFF">
+    <text x="18" y="21" font-size="11" font-weight="600">9:41</text>
+    <text x="304" y="21" font-size="10" font-weight="600">5G</text>
+    <rect x="329" y="17" width="3" height="4" rx="1"/>
+    <rect x="336" y="14" width="3" height="7" rx="1"/>
+    <rect x="343" y="11" width="3" height="10" rx="1"/>
+    <circle cx="371" cy="17" r="2"/>
+  </g>
+
+  <!-- TikTok video surface -->
+  <g id="TikTokVideoPlayer">
+    <rect x="0" y="32" width="390" height="514" fill="url(#ttVideoBg)"/>
+    <circle cx="55" cy="272" r="150" fill="url(#ttCyanHalo)" opacity="0.48"/>
+    <circle cx="322" cy="205" r="155" fill="url(#ttRoseHalo)" opacity="0.54"/>
+
+    <!-- TikTok brand and feed tabs -->
+    <g id="TikTokBrand" transform="translate(16, 50)">
+      <path fill="#25F4EE" d="M8 3v12a3 3 0 1 1-2-2.8V9.4A5.8 5.8 0 1 0 11 15V7.7a8 8 0 0 0 4.8 1.6V6.4A4.9 4.9 0 0 1 11 1H8v2Z"/>
+      <path fill="#FE2C55" d="M10 2v12a3 3 0 1 1-2-2.8V8.4A5.8 5.8 0 1 0 13 14V6.7a8 8 0 0 0 4.8 1.6V5.4A4.9 4.9 0 0 1 13 0h-3v2Z"/>
+      <path fill="#FFFFFF" d="M9 2.5v12a3 3 0 1 1-2-2.8V8.9A5.8 5.8 0 1 0 12 14.5V7.2a8 8 0 0 0 4.8 1.6V5.9A4.9 4.9 0 0 1 12 .5H9v2Z"/>
+      <text x="28" y="18" fill="#FFFFFF" font-family="Roboto, Arial, sans-serif" font-size="17" font-weight="700">TikTok</text>
+    </g>
+    <g id="FeedTabs" font-family="Roboto, Arial, sans-serif" font-size="11">
+      <text x="154" y="61" fill="#8C929B">Đang theo dõi</text>
+      <text x="240" y="61" fill="#FFFFFF" font-weight="700">Dành cho bạn</text>
+      <rect x="260" y="68" width="28" height="2" rx="1" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Editable educational video artwork -->
+    <g id="VideoArtwork" filter="url(#ttShadow)">
+      <rect x="18" y="127" width="286" height="208" rx="24" fill="#05080D" fill-opacity="0.78" stroke="#FFFFFF" stroke-opacity="0.10"/>
+      <rect x="36" y="145" width="109" height="28" rx="14" fill="#25F4EE"/>
+      <text x="90.5" y="163" fill="#001B1B" font-family="Roboto, Arial, sans-serif" font-size="10" font-weight="700" text-anchor="middle">TRAVEL ENGLISH</text>
+      <text x="36" y="216" fill="#FFFFFF" font-family="Roboto, Arial, sans-serif" font-size="31" font-weight="700">English</text>
+      <text x="36" y="254" fill="#FFFFFF" font-family="Roboto, Arial, sans-serif" font-size="31" font-weight="700">in 30 seconds</text>
+      <rect x="36" y="272" width="66" height="4" rx="2" fill="url(#ttProgress)"/>
+      <text x="36" y="307" fill="#94A3B8" font-family="Roboto, Arial, sans-serif" font-size="14">Try it before the answer appears →</text>
+    </g>
+
+    <!-- Engagement rail -->
+    <g id="ActionRail" font-family="Roboto, Arial, sans-serif" fill="#FFFFFF" text-anchor="middle">
+      <g transform="translate(328,176)">
+        <circle cx="22" cy="20" r="21" fill="#17263A" stroke="#FFFFFF" stroke-opacity="0.08"/>
+        <path d="M22 30S10 23 10 16c0-7 8-9 12-3 4-6 12-4 12 3 0 7-12 14-12 14Z" fill="#FE2C55"/>
+        <text x="22" y="55" font-size="11" font-weight="600">128K</text>
+      </g>
+      <g transform="translate(328,246)">
+        <circle cx="22" cy="20" r="21" fill="#17263A" stroke="#FFFFFF" stroke-opacity="0.08"/>
+        <path d="M12 12h20v14H20l-6 5v-5h-2Z" fill="#FFFFFF"/>
+        <text x="22" y="55" font-size="11" font-weight="600">3.2K</text>
+      </g>
+      <g transform="translate(328,316)">
+        <circle cx="22" cy="20" r="21" fill="#17263A" stroke="#FFFFFF" stroke-opacity="0.08"/>
+        <path d="M15 10h14v22l-7-5-7 5Z" fill="#FFFFFF"/>
+        <text x="22" y="55" font-size="11" font-weight="600">21K</text>
+      </g>
+      <g transform="translate(328,386)">
+        <circle cx="22" cy="20" r="21" fill="#17263A" stroke="#FFFFFF" stroke-opacity="0.08"/>
+        <path d="m23 10 10 10-10 10v-6c-7 0-10 3-12 7 0-9 4-14 12-14Z" fill="#FFFFFF"/>
+        <text x="22" y="55" font-size="10" font-weight="600">Share</text>
+      </g>
+    </g>
+
+    <!-- Creator metadata -->
+    <circle cx="33" cy="463" r="17" fill="url(#ttAvatar)" stroke="#FFFFFF" stroke-width="2"/>
+    <text x="58" y="469" fill="#FFFFFF" font-family="Roboto, Arial, sans-serif" font-size="13" font-weight="700">@learnwithmai</text>
+    <text x="16" y="501" fill="#FFFFFF" font-family="Roboto, Arial, sans-serif" font-size="12">Một câu tiếng Anh dùng ngay khi đi du lịch ✈</text>
+    <text x="16" y="526" fill="#94A3B8" font-family="Roboto, Arial, sans-serif" font-size="11">♫ original sound · ShortLearn</text>
+
+    <rect x="0" y="542" width="390" height="4" fill="#233044"/>
+    <rect x="0" y="542" width="214" height="4" fill="url(#ttProgress)"/>
+  </g>
+
+  <!-- YouTube-synchronized Language Reactor dock -->
+  <g id="LanguageReactorDock" transform="translate(0,546)">
+    <rect width="390" height="190" fill="#191B1E"/>
+    <rect width="390" height="2" fill="#38BDF8" fill-opacity="0.35"/>
+
+    <g id="InteractiveSubtitle" transform="translate(12,20)" font-family="Roboto, Arial, sans-serif" font-size="16" font-weight="600">
+      <text x="0" y="21" fill="#F4F5F7">Could</text>
+      <text x="52" y="21" fill="#F4F5F7">you</text>
+      <text x="86" y="21" fill="#FF9D42">take</text>
+      <text x="128" y="21" fill="#F4F5F7">a photo?</text>
+    </g>
+    <rect x="10" y="66" width="370" height="1" fill="#393D42"/>
+
+    <text x="12" y="104" fill="#E7E9ED" font-family="Roboto, Arial, sans-serif" font-size="14" font-weight="600">Bạn có thể chụp giúp tôi một tấm ảnh không?</text>
+    <rect x="10" y="132" width="370" height="1" fill="#393D42"/>
+
+    <g id="SubtitleControls" transform="translate(10,145)" font-family="Roboto, Arial, sans-serif" font-size="11" font-weight="700" text-anchor="middle">
+      <rect x="0" y="0" width="82" height="32" rx="6" fill="#292C31"/>
+      <text x="41" y="20" fill="#C7CBD1">↻ Lại câu</text>
+      <rect x="88" y="0" width="108" height="32" rx="6" fill="#292C31"/>
+      <text x="142" y="20" fill="#C7CBD1">⏸ Pause: TẮT</text>
+      <rect x="202" y="0" width="84" height="32" rx="6" fill="#292C31"/>
+      <text x="244" y="20" fill="#C7CBD1">Câu tiếp ❯</text>
+      <rect x="292" y="0" width="78" height="32" rx="6" fill="#292C31" stroke="#FF9D42" stroke-width="1"/>
+      <text x="331" y="20" fill="#FFB46F">Video ❯❯</text>
+    </g>
+  </g>
+
+  <!-- Bottom navigation -->
+  <g id="BottomNavigation" transform="translate(0,736)" font-family="Roboto, Arial, sans-serif" text-anchor="middle">
+    <rect width="390" height="108" fill="#050A12"/>
+    <rect width="390" height="1" fill="#FFFFFF" fill-opacity="0.08"/>
+    <g transform="translate(33,13)">
+      <text x="45" y="31" fill="#25F4EE" font-size="21">♪</text>
+      <text x="45" y="53" fill="#25F4EE" font-size="11" font-weight="700">TikTok</text>
+    </g>
+    <g transform="translate(150,13)">
+      <rect x="37" y="15" width="16" height="16" rx="2" fill="none" stroke="#94A3B8" stroke-width="2"/>
+      <text x="45" y="53" fill="#94A3B8" font-size="11" font-weight="600">Đã lưu</text>
+    </g>
+    <g transform="translate(267,13)">
+      <circle cx="45" cy="22" r="8" fill="#94A3B8"/>
+      <path d="M31 42c2-9 8-13 14-13s12 4 14 13Z" fill="#94A3B8"/>
+      <text x="45" y="53" fill="#94A3B8" font-size="11" font-weight="600">Tài khoản</text>
+    </g>
+    <rect x="131" y="98" width="128" height="5" rx="3" fill="#FFFFFF"/>
+  </g>
+</svg>

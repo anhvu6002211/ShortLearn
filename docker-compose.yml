@@ -1,0 +1,152 @@
+version: '3.8'
+
+services:
+  # 1. Cơ sở dữ liệu MySQL 8.0
+  mysql:
+    image: mysql:8.0
+    container_name: shortlearn_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-shortlearn_secret}
+      MYSQL_DATABASE: ${DB_NAME:-shortlearn_db}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-shortlearn_secret}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - shortlearn_network
+
+  # 2. Redis Caching & PubSub (V2: allkeys-lru eviction policy)
+  redis:
+    image: redis:7-alpine
+    container_name: shortlearn_redis
+    restart: always
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - shortlearn_network
+
+  # 3. RabbitMQ Message Broker với Web UI Management
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: shortlearn_rabbitmq
+    restart: always
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "15672:15672" # RabbitMQ Management Web UI (http://localhost:15672)
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - shortlearn_network
+
+  # 4. Trạm trung chuyển API Gateway (Node.js Express)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shortlearn_api_gateway
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-5000}:5000"
+    environment:
+      PORT: 5000
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-shortlearn_secret}
+      DB_NAME: ${DB_NAME:-shortlearn_db}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672
+      JWT_SECRET: ${JWT_SECRET:-super_secret_shortlearn_jwt_token_key_2026}
+      OTP_HMAC_SECRET: ${OTP_HMAC_SECRET:-super_secret_shortlearn_otp_hmac_key_2026}
+      ACCESS_TOKEN_TTL_SECONDS: ${ACCESS_TOKEN_TTL_SECONDS:-900}
+      REFRESH_TOKEN_TTL_DAYS: ${REFRESH_TOKEN_TTL_DAYS:-30}
+      OTP_TTL_SECONDS: ${OTP_TTL_SECONDS:-600}
+      OTP_RESEND_COOLDOWN_SECONDS: ${OTP_RESEND_COOLDOWN_SECONDS:-60}
+      AUTH_OTP_DELIVERY_MODE: ${AUTH_OTP_DELIVERY_MODE:-console}
+      AUTH_EXPOSE_OTP: ${AUTH_EXPOSE_OTP:-false}
+      AUTH_OTP_WEBHOOK_URL: ${AUTH_OTP_WEBHOOK_URL:-}
+      AUTH_OTP_WEBHOOK_TOKEN: ${AUTH_OTP_WEBHOOK_TOKEN:-}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - shortlearn_network
+
+  # 5. Worker cào phụ đề & Xử lý AI Dịch thuật (Python)
+  ai-worker:
+    build:
+      context: ./ai-worker
+      dockerfile: Dockerfile
+    container_name: shortlearn_ai_worker
+    restart: unless-stopped
+    environment:
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-shortlearn_secret}
+      DB_NAME: ${DB_NAME:-shortlearn_db}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      PRIMARY_LLM: ${PRIMARY_LLM:-groq}
+      LLM_BATCH_SIZE: ${LLM_BATCH_SIZE:-6}
+      WHISPER_PROVIDER: ${WHISPER_PROVIDER:-local}
+      WHISPER_MODEL: ${WHISPER_MODEL:-base.en}
+      WHISPER_DEVICE: ${WHISPER_DEVICE:-cpu}
+      WHISPER_COMPUTE_TYPE: ${WHISPER_COMPUTE_TYPE:-int8}
+      WHISPER_CPU_THREADS: ${WHISPER_CPU_THREADS:-4}
+      WHISPER_LANGUAGE: ${WHISPER_LANGUAGE:-en}
+      WHISPER_MODEL_DIR: /models
+    volumes:
+      - whisper_models:/models
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - shortlearn_network
+
+networks:
+  shortlearn_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:
+  rabbitmq_data:
+  whisper_models:

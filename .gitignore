@@ -1,0 +1,95 @@
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# Dependencies
+node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+
+# Python & AI Worker
+.venv/
+**/.venv/
+venv/
+**/venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+.Python
+*.egg-info/
+
+# AI Models & Large Weights
+.models/
+**/.models/
+*.bin
+*.pt
+*.pth
+*.onnx
+
+# React Native / Expo / Web builds
+.expo/
+**/.expo/
+.expo-shared/
+dist/
+**/dist/
+build/
+**/build/
+web-build/
+*.jsbundle
+
+# Android build artifacts
+.gradle/
+**/.gradle/
+.kotlin/
+**/.kotlin/
+**/android/.gradle/
+**/android/build/
+**/android/app/build/
+**/android/.idea/
+**/android/.kotlin/
+**/local.properties
+*.iml
+*.hprof
+.cxx/
+**/android/app/.cxx/
+*.apk
+*.aab
+
+# Platform tools & binaries
+platform-tools/
+
+# Test captures, debug screenshots & logs
+.tmp/
+*.log
+**/*.log
+temp_injected.js
+ui.xml
+current_ui_dump.xml
+current_screen.png
+emulator_current_screen.png
+live_screen.png
+screen_*.png
+swipe_result.png
+tap_short.png
+shortlearn-app/*.png
+shortlearn-app/*.xml
+shortlearn-app/*.log
+
+# Preserved assets / documentation
+!figma-export/**
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Junctions & Redundant folders
+frontend
+short/
+.figma-work/

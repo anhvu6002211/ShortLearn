@@ -1,0 +1,43 @@
+{
+  "name": "shortlearn-app",
+  "version": "1.0.0",
+  "main": "expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "web": "expo start --web",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-native-google-signin/google-signin": "^16.1.5",
+    "@react-navigation/bottom-tabs": "^7.20.0",
+    "@react-navigation/native": "^7.5.0",
+    "@react-navigation/native-stack": "^7.20.0",
+    "@shopify/flash-list": "^2.3.3",
+    "expo": "~57.0.26",
+    "expo-asset": "~57.0.18",
+    "expo-dev-client": "~57.0.19",
+    "expo-secure-store": "~57.0.4",
+    "expo-splash-screen": "~57.0.9",
+    "expo-status-bar": "~57.0.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-web": "^0.21.2",
+    "react-native-webview": "13.16.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@expo/ngrok": "^4.1.3",
+    "@react-native-community/cli": "^20.2.0",
+    "@react-native-community/cli-platform-android": "^20.2.0",
+    "@react-native/metro-config": "^0.86.3",
+    "@types/react": "~19.2.4",
+    "babel-preset-expo": "^57.0.13",
+    "typescript": "~5.9.3"
+  },
+  "private": true
+}
