@@ -11,6 +11,7 @@ const server = fs.readFileSync(path.join(root, 'src', 'server.js'), 'utf8');
 test('mounts every required auth endpoint under /api/v1/auth', () => {
   for (const endpoint of [
     '/register',
+    '/google',
     '/login',
     '/otp/request',
     '/otp/verify',

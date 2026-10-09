@@ -1,4 +1,8 @@
 /**
+ * DEPRECATED: V2 bridge retained only for App.v2_complex.tsx historical reference.
+ * Production bridge: src/webview/youtubeBridge.ts (YOUTUBE_INJECTED_SCRIPT).
+ * Do not import this module from App.tsx or new screens.
+ *
  * Injected JavaScript Code for React Native WebView — V2 Optimized
  * Chạy trực tiếp trong context của m.youtube.com/shorts
  *

@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
 const db = require('../config/db');
 const {
   createOtpCode,
@@ -28,6 +29,7 @@ const {
 } = require('../utils/authValidation');
 
 const GENERIC_OTP_MESSAGE = 'If the account can use this method, a verification code has been sent.';
+const googleClient = new OAuth2Client();
 
 class AuthHttpError extends Error {
   constructor(status, code, message) {
@@ -301,6 +303,58 @@ async function register(req, res) {
     });
   } catch (error) {
     return sendAuthError(res, error, 'Unable to register the account.');
+  }
+}
+
+
+/** POST /api/v1/auth/google */
+async function googleLogin(req, res) {
+  try {
+    const idToken = typeof req.body?.id_token === 'string' ? req.body.id_token.trim() : '';
+    const audience = process.env.GOOGLE_WEB_CLIENT_ID;
+    if (!audience) throw new AuthHttpError(503, 'google_auth_unavailable', 'Google sign-in is not configured.');
+    if (!idToken || idToken.length > 10_000) throw new TypeError('id_token is required.');
+    const ticket = await googleClient.verifyIdToken({ idToken, audience });
+    const profile = ticket.getPayload();
+    if (!profile?.sub || !profile.email || !profile.email_verified) {
+      throw new AuthHttpError(401, 'invalid_google_token', 'Google account verification failed.');
+    }
+    const email = normalizeEmail(profile.email);
+    const device = normalizeDevice(req.body?.device);
+    const result = await withTransaction(async (connection) => {
+      const [identityRows] = await connection.query(
+        `SELECT u.id, u.public_id, u.email, u.display_name, u.avatar_url, u.status,
+                u.email_verified_at, u.current_level, u.auth_version
+         FROM user_auth_identities i JOIN users u ON u.id = i.user_id
+         WHERE i.provider = 'google' AND i.provider_subject = ? AND u.deleted_at IS NULL
+         LIMIT 1 FOR UPDATE`, [profile.sub],
+      );
+      let user = identityRows[0];
+      if (!user) {
+        const [emailRows] = await connection.query(
+          'SELECT id FROM users WHERE email_normalized = ? AND deleted_at IS NULL LIMIT 1 FOR UPDATE', [email],
+        );
+        if (emailRows[0]) throw new AuthHttpError(409, 'email_in_use', 'Use your existing sign-in method for this email.');
+        const publicId = crypto.randomUUID();
+        const displayName = normalizeDisplayName(profile.name || profile.email.split('@')[0]);
+        const [insert] = await connection.query(
+          `INSERT INTO users (public_id, email, password_hash, display_name, avatar_url, status, email_verified_at, password_changed_at)
+           VALUES (?, ?, NULL, ?, ?, 'active', NOW(), NOW())`,
+          [publicId, email, displayName, typeof profile.picture === 'string' ? profile.picture.slice(0, 2048) : null],
+        );
+        await connection.query(
+          `INSERT INTO user_auth_identities (user_id, provider, provider_subject, provider_email)
+           VALUES (?, 'google', ?, ?)`, [insert.insertId, profile.sub, email],
+        );
+        user = { id: insert.insertId, public_id: publicId, email, display_name: displayName, avatar_url: profile.picture || null, status: 'active', email_verified_at: new Date(), current_level: 'B1', auth_version: 1 };
+      }
+      if (user.status !== 'active') throw new AuthHttpError(403, 'account_unavailable', 'This account is not available.');
+      await connection.query('UPDATE users SET last_login_at = NOW() WHERE id = ?', [user.id]);
+      return { user, tokens: await createSessionTokens(connection, user, req, device) };
+    });
+    return res.status(200).json({ user: publicUser(result.user), tokens: result.tokens });
+  } catch (error) {
+    return sendAuthError(res, error, 'Unable to sign in with Google.');
   }
 }
 
@@ -704,6 +758,7 @@ async function resetPassword(req, res) {
 
 module.exports = {
   forgotPassword,
+  googleLogin,
   login,
   logout,
   refresh,

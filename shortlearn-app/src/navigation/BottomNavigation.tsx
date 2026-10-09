@@ -9,6 +9,7 @@ interface BottomNavigationProps {
   onHide: () => void;
   onShow: () => void;
   onOpenShorts: () => void;
+  onOpenExplore: () => void;
   onOpenReview: () => void;
   onOpenAccount: () => void;
 }
@@ -20,6 +21,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   onHide,
   onShow,
   onOpenShorts,
+  onOpenExplore,
   onOpenReview,
   onOpenAccount,
 }) => {
@@ -71,6 +73,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <Text style={[styles.navLabel, activeTab === 'shorts' && styles.navActive]}>Shorts</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.navItem} accessibilityRole="button" accessibilityLabel="Khám phá video" onPress={onOpenExplore}>
+          <Text style={[styles.navIcon, activeTab === 'explore' && styles.navActive]}>⌕</Text>
+          <Text style={[styles.navLabel, activeTab === 'explore' && styles.navActive]}>Khám phá</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.navItem} onPress={onOpenReview}>
           <View>
             <Text style={[
@@ -93,7 +100,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
         <TouchableOpacity style={styles.navItem} onPress={onOpenAccount}>
           <Text style={[styles.navIcon, activeTab === 'account' && styles.navActive]}>👤</Text>
-          <Text style={[styles.navLabel, activeTab === 'account' && styles.navActive]}>Tài khoản</Text>
+          <Text style={[styles.navLabel, activeTab === 'account' && styles.navActive]}>Cá nhân</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -4,6 +4,7 @@ export interface LearningDisplayPreferences {
   colorizeByLearningStage: boolean;
   showCardLabelUnderlines: boolean;
   longPressCyclesCardLabel: boolean;
+  autoPauseEnabled: boolean;
   knownVocabularySize: number;
 }
 
@@ -13,6 +14,7 @@ export const DEFAULT_LEARNING_DISPLAY_PREFERENCES: LearningDisplayPreferences = 
   colorizeByLearningStage: true,
   showCardLabelUnderlines: true,
   longPressCyclesCardLabel: false,
+  autoPauseEnabled: false,
   knownVocabularySize: 3_000,
 };
 
@@ -25,6 +27,7 @@ const normalizePreferences = (value: unknown): LearningDisplayPreferences => {
     colorizeByLearningStage: stored.colorizeByLearningStage !== false,
     showCardLabelUnderlines: stored.showCardLabelUnderlines !== false,
     longPressCyclesCardLabel: stored.longPressCyclesCardLabel === true,
+    autoPauseEnabled: stored.autoPauseEnabled === true,
     knownVocabularySize: [1_000, 3_000, 5_000, 10_000].includes(vocabularySize)
       ? vocabularySize
       : DEFAULT_LEARNING_DISPLAY_PREFERENCES.knownVocabularySize,

@@ -1,3 +1,6 @@
+// DEPRECATED: Experimental V2 app retained for historical reference only.
+// Production entry point: App.tsx with navigation/screens and src/webview/youtubeBridge.ts.
+// Do not add features or imports here.
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
@@ -16,12 +19,11 @@ import { SubtitleOverlay } from './src/components/SubtitleOverlay';
 import { findSubtitleCue, SubtitleCue } from './src/utils/binarySearchSubtitles';
 import { FlashcardReview, DueCard } from './src/components/FlashcardReview';
 import { Rating } from './src/utils/srsAlgorithm';
+import { AuthProvider, useAuth } from './src/providers/AuthProvider';
+import { apiRequest } from './src/services/api';
 
-// Địa chỉ IP của máy tính host chạy API Gateway
-// 10.0.2.2 cho Android Emulator; khi test trên điện thoại thật thì đổi thành IP LAN máy (ví dụ 192.168.1.x)
-const API_BASE_URL = 'http://10.0.2.2:5000/api/v1';
-
-export default function App() {
+function ShortLearnLegacyApp() {
+  const { authenticatedRequest } = useAuth();
   const webViewRef = useRef<WebView>(null);
   const videoCounterRef = useRef<number>(0);
 
@@ -48,7 +50,7 @@ export default function App() {
   const fetchDueCards = useCallback(async () => {
     try {
       setIsLoadingDueCards(true);
-      const res = await fetch(`${API_BASE_URL}/vocabulary/due?user_id=1`);
+      const res = await authenticatedRequest('/vocabulary/due');
       if (res.ok) {
         const data = await res.json();
         setDueCards(data.cards || []);
@@ -58,7 +60,7 @@ export default function App() {
     } finally {
       setIsLoadingDueCards(false);
     }
-  }, []);
+  }, [authenticatedRequest]);
 
   useEffect(() => {
     fetchDueCards();
@@ -68,7 +70,7 @@ export default function App() {
   const fetchSubtitles = async (videoId: string) => {
     try {
       setIsLoadingSubtitles(true);
-      const res = await fetch(`${API_BASE_URL}/subtitles/request`, {
+      const res = await apiRequest('/subtitles/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ video_id: videoId, platform: 'youtube' }),
@@ -135,11 +137,10 @@ export default function App() {
   const handleSaveToSRS = async () => {
     try {
       setIsSavingWord(true);
-      const res = await fetch(`${API_BASE_URL}/vocabulary/save`, {
+      const res = await authenticatedRequest('/vocabulary/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: 1,
           word: selectedWord,
           meaning: `Nghĩa của "${selectedWord}" trong ngữ cảnh`,
           context_sentence: contextSentence,
@@ -165,11 +166,10 @@ export default function App() {
   // Xử lý chấm điểm thẻ FSRS v5 từ màn hình Flashcard
   const handleRateCard = async (card: DueCard, rating: Rating) => {
     try {
-      await fetch(`${API_BASE_URL}/vocabulary/review`, {
+      await authenticatedRequest('/vocabulary/review', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: 1,
           word: card.word,
           rating: rating,
         }),
@@ -322,6 +322,14 @@ export default function App() {
         </TouchableOpacity>
       </View>
     </SafeAreaView>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <ShortLearnLegacyApp />
+    </AuthProvider>
   );
 }
 

@@ -91,6 +91,9 @@ services:
       AUTH_EXPOSE_OTP: ${AUTH_EXPOSE_OTP:-false}
       AUTH_OTP_WEBHOOK_URL: ${AUTH_OTP_WEBHOOK_URL:-}
       AUTH_OTP_WEBHOOK_TOKEN: ${AUTH_OTP_WEBHOOK_TOKEN:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      AUTH_OTP_FROM: ${AUTH_OTP_FROM:-}
+      GOOGLE_WEB_CLIENT_ID: ${GOOGLE_WEB_CLIENT_ID:-}
     depends_on:
       mysql:
         condition: service_healthy

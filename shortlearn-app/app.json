@@ -7,11 +7,18 @@
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "android": {
-      "package": "com.shortlearn.app"
+      "package": "com.shortlearn.app",
+      "usesCleartextTraffic": true
     },
     "plugins": [
       "expo-secure-store",
       "expo-splash-screen"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5569b9d5-f3a6-4a7c-a127-a77db2ff16a6"
+      }
+    },
+    "owner": "vu65890"
   }
 }

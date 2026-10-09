@@ -9,6 +9,7 @@ interface MainTabsProps {
   bottomNavigationVisible: boolean;
   dueCount: number;
   renderAccount: () => React.ReactElement;
+  renderExplore: () => React.ReactElement;
   renderReview: () => React.ReactElement;
   renderShorts: () => React.ReactElement;
   onActiveTabChange: (tab: MainTab) => void;
@@ -20,6 +21,7 @@ export const MainTabs: React.FC<MainTabsProps> = ({
   bottomNavigationVisible,
   dueCount,
   renderAccount,
+  renderExplore,
   renderReview,
   renderShorts,
   onActiveTabChange,
@@ -38,15 +40,18 @@ export const MainTabs: React.FC<MainTabsProps> = ({
     }}
     tabBar={({ state, navigation }) => {
       const routeName = state.routes[state.index]?.name;
-      const activeTab: MainTab = routeName === 'Review'
-        ? 'review'
-        : routeName === 'Account'
-          ? 'account'
-          : 'shorts';
+      const activeTab: MainTab = routeName === 'Explore'
+        ? 'explore'
+        : routeName === 'Review'
+          ? 'review'
+          : routeName === 'Account'
+            ? 'account'
+            : 'shorts';
 
       const openTab = (tab: MainTab) => {
         onTabPress(tab);
-        if (tab === 'review') navigation.navigate('Review');
+        if (tab === 'explore') navigation.navigate('Explore');
+        else if (tab === 'review') navigation.navigate('Review');
         else if (tab === 'account') navigation.navigate('Account');
         else navigation.navigate('Shorts');
       };
@@ -59,6 +64,7 @@ export const MainTabs: React.FC<MainTabsProps> = ({
           onHide={() => onBottomNavigationVisibleChange(false)}
           onShow={() => onBottomNavigationVisibleChange(true)}
           onOpenShorts={() => openTab('shorts')}
+          onOpenExplore={() => openTab('explore')}
           onOpenReview={() => openTab('review')}
           onOpenAccount={() => openTab('account')}
         />
@@ -70,6 +76,12 @@ export const MainTabs: React.FC<MainTabsProps> = ({
       listeners={{ focus: () => onActiveTabChange('shorts') }}
     >
       {renderShorts}
+    </Tab.Screen>
+    <Tab.Screen
+      name="Explore"
+      listeners={{ focus: () => onActiveTabChange('explore') }}
+    >
+      {renderExplore}
     </Tab.Screen>
     <Tab.Screen
       name="Review"

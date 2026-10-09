@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   ActivityIndicator,
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,6 +12,10 @@ import { LearningDisplaySettings } from '../components/LearningDisplaySettings';
 import { LearningDisplayPreferences } from '../services/learningPreferences';
 import { VideoPlatform } from '../services/videoPlatform';
 import { YouTubeSession } from '../services/youtubeAuth';
+import { useAuth } from '../providers/AuthProvider';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../navigation/types';
 
 interface AccountScreenProps {
   accountPlatform: VideoPlatform;
@@ -25,9 +30,13 @@ interface AccountScreenProps {
   onAccountPlatformChange: (platform: VideoPlatform) => void;
   onDisconnectYouTube: () => void | Promise<void>;
   onLearningDisplayChange: (patch: Partial<LearningDisplayPreferences>) => void;
+  onOpenSettings: () => void;
   onOpenTikTok: () => void;
+  onOpenOnboarding: () => void;
   onOpenYouTube: () => void;
   onSignInYouTube: () => void | Promise<void>;
+  savedCount: number;
+  dueCount: number;
 }
 
 export const AccountScreen: React.FC<AccountScreenProps> = ({
@@ -43,10 +52,25 @@ export const AccountScreen: React.FC<AccountScreenProps> = ({
   onAccountPlatformChange,
   onDisconnectYouTube,
   onLearningDisplayChange,
+  onOpenSettings,
   onOpenTikTok,
+  onOpenOnboarding,
   onOpenYouTube,
   onSignInYouTube,
-}) => (
+  savedCount,
+  dueCount,
+}) => {
+  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+  const { isAuthenticated, session, clearSession } = useAuth();
+  const signOut = () => Alert.alert(
+    'Đăng xuất ShortLearn?',
+    'Phiên đăng nhập sẽ bị xóa khỏi thiết bị này.',
+    [
+      { text: 'Hủy', style: 'cancel' },
+      { text: 'Đăng xuất', style: 'destructive', onPress: () => { clearSession(); navigation.navigate('SignIn'); } },
+    ],
+  );
+  return (
   <ScrollView contentContainerStyle={styles.accountView}>
     <View style={styles.accountHero}>
       <View style={styles.accountHeroPlatforms}>
@@ -57,10 +81,38 @@ export const AccountScreen: React.FC<AccountScreenProps> = ({
           <Text style={styles.accountHeroTikTokGlyph}>♪</Text>
         </View>
       </View>
-      <Text style={styles.accountTitle}>Tài khoản nền tảng</Text>
+      <Text style={styles.accountTitle}>Cá nhân</Text>
       <Text style={styles.accountDescription}>
-        Quản lý phiên YouTube và TikTok dùng để học cùng ShortLearn.
+        Hồ sơ ShortLearn, cài đặt học và các phiên nền tảng của bạn.
       </Text>
+      <View style={styles.shortLearnProfileCard}>
+        <View style={styles.shortLearnAvatar}><Text style={styles.shortLearnAvatarText}>{isAuthenticated ? (session?.user.displayName || session?.user.email || 'S').slice(0, 1).toUpperCase() : 'K'}</Text></View>
+        <View style={styles.shortLearnProfileCopy}>
+          <Text style={styles.shortLearnProfileName}>{isAuthenticated ? (session?.user.displayName || 'Người học ShortLearn') : 'Chế độ Khách'}</Text>
+          <Text style={styles.shortLearnProfileEmail}>{isAuthenticated ? session?.user.email : 'Đăng nhập để đồng bộ từ vựng và lịch ôn.'}</Text>
+        </View>
+      </View>
+      <View style={styles.learningStats}>
+        <View style={styles.stat}><Text style={styles.statValue}>{savedCount}</Text><Text style={styles.statLabel}>Từ đã lưu</Text></View>
+        <View style={styles.stat}><Text style={styles.statValue}>{dueCount}</Text><Text style={styles.statLabel}>Thẻ đến hạn</Text></View>
+      </View>
+      {isAuthenticated ? <Text style={styles.statsHint}>Streak và lịch sử học sẽ hiển thị khi API tiến độ sẵn sàng.</Text> : null}
+      {isAuthenticated ? (
+        <>
+          <Text style={styles.shortLearnAccountText}>{session?.user.email}</Text>
+          <TouchableOpacity accessibilityRole="button" onPress={signOut} style={styles.shortLearnSignOutButton}>
+            <Text style={styles.shortLearnSignOutText}>Đăng xuất ShortLearn</Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={() => navigation.navigate('SignIn')}
+          style={styles.shortLearnSignInButton}
+        >
+          <Text style={styles.shortLearnSignInText}>Đăng nhập hoặc đổi tài khoản ShortLearn</Text>
+        </TouchableOpacity>
+      )}
     </View>
 
     <View style={styles.accountPlatformSwitcher}>
@@ -223,13 +275,32 @@ export const AccountScreen: React.FC<AccountScreenProps> = ({
       onChange={onLearningDisplayChange}
     />
 
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel="Mở cài đặt ShortLearn"
+      onPress={onOpenSettings}
+      style={styles.settingsButton}
+    >
+      <Text style={styles.settingsButtonText}>Cài đặt ShortLearn</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel="Xem lại hướng dẫn ShortLearn"
+      onPress={onOpenOnboarding}
+      style={styles.onboardingButton}
+    >
+      <Text style={styles.onboardingButtonText}>Xem lại hướng dẫn ShortLearn</Text>
+    </TouchableOpacity>
+
     <Text style={styles.accountPrivacyText}>
       {accountPlatform === 'youtube'
         ? 'YouTube dùng bộ chọn tài khoản Google của hệ thống và chỉ yêu cầu quyền đọc. Phiên truy cập được mã hóa trong bộ nhớ an toàn của thiết bị.'
         : 'TikTok đăng nhập trên trang chính thức trong WebView. Cookie phiên được giữ trong trình duyệt ứng dụng; ShortLearn không đọc mật khẩu của bạn.'}
     </Text>
   </ScrollView>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   accountView: { flexGrow: 1, backgroundColor: '#090D16', padding: 20 },
@@ -256,6 +327,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
+  shortLearnSignInButton: { marginTop: 16, minHeight: 42, paddingHorizontal: 16, borderRadius: 12, backgroundColor: '#6D5BD0', alignItems: 'center', justifyContent: 'center' },
+  shortLearnSignInText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
+  shortLearnProfileCard: { width: '100%', flexDirection: 'row', alignItems: 'center', marginTop: 18, padding: 13, borderRadius: 16, backgroundColor: '#111827', borderWidth: 1, borderColor: 'rgba(148,163,184,0.18)' },
+  shortLearnAvatar: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: '#6D5BD0', marginRight: 11 },
+  shortLearnAvatarText: { color: '#FFFFFF', fontSize: 17, fontWeight: '900' },
+  shortLearnProfileCopy: { flex: 1 },
+  shortLearnProfileName: { color: '#F8FAFC', fontSize: 14, fontWeight: '800' },
+  shortLearnProfileEmail: { color: '#94A3B8', fontSize: 12, marginTop: 3 },
+  learningStats: { width: '100%', flexDirection: 'row', gap: 10, marginTop: 10 },
+  stat: { flex: 1, borderRadius: 12, paddingVertical: 10, backgroundColor: 'rgba(56,189,248,0.08)', alignItems: 'center' },
+  statValue: { color: '#E0F2FE', fontSize: 19, fontWeight: '900' },
+  statLabel: { color: '#94A3B8', fontSize: 11, marginTop: 2 },
+  statsHint: { color: '#64748B', fontSize: 11, textAlign: 'center', marginTop: 9 },
+  shortLearnAccountText: { color: '#94A3B8', fontSize: 13, marginTop: 14 },
+  shortLearnSignOutButton: { marginTop: 8, minHeight: 40, paddingHorizontal: 16, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(248, 113, 113, 0.7)', alignItems: 'center', justifyContent: 'center' },
+  shortLearnSignOutText: { color: '#FCA5A5', fontSize: 14, fontWeight: '800' },
   accountPlatformSwitcher: { flexDirection: 'row', marginBottom: 14, gap: 10 },
   accountPlatformButton: {
     flex: 1,
@@ -385,5 +472,9 @@ const styles = StyleSheet.create({
   accountNoticeText: { color: '#FDE68A', fontSize: 13, lineHeight: 19 },
   accountStatusText: { color: '#93C5FD', fontSize: 13, lineHeight: 19, textAlign: 'center', marginTop: 16 },
   accountPrivacyText: { color: '#64748B', fontSize: 12, lineHeight: 18, textAlign: 'center', marginTop: 22, paddingHorizontal: 8 },
+  onboardingButton: { minHeight: 46, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(167, 139, 250, 0.55)', alignItems: 'center', justifyContent: 'center', marginTop: 18 },
+  onboardingButtonText: { color: '#C4B5FD', fontSize: 14, fontWeight: '800' },
+  settingsButton: { minHeight: 46, borderRadius: 12, backgroundColor: '#1D4ED8', alignItems: 'center', justifyContent: 'center', marginTop: 18 },
+  settingsButtonText: { color: '#DBEAFE', fontSize: 14, fontWeight: '800' },
   disabledButton: { opacity: 0.55 },
 });

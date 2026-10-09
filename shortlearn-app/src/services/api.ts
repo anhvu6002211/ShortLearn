@@ -68,10 +68,22 @@ export async function apiRequest(
 }
 
 export async function getApiError(response: Response): Promise<string> {
+  let body: { error?: unknown; message?: unknown; code?: unknown } | null = null;
   try {
-    const body = await response.json();
-    return body?.message || body?.error || `HTTP ${response.status}`;
-  } catch (_) {
-    return `HTTP ${response.status}`;
+    body = await response.json();
+  } catch {
+    // Fall through to the status mapping below.
   }
+
+  if (response.status === 401) return 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn.';
+  if (response.status === 403) return 'Bạn chưa có quyền thực hiện thao tác này.';
+  if (response.status === 404) return 'Không tìm thấy dữ liệu yêu cầu.';
+  if (response.status === 409) return 'Dữ liệu này đã tồn tại hoặc vừa được thay đổi.';
+  if (response.status === 429) return 'Bạn thao tác quá nhanh. Hãy thử lại sau ít phút.';
+  if (response.status >= 500) return 'Dịch vụ đang gặp sự cố. Hãy thử lại sau.';
+
+  const message = typeof body?.message === 'string' ? body.message : body?.error;
+  return typeof message === 'string' && message.trim()
+    ? message.trim().slice(0, 240)
+    : 'Yêu cầu chưa hợp lệ. Vui lòng kiểm tra lại thông tin.';
 }

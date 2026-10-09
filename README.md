@@ -53,7 +53,7 @@ shortlearn/
 ├── redis.conf                  # Cấu hình Redis maxmemory 256MB + allkeys-lru
 ├── .env.example                # File mẫu biến môi trường
 │
-├── frontend/             # Ứng dụng Di động (React Native Expo SDK 57)
+├── shortlearn-app/             # Ứng dụng Di động (React Native Expo SDK 57)
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── LanguageReactorOverlay.tsx  # Khoang phụ đề song ngữ độc lập phía dưới
@@ -93,7 +93,7 @@ shortlearn/
 ### 1. Xem giao diện trên máy tính — không cần điện thoại
 
 ```bash
-cd frontend
+cd shortlearn-app
 npm.cmd install
 npm.cmd run web
 ```
@@ -102,14 +102,14 @@ Expo sẽ mở giao diện Web cục bộ. Nếu trình duyệt không tự bậ
 
 > Nếu PowerShell báo chặn `npm.ps1`, chạy một lần `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned -Force`, sau đó dùng bình thường `npm run web`. Chính sách này cho phép script cục bộ, còn script tải từ Internet vẫn cần chữ ký. Nếu không muốn đổi chính sách, dùng `npm.cmd run web` thay cho `npm run web`.
 
-**Cách nhanh nhất trên Windows:** nhấp đúp `frontend\\run-web.cmd` hoặc chạy `./run-web.cmd`. File này mở trình duyệt tại `http://localhost:8090` mà không dùng `npm.ps1`.
+**Cách nhanh nhất trên Windows:** nhấp đúp `shortlearn-app\\run-web.cmd` hoặc chạy `cd shortlearn-app && .\run-web.cmd`. File này mở trình duyệt tại `http://localhost:8090` mà không dùng `npm.ps1`.
 
 ### 2. Trải nghiệm Trực tiếp trên Điện thoại (Expo Go)
 Cách nhanh nhất để chạy ứng dụng trực tiếp trên điện thoại Android / iOS mà không cần cài đặt backend:
 
 ```bash
 # 1. Di chuyển vào thư mục app
-cd "frontend"
+cd "shortlearn-app"
 
 # 2. Cài đặt các gói phụ thuộc (nếu chưa cài)
 npm install
@@ -138,10 +138,10 @@ adb devices
 adb reverse tcp:8081 tcp:8081 # Metro / Expo
 adb reverse tcp:5000 tcp:5000 # API Gateway
 
-# frontend/.env
+# shortlearn-app/.env
 EXPO_PUBLIC_API_URL=http://127.0.0.1:5000
 
-cd frontend
+cd shortlearn-app
 npx expo start --lan
 adb shell am start -a android.intent.action.VIEW -d "exp://127.0.0.1:8081"
 ```
@@ -155,11 +155,11 @@ ShortLearn dùng **Google Sign-In native** (bộ chọn tài khoản Google củ
 1. Trong Google Cloud Console, bật **YouTube Data API v3**, thiết lập OAuth consent screen và thêm tài khoản thử nghiệm nếu app chưa được xác minh.
 2. Tạo OAuth client **Android** cho package `com.shortlearn.app` cùng SHA-1 của bản development/release build.
 3. Tạo thêm OAuth client loại **Web application**. Client ID Web này bắt buộc cho Google Sign-In native, kể cả khi ứng dụng chỉ chạy Android; không điền Client Secret vào ứng dụng.
-4. Điền Android Client ID và Web Client ID vào `frontend/.env` theo [.env.example](frontend/.env.example), sau đó tạo lại development build.
+4. Điền Android Client ID và Web Client ID vào `shortlearn-app/.env` theo [.env.example](shortlearn-app/.env.example), sau đó tạo lại development build.
 5. Khi consent screen ở trạng thái Testing, thêm đúng tài khoản Google sẽ đăng nhập vào danh sách **Test users**. OAuth không thể hoàn tất trong Expo Go vì Expo Go không chứa native Google Sign-In của ShortLearn.
 
 ```bash
-cd frontend
+cd shortlearn-app
 npx expo prebuild
 npx expo run:android --device
 ```

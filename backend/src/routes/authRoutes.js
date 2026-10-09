@@ -2,6 +2,7 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const {
   forgotPassword,
+  googleLogin,
   login,
   logout,
   refresh,
@@ -40,6 +41,7 @@ const refreshLimiter = limiter({
 });
 
 router.post('/register', credentialLimiter, register);
+router.post('/google', credentialLimiter, googleLogin);
 router.post('/login', credentialLimiter, login);
 router.post('/otp/request', otpRequestLimiter, requestOtp);
 router.post('/otp/verify', credentialLimiter, verifyOtp);

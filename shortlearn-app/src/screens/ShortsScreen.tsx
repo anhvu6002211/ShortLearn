@@ -12,6 +12,7 @@ import { FlashList, FlashListRef } from '@shopify/flash-list';
 import { WebView } from 'react-native-webview';
 import { LanguageReactorOverlay, SubtitleCue } from '../components/LanguageReactorOverlay';
 import { ShortVideoWebView } from '../components/ShortVideoWebView';
+import { EmptyState, LoadingState } from '../components/common/StateViews';
 import { TranscriptCueRow } from '../components/TranscriptCueRow';
 import { LearningDisplayPreferences } from '../services/learningPreferences';
 import { VideoPlatform } from '../services/videoPlatform';
@@ -202,14 +203,16 @@ export const ShortsScreen: React.FC<ShortsScreenProps> = ({
       )}
       ListEmptyComponent={(
         <View style={styles.transcriptEmptyVirtual}>
-          {loading && <ActivityIndicator size="small" color="#38BDF8" />}
-          <Text style={styles.transcriptEmptyText}>
-            {loading
-              ? 'Đang tạo bản chép lời...'
-              : hasNoCaptions
-                ? 'Video này chưa có bản chép lời.'
+          {loading ? (
+            <LoadingState message="Đang tạo bản chép lời..." />
+          ) : (
+            <EmptyState
+              title={hasNoCaptions ? 'Video chưa có bản chép lời' : 'Đang chờ video bắt đầu'}
+              message={hasNoCaptions
+                ? 'Vuốt sang video khác để tiếp tục học.'
                 : 'Bản chép lời sẽ xuất hiện khi video bắt đầu.'}
-          </Text>
+            />
+          )}
         </View>
       )}
       ListFooterComponent={<View style={styles.transcriptFooter} />}

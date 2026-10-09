@@ -19,6 +19,7 @@ import {
 } from '../types/learning';
 import { DueCard, FlashcardReview } from './FlashcardReview';
 import { VideoPlatform } from '../services/videoPlatform';
+import { EmptyState, ErrorState, LoadingState } from './common/StateViews';
 
 export interface SavedItem extends DueCard {
   is_due?: number | boolean;
@@ -447,29 +448,22 @@ export const SavedItemsView: React.FC<SavedItemsViewProps> = ({
       </View>
 
       {isLoading ? (
-        <View style={styles.centerState}>
-          <ActivityIndicator color="#6950B5" />
-          <Text style={styles.stateText}>Đang tải saved items...</Text>
-        </View>
+        <LoadingState message="Đang tải mục đã lưu..." />
       ) : errorMessage ? (
-        <View style={styles.centerState}>
-          <Text style={styles.stateTitle}>Không thể tải danh sách</Text>
-          <Text style={styles.stateText}>{errorMessage}</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={onRefresh}>
-            <Text style={styles.retryButtonText}>Thử lại</Text>
-          </TouchableOpacity>
-        </View>
+        <ErrorState
+          title="Không thể tải danh sách"
+          message={errorMessage}
+          onRetry={onRefresh}
+        />
       ) : (
         <ScrollView contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false}>
           {visibleItems.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyTitle}>{items.length === 0 ? 'Chưa có saved items' : 'Không tìm thấy mục phù hợp'}</Text>
-              <Text style={styles.emptyText}>
-                {items.length === 0
-                  ? 'Chạm vào một từ trong phụ đề rồi chọn Lưu để tạo mục đầu tiên.'
-                  : 'Thử đổi từ khóa hoặc bộ lọc để xem thêm mục.'}
-              </Text>
-            </View>
+            <EmptyState
+              title={items.length === 0 ? 'Chưa có mục đã lưu' : 'Không tìm thấy mục phù hợp'}
+              message={items.length === 0
+                ? 'Chạm vào một từ trong phụ đề rồi chọn Lưu để tạo mục đầu tiên.'
+                : 'Thử đổi từ khóa hoặc bộ lọc để xem thêm mục.'}
+            />
           ) : visibleItems.map((item) => {
             const canReplay = Boolean(item.platform_video_id);
             return (

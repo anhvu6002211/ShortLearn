@@ -65,7 +65,7 @@ export const LanguageReactorOverlay: React.FC<LanguageReactorOverlayProps> = ({
       <View style={styles.emptyStrip}>
         <View style={styles.emptyHeader}>
           <Text style={styles.emptyIcon}>🎧</Text>
-          <Text style={styles.emptyText}>Language Reactor • Đang lắng nghe lời thoại video...</Text>
+          <Text style={styles.emptyText}>Đang lắng nghe lời thoại video...</Text>
         </View>
         <View style={styles.controlBar}>
           {onPrevShort && (

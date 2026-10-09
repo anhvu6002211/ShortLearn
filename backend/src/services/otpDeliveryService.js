@@ -19,6 +19,25 @@ async function deliverOtp({ email, code, purpose, challengeId, expiresInSeconds 
     return;
   }
 
+  if (mode === 'resend') {
+    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.AUTH_OTP_FROM;
+    if (!apiKey || !from) throw new Error('RESEND_API_KEY and AUTH_OTP_FROM are required in resend mode.');
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from,
+        to: [email],
+        subject: 'Mã xác minh ShortLearn',
+        text: `Mã ${PURPOSE_LABELS[purpose]} ShortLearn của bạn là: ${code}. Mã hết hạn sau ${Math.ceil(expiresInSeconds / 60)} phút.`,
+      }),
+      signal: AbortSignal.timeout(5_000),
+    });
+    if (!response.ok) throw new Error(`Resend returned HTTP ${response.status}.`);
+    return;
+  }
+
   if (mode !== 'webhook') throw new Error(`Unsupported AUTH_OTP_DELIVERY_MODE: ${mode}`);
   const webhookUrl = process.env.AUTH_OTP_WEBHOOK_URL;
   if (!webhookUrl) throw new Error('AUTH_OTP_WEBHOOK_URL is required in webhook mode.');
