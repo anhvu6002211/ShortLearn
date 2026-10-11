@@ -1,12 +1,13 @@
-﻿import React from 'react';
+import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { colors, radii, touchTarget, typography } from '../../styles/theme';
 
 interface StateViewProps { title: string; message?: string; }
 interface ErrorStateProps extends StateViewProps { onRetry?: () => void; }
 
 export const LoadingState: React.FC<Pick<StateViewProps, 'message'>> = ({ message = 'Đang tải...' }) => (
   <View accessibilityRole="progressbar" style={styles.state}>
-    <ActivityIndicator color="#8B5CF6" />
+    <View style={styles.loadingHalo}><ActivityIndicator color={colors.primary} /></View>
     <Text style={styles.message}>{message}</Text>
   </View>
 );
@@ -31,11 +32,12 @@ export const OfflineBanner: React.FC<{ message?: string }> = ({ message = 'Bạn
 );
 
 const styles = StyleSheet.create({
-  state: { alignItems: 'center', justifyContent: 'center', padding: 24, gap: 8 },
-  title: { color: '#E2E8F0', fontSize: 16, fontWeight: '800', textAlign: 'center' },
-  message: { color: '#94A3B8', fontSize: 14, lineHeight: 20, textAlign: 'center' },
-  retryButton: { marginTop: 6, minHeight: 40, paddingHorizontal: 16, borderRadius: 10, backgroundColor: '#6D5BD0', justifyContent: 'center' },
-  retryText: { color: '#FFFFFF', fontWeight: '800' },
-  offlineBanner: { backgroundColor: 'rgba(245, 158, 11, 0.14)', borderColor: 'rgba(245, 158, 11, 0.5)', borderWidth: 1, borderRadius: 10, margin: 12, padding: 10 },
-  offlineText: { color: '#FDE68A', fontSize: 13, lineHeight: 18, textAlign: 'center' },
+  state: { alignItems: 'center', justifyContent: 'center', padding: 28, margin: 16, borderRadius: radii.xl, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, gap: 9 },
+  loadingHalo: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(56,189,248,0.10)' },
+  title: { color: colors.text, fontSize: typography.bodyLarge, fontWeight: '900', textAlign: 'center' },
+  message: { color: colors.textMuted, fontSize: typography.bodyMedium, lineHeight: 20, textAlign: 'center' },
+  retryButton: { marginTop: 8, minHeight: touchTarget, paddingHorizontal: 18, borderRadius: radii.lg, backgroundColor: colors.primary, justifyContent: 'center' },
+  retryText: { color: '#082F49', fontWeight: '900' },
+  offlineBanner: { backgroundColor: 'rgba(245,158,11,0.12)', borderColor: 'rgba(245,158,11,0.42)', borderWidth: 1, borderRadius: radii.lg, margin: 12, padding: 11 },
+  offlineText: { color: '#FDE68A', fontSize: typography.bodySmall, lineHeight: 18, textAlign: 'center' },
 });

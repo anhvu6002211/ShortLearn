@@ -1,62 +1,31 @@
 import React from 'react';
 import {
-  ActivityIndicator,
   Alert,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { LearningDisplaySettings } from '../components/LearningDisplaySettings';
-import { LearningDisplayPreferences } from '../services/learningPreferences';
-import { VideoPlatform } from '../services/videoPlatform';
-import { YouTubeSession } from '../services/youtubeAuth';
 import { useAuth } from '../providers/AuthProvider';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../navigation/types';
+import { colors, radii, spacing, touchTarget, typography } from '../styles/theme';
 
 interface AccountScreenProps {
-  accountPlatform: VideoPlatform;
-  isDisconnectingYouTube: boolean;
-  isExpoGo: boolean;
-  isGoogleOAuthConfigured: boolean;
-  isLoadingYouTubeSession: boolean;
-  isSigningInYouTube: boolean;
-  learningDisplayPreferences: LearningDisplayPreferences;
-  youTubeNotice: string | null;
-  youTubeSession: YouTubeSession | null;
-  onAccountPlatformChange: (platform: VideoPlatform) => void;
-  onDisconnectYouTube: () => void | Promise<void>;
-  onLearningDisplayChange: (patch: Partial<LearningDisplayPreferences>) => void;
   onOpenSettings: () => void;
-  onOpenTikTok: () => void;
   onOpenOnboarding: () => void;
-  onOpenYouTube: () => void;
-  onSignInYouTube: () => void | Promise<void>;
+  onLoginTikTok: () => void;
   savedCount: number;
   dueCount: number;
 }
 
 export const AccountScreen: React.FC<AccountScreenProps> = ({
-  accountPlatform,
-  isDisconnectingYouTube,
-  isExpoGo,
-  isGoogleOAuthConfigured,
-  isLoadingYouTubeSession,
-  isSigningInYouTube,
-  learningDisplayPreferences,
-  youTubeNotice,
-  youTubeSession,
-  onAccountPlatformChange,
-  onDisconnectYouTube,
-  onLearningDisplayChange,
   onOpenSettings,
-  onOpenTikTok,
   onOpenOnboarding,
-  onOpenYouTube,
-  onSignInYouTube,
+  onLoginTikTok,
   savedCount,
   dueCount,
 }) => {
@@ -70,241 +39,85 @@ export const AccountScreen: React.FC<AccountScreenProps> = ({
       { text: 'Đăng xuất', style: 'destructive', onPress: () => { clearSession(); navigation.navigate('SignIn'); } },
     ],
   );
+
+  const profileName = isAuthenticated
+    ? session?.user.displayName || 'Người học ShortLearn'
+    : 'Chế độ Khách';
+  const profileEmail = isAuthenticated
+    ? session?.user.email
+    : 'Đăng nhập để đồng bộ từ vựng và lịch ôn.';
+  const avatarLetter = (isAuthenticated ? session?.user.displayName || session?.user.email : 'K')?.slice(0, 1).toUpperCase();
+
   return (
-  <ScrollView contentContainerStyle={styles.accountView}>
-    <View style={styles.accountHero}>
-      <View style={styles.accountHeroPlatforms}>
-        <View style={[styles.accountHeroPlatformIcon, styles.accountHeroYouTubeIcon]}>
-          <Text style={styles.accountHeroYouTubeGlyph}>▶</Text>
-        </View>
-        <View style={[styles.accountHeroPlatformIcon, styles.accountHeroTikTokIcon]}>
-          <Text style={styles.accountHeroTikTokGlyph}>♪</Text>
-        </View>
+    <ScrollView contentContainerStyle={styles.accountView}>
+      <View style={styles.accountHero}>
+        <Image accessibilityLabel="Logo ShortLearn" source={require('../../assets/branding/shortlearn-mark.png')} style={styles.heroMark} />
+        <Text style={styles.accountTitle}>Cá nhân</Text>
+        <Text style={styles.accountDescription}>Không gian học tập được cá nhân hóa cho bạn.</Text>
       </View>
-      <Text style={styles.accountTitle}>Cá nhân</Text>
-      <Text style={styles.accountDescription}>
-        Hồ sơ ShortLearn, cài đặt học và các phiên nền tảng của bạn.
-      </Text>
+
       <View style={styles.shortLearnProfileCard}>
-        <View style={styles.shortLearnAvatar}><Text style={styles.shortLearnAvatarText}>{isAuthenticated ? (session?.user.displayName || session?.user.email || 'S').slice(0, 1).toUpperCase() : 'K'}</Text></View>
+        <View style={styles.shortLearnAvatar}><Text style={styles.shortLearnAvatarText}>{avatarLetter}</Text></View>
         <View style={styles.shortLearnProfileCopy}>
-          <Text style={styles.shortLearnProfileName}>{isAuthenticated ? (session?.user.displayName || 'Người học ShortLearn') : 'Chế độ Khách'}</Text>
-          <Text style={styles.shortLearnProfileEmail}>{isAuthenticated ? session?.user.email : 'Đăng nhập để đồng bộ từ vựng và lịch ôn.'}</Text>
+          <View style={styles.profileStatusRow}>
+            <Text style={styles.shortLearnProfileName}>{profileName}</Text>
+            <View style={styles.profileStatusDot} />
+          </View>
+          <Text numberOfLines={1} style={styles.shortLearnProfileEmail}>{profileEmail}</Text>
         </View>
       </View>
+
       <View style={styles.learningStats}>
         <View style={styles.stat}><Text style={styles.statValue}>{savedCount}</Text><Text style={styles.statLabel}>Từ đã lưu</Text></View>
-        <View style={styles.stat}><Text style={styles.statValue}>{dueCount}</Text><Text style={styles.statLabel}>Thẻ đến hạn</Text></View>
+        <View style={styles.statDivider} />
+        <View style={styles.stat}><Text style={styles.statValue}>{dueCount}</Text><Text style={styles.statLabel}>Đến hạn hôm nay</Text></View>
       </View>
-      {isAuthenticated ? <Text style={styles.statsHint}>Streak và lịch sử học sẽ hiển thị khi API tiến độ sẵn sàng.</Text> : null}
+
       {isAuthenticated ? (
-        <>
-          <Text style={styles.shortLearnAccountText}>{session?.user.email}</Text>
-          <TouchableOpacity accessibilityRole="button" onPress={signOut} style={styles.shortLearnSignOutButton}>
-            <Text style={styles.shortLearnSignOutText}>Đăng xuất ShortLearn</Text>
-          </TouchableOpacity>
-        </>
+        <TouchableOpacity accessibilityRole="button" onPress={signOut} style={styles.shortLearnSignOutButton}>
+          <Text style={styles.shortLearnSignOutText}>Đăng xuất ShortLearn</Text>
+        </TouchableOpacity>
       ) : (
-        <TouchableOpacity
-          accessibilityRole="button"
-          onPress={() => navigation.navigate('SignIn')}
-          style={styles.shortLearnSignInButton}
-        >
-          <Text style={styles.shortLearnSignInText}>Đăng nhập hoặc đổi tài khoản ShortLearn</Text>
+        <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('SignIn')} style={styles.shortLearnSignInButton}>
+          <Text style={styles.shortLearnSignInText}>Đăng nhập ShortLearn</Text>
         </TouchableOpacity>
       )}
-    </View>
 
-    <View style={styles.accountPlatformSwitcher}>
-      <TouchableOpacity
-        accessibilityRole="button"
-        accessibilityState={{ selected: accountPlatform === 'youtube' }}
-        onPress={() => onAccountPlatformChange('youtube')}
-        style={[
-          styles.accountPlatformButton,
-          accountPlatform === 'youtube' && styles.accountPlatformYouTubeActive,
-        ]}
-      >
-        <View style={[styles.accountPlatformLogo, styles.accountPlatformLogoYouTube]}>
-          <Text style={styles.accountPlatformYouTubeGlyph}>▶</Text>
+      <Text style={styles.sectionTitle}>TÀI KHOẢN NỀN TẢNG</Text>
+      <View style={styles.tikTokAccountCard}>
+        <View style={styles.comingSoonIcon}><Text style={styles.comingSoonGlyph}>♪</Text></View>
+        <View style={styles.comingSoonCopy}>
+          <Text style={styles.comingSoonEyebrow}>TIKTOK WEB</Text>
+          <Text style={styles.comingSoonTitle}>Đăng nhập TikTok</Text>
+          <Text style={styles.comingSoonText}>Mở trang đăng nhập chính thức trong trình phát. ShortLearn không đọc mật khẩu.</Text>
         </View>
-        <View style={styles.accountPlatformCopy}>
-          <Text style={styles.accountPlatformName}>YouTube</Text>
-          <Text style={styles.accountPlatformStatus}>
-            {youTubeSession ? 'Đã liên kết' : 'Tài khoản Google'}
-          </Text>
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        accessibilityRole="button"
-        accessibilityState={{ selected: accountPlatform === 'tiktok' }}
-        onPress={() => onAccountPlatformChange('tiktok')}
-        style={[
-          styles.accountPlatformButton,
-          accountPlatform === 'tiktok' && styles.accountPlatformTikTokActive,
-        ]}
-      >
-        <View style={[styles.accountPlatformLogo, styles.accountPlatformLogoTikTok]}>
-          <Text style={styles.accountPlatformTikTokGlyph}>♪</Text>
-        </View>
-        <View style={styles.accountPlatformCopy}>
-          <Text style={styles.accountPlatformName}>TikTok</Text>
-          <Text style={styles.accountPlatformStatus}>Phiên WebView</Text>
-        </View>
-      </TouchableOpacity>
-    </View>
-
-    {accountPlatform === 'youtube' ? (
-      <>
-        {isLoadingYouTubeSession ? (
-          <View style={styles.accountCard}>
-            <ActivityIndicator color="#38BDF8" />
-            <Text style={styles.accountLoadingText}>Đang kiểm tra phiên đăng nhập...</Text>
-          </View>
-        ) : youTubeSession ? (
-          <View style={styles.accountCard}>
-            <View style={styles.accountIdentityRow}>
-              <View style={styles.accountAvatar}>
-                <Text style={styles.accountAvatarText}>
-                  {youTubeSession.account.displayName.slice(0, 1).toUpperCase()}
-                </Text>
-              </View>
-              <View style={styles.accountIdentityText}>
-                <Text style={styles.accountConnected}>Đã liên kết YouTube</Text>
-                <Text style={styles.accountName}>
-                  {youTubeSession.account.channelTitle || youTubeSession.account.displayName}
-                </Text>
-                {youTubeSession.account.email && (
-                  <Text style={styles.accountEmail}>{youTubeSession.account.email}</Text>
-                )}
-              </View>
-            </View>
-
-            <TouchableOpacity style={styles.youTubeOpenButton} onPress={onOpenYouTube}>
-              <Text style={styles.youTubeOpenButtonText}>▶  Mở YouTube</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.accountSecondaryButton}
-              onPress={onSignInYouTube}
-              disabled={isSigningInYouTube || isDisconnectingYouTube}
-            >
-              <Text style={styles.accountSecondaryButtonText}>Đổi tài khoản</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.accountDisconnectButton}
-              onPress={onDisconnectYouTube}
-              disabled={isSigningInYouTube || isDisconnectingYouTube}
-            >
-              {isDisconnectingYouTube ? (
-                <ActivityIndicator color="#FCA5A5" />
-              ) : (
-                <Text style={styles.accountDisconnectButtonText}>Ngắt liên kết</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={styles.accountCard}>
-            <Text style={styles.accountCardEyebrow}>YOUTUBE</Text>
-            <Text style={styles.accountCardTitle}>Chưa liên kết tài khoản</Text>
-            <Text style={styles.accountCardDescription}>
-              Đăng nhập Google để cho phép ShortLearn đọc thông tin kênh YouTube cơ bản của bạn.
-            </Text>
-            <TouchableOpacity
-              style={[
-                styles.googleLoginButton,
-                (isSigningInYouTube || isDisconnectingYouTube) && styles.disabledButton,
-              ]}
-              onPress={onSignInYouTube}
-              disabled={isSigningInYouTube || isDisconnectingYouTube}
-            >
-              {isSigningInYouTube ? (
-                <ActivityIndicator color="#0F172A" />
-              ) : (
-                <Text style={styles.googleLoginButtonText}>G  Đăng nhập với Google</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.youTubeOpenButton} onPress={onOpenYouTube}>
-              <Text style={styles.youTubeOpenButtonText}>▶  Mở YouTube để đăng nhập</Text>
-            </TouchableOpacity>
-            <Text style={styles.accountYouTubeHint}>
-              Đăng nhập trong YouTube dùng cho phiên xem. Để liên kết dữ liệu kênh với ShortLearn, hãy dùng nút Google phía trên.
-            </Text>
-          </View>
-        )}
-
-        {(isExpoGo || !isGoogleOAuthConfigured) && (
-          <View style={styles.accountNotice}>
-            <Text style={styles.accountNoticeTitle}>Thiết lập YouTube còn thiếu</Text>
-            <Text style={styles.accountNoticeText}>
-              {isExpoGo
-                ? 'Đăng nhập Google cần development build; Expo Go chỉ dùng để xem giao diện này.'
-                : 'Cần thêm Web OAuth Client ID vào .env, sau đó khởi động lại Metro và tải lại ứng dụng.'}
-            </Text>
-          </View>
-        )}
-
-        {youTubeNotice && <Text style={styles.accountStatusText}>{youTubeNotice}</Text>}
-      </>
-    ) : (
-      <View style={styles.accountCard}>
-        <View style={styles.accountIdentityRow}>
-          <View style={[styles.accountAvatar, styles.accountAvatarTikTok]}>
-            <Text style={styles.accountAvatarTikTokText}>♪</Text>
-          </View>
-          <View style={styles.accountIdentityText}>
-            <Text style={styles.accountTikTokMode}>ĐĂNG NHẬP TRONG WEBVIEW</Text>
-            <Text style={styles.accountName}>Tài khoản TikTok</Text>
-            <Text style={styles.accountEmail}>Phiên được lưu trong trình duyệt ứng dụng</Text>
-          </View>
-        </View>
-        <Text style={styles.accountCardDescription}>
-          Mở TikTok rồi đăng nhập trực tiếp trên trang chính thức. ShortLearn không nhận hoặc lưu mật khẩu TikTok của bạn.
-        </Text>
-        <TouchableOpacity style={styles.tikTokLoginButton} onPress={onOpenTikTok}>
-          <Text style={styles.tikTokLoginButtonText}>♪  Mở TikTok để đăng nhập</Text>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Đăng nhập TikTok" onPress={onLoginTikTok} style={styles.tikTokLoginButton}>
+          <Text style={styles.tikTokLoginButtonText}>Đăng nhập</Text>
         </TouchableOpacity>
-        <Text style={styles.accountTikTokHint}>
-          Sau khi đăng nhập, bạn có thể xem Shorts TikTok và phụ đề trong cùng phiên này.
-        </Text>
       </View>
-    )}
 
-    <LearningDisplaySettings
-      preferences={learningDisplayPreferences}
-      onChange={onLearningDisplayChange}
-    />
+      <Text style={styles.sectionTitle}>TÙY CHỈNH</Text>
+      <View style={styles.menuCard}>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Mở cài đặt học" onPress={onOpenSettings} style={styles.menuRow}>
+          <View style={[styles.menuIcon, styles.menuIconSky]}><Text style={styles.menuGlyph}>⚙</Text></View>
+          <View style={styles.menuCopy}><Text style={styles.menuTitle}>Cài đặt học</Text><Text style={styles.menuDescription}>Phụ đề, tự dừng và hiển thị</Text></View>
+          <Text style={styles.menuChevron}>›</Text>
+        </TouchableOpacity>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Xem lại hướng dẫn ShortLearn" onPress={onOpenOnboarding} style={styles.menuRow}>
+          <View style={[styles.menuIcon, styles.menuIconPurple]}><Text style={styles.menuGlyph}>?</Text></View>
+          <View style={styles.menuCopy}><Text style={styles.menuTitle}>Xem lại hướng dẫn</Text><Text style={styles.menuDescription}>Bắt đầu học cùng ShortLearn</Text></View>
+          <Text style={styles.menuChevron}>›</Text>
+        </TouchableOpacity>
+      </View>
 
-    <TouchableOpacity
-      accessibilityRole="button"
-      accessibilityLabel="Mở cài đặt ShortLearn"
-      onPress={onOpenSettings}
-      style={styles.settingsButton}
-    >
-      <Text style={styles.settingsButtonText}>Cài đặt ShortLearn</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity
-      accessibilityRole="button"
-      accessibilityLabel="Xem lại hướng dẫn ShortLearn"
-      onPress={onOpenOnboarding}
-      style={styles.onboardingButton}
-    >
-      <Text style={styles.onboardingButtonText}>Xem lại hướng dẫn ShortLearn</Text>
-    </TouchableOpacity>
-
-    <Text style={styles.accountPrivacyText}>
-      {accountPlatform === 'youtube'
-        ? 'YouTube dùng bộ chọn tài khoản Google của hệ thống và chỉ yêu cầu quyền đọc. Phiên truy cập được mã hóa trong bộ nhớ an toàn của thiết bị.'
-        : 'TikTok đăng nhập trên trang chính thức trong WebView. Cookie phiên được giữ trong trình duyệt ứng dụng; ShortLearn không đọc mật khẩu của bạn.'}
-    </Text>
-  </ScrollView>
+      <Text style={styles.accountPrivacyText}>Dữ liệu học được bảo vệ theo phiên đăng nhập trên thiết bị này.</Text>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  accountView: { flexGrow: 1, backgroundColor: '#090D16', padding: 20 },
-  accountHero: { alignItems: 'center', marginTop: 28, marginBottom: 22 },
+  accountView: { flexGrow: 1, backgroundColor: colors.canvas, padding: 20, paddingBottom: 32 },
+  accountHero: { alignItems: 'center', marginTop: 20, marginBottom: spacing.xl },
   accountHeroPlatforms: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
   accountHeroPlatformIcon: {
     width: 48,
@@ -319,30 +132,30 @@ const styles = StyleSheet.create({
   accountHeroTikTokIcon: { backgroundColor: '#050505', marginLeft: -8, borderColor: '#25F4EE' },
   accountHeroYouTubeGlyph: { color: '#FFFFFF', fontSize: 21, marginLeft: 3 },
   accountHeroTikTokGlyph: { color: '#FFFFFF', fontSize: 27, fontWeight: '900' },
-  accountTitle: { color: '#F8FAFC', fontSize: 26, fontWeight: '800' },
+  accountTitle: { color: colors.text, fontSize: 26, fontWeight: '800' },
   accountDescription: {
-    color: '#94A3B8',
+    color: colors.textMuted,
     fontSize: 15,
     lineHeight: 22,
     textAlign: 'center',
     marginTop: 10,
   },
-  shortLearnSignInButton: { marginTop: 16, minHeight: 42, paddingHorizontal: 16, borderRadius: 12, backgroundColor: '#6D5BD0', alignItems: 'center', justifyContent: 'center' },
-  shortLearnSignInText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
-  shortLearnProfileCard: { width: '100%', flexDirection: 'row', alignItems: 'center', marginTop: 18, padding: 13, borderRadius: 16, backgroundColor: '#111827', borderWidth: 1, borderColor: 'rgba(148,163,184,0.18)' },
-  shortLearnAvatar: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: '#6D5BD0', marginRight: 11 },
-  shortLearnAvatarText: { color: '#FFFFFF', fontSize: 17, fontWeight: '900' },
+  shortLearnSignInButton: { marginTop: spacing.lg, minHeight: touchTarget, paddingHorizontal: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+  shortLearnSignInText: { color: '#082F49', fontSize: typography.bodyMedium, fontWeight: '800' },
+  shortLearnProfileCard: { width: '100%', flexDirection: 'row', alignItems: 'center', marginTop: 18, padding: 15, borderRadius: 20, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
+  shortLearnAvatar: { width: 46, height: 46, borderRadius: radii.xl, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary, marginRight: spacing.md },
+  shortLearnAvatarText: { color: '#082F49', fontSize: 18, fontWeight: '900' },
   shortLearnProfileCopy: { flex: 1 },
-  shortLearnProfileName: { color: '#F8FAFC', fontSize: 14, fontWeight: '800' },
-  shortLearnProfileEmail: { color: '#94A3B8', fontSize: 12, marginTop: 3 },
-  learningStats: { width: '100%', flexDirection: 'row', gap: 10, marginTop: 10 },
-  stat: { flex: 1, borderRadius: 12, paddingVertical: 10, backgroundColor: 'rgba(56,189,248,0.08)', alignItems: 'center' },
-  statValue: { color: '#E0F2FE', fontSize: 19, fontWeight: '900' },
-  statLabel: { color: '#94A3B8', fontSize: 11, marginTop: 2 },
-  statsHint: { color: '#64748B', fontSize: 11, textAlign: 'center', marginTop: 9 },
-  shortLearnAccountText: { color: '#94A3B8', fontSize: 13, marginTop: 14 },
-  shortLearnSignOutButton: { marginTop: 8, minHeight: 40, paddingHorizontal: 16, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(248, 113, 113, 0.7)', alignItems: 'center', justifyContent: 'center' },
-  shortLearnSignOutText: { color: '#FCA5A5', fontSize: 14, fontWeight: '800' },
+  shortLearnProfileName: { color: colors.text, fontSize: typography.bodyMedium, fontWeight: '800' },
+  shortLearnProfileEmail: { color: colors.textMuted, fontSize: 12, marginTop: 3 },
+  learningStats: { width: '100%', flexDirection: 'row', gap: 10, marginTop: spacing.md },
+  stat: { flex: 1, borderRadius: radii.xl, paddingVertical: spacing.md, backgroundColor: 'rgba(56,189,248,0.08)', borderWidth: 1, borderColor: colors.primaryBorder, alignItems: 'center' },
+  statValue: { color: colors.primaryLight, fontSize: typography.titleMedium, fontWeight: '900' },
+  statLabel: { color: colors.textMuted, fontSize: typography.label, marginTop: 2 },
+  statsHint: { color: colors.textSubdued, fontSize: typography.label, textAlign: 'center', marginTop: 9 },
+  shortLearnAccountText: { color: colors.textMuted, fontSize: typography.bodySmall, marginTop: 14 },
+  shortLearnSignOutButton: { marginTop: spacing.sm, minHeight: touchTarget, paddingHorizontal: spacing.lg, borderRadius: radii.lg, borderWidth: 1, borderColor: 'rgba(248,113,113,0.7)', alignItems: 'center', justifyContent: 'center' },
+  shortLearnSignOutText: { color: '#FCA5A5', fontSize: typography.bodyMedium, fontWeight: '800' },
   accountPlatformSwitcher: { flexDirection: 'row', marginBottom: 14, gap: 10 },
   accountPlatformButton: {
     flex: 1,
@@ -372,14 +185,13 @@ const styles = StyleSheet.create({
   accountPlatformTikTokGlyph: { color: '#FFFFFF', fontSize: 22, fontWeight: '900' },
   accountPlatformCopy: { flex: 1 },
   accountPlatformName: { color: '#F8FAFC', fontSize: 14, fontWeight: '800' },
-  accountPlatformStatus: { color: '#94A3B8', fontSize: 10, lineHeight: 14, marginTop: 2 },
-  accountCard: {
-    backgroundColor: '#1E293B',
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    padding: 20,
-  },
+  comingSoonCard: { flexDirection: 'row', padding: 16, borderRadius: 18, backgroundColor: 'rgba(37,244,238,0.06)', borderWidth: 1, borderColor: 'rgba(37,244,238,0.24)', marginTop: 2 },
+  comingSoonIcon: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#111827', borderWidth: 1, borderColor: 'rgba(37,244,238,0.55)', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  comingSoonGlyph: { color: '#25F4EE', fontSize: 25, fontWeight: '900' },
+  comingSoonCopy: { flex: 1 },
+  comingSoonEyebrow: { color: '#67E8F9', fontSize: 10, fontWeight: '900', letterSpacing: 1.15 },
+  comingSoonTitle: { color: '#F8FAFC', fontSize: 16, fontWeight: '900', marginTop: 3 },
+  comingSoonText: { color: '#94A3B8', fontSize: 12, lineHeight: 18, marginTop: 4 },
   accountCardEyebrow: { color: '#FF6B86', fontSize: 10, fontWeight: '900', letterSpacing: 1.8, marginBottom: 7 },
   accountLoadingText: { color: '#94A3B8', textAlign: 'center', marginTop: 12, fontSize: 14 },
   accountIdentityRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
@@ -423,8 +235,11 @@ const styles = StyleSheet.create({
   },
   youTubeOpenButtonText: { color: '#FF8BA3', fontSize: 14, fontWeight: '800' },
   accountYouTubeHint: { color: '#64748B', fontSize: 11, lineHeight: 17, textAlign: 'center', paddingHorizontal: 4 },
+  tikTokAccountCard: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 18, backgroundColor: 'rgba(37,244,238,0.06)', borderWidth: 1, borderColor: 'rgba(37,244,238,0.24)' },
   tikTokLoginButton: {
-    minHeight: 49,
+    minHeight: 44,
+    paddingHorizontal: 14,
+    marginLeft: 10,
     backgroundColor: '#050505',
     borderRadius: 12,
     borderWidth: 1,
@@ -476,5 +291,20 @@ const styles = StyleSheet.create({
   onboardingButtonText: { color: '#C4B5FD', fontSize: 14, fontWeight: '800' },
   settingsButton: { minHeight: 46, borderRadius: 12, backgroundColor: '#1D4ED8', alignItems: 'center', justifyContent: 'center', marginTop: 18 },
   settingsButtonText: { color: '#DBEAFE', fontSize: 14, fontWeight: '800' },
+  heroMark: { width: 64, height: 64, resizeMode: 'contain', marginBottom: 14 },
+  profileStatusRow: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  profileStatusDot: { width: 7, height: 7, borderRadius: radii.pill, backgroundColor: colors.success },
+  statDivider: { width: 1, height: 34, alignSelf: 'center', backgroundColor: colors.borderStrong },
+  sectionTitle: { color: colors.textSubdued, fontSize: typography.label, fontWeight: '900', letterSpacing: 1.25, marginTop: 26, marginBottom: 10, marginLeft: 4 },
+  menuCard: { borderRadius: 18, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' },
+  menuRow: { minHeight: 72, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.border },
+  menuIcon: { width: 40, height: 40, borderRadius: radii.lg, alignItems: 'center', justifyContent: 'center', marginRight: spacing.md },
+  menuIconSky: { backgroundColor: 'rgba(56,189,248,0.14)' },
+  menuIconPurple: { backgroundColor: 'rgba(168,85,247,0.14)' },
+  menuGlyph: { color: colors.text, fontSize: typography.titleMedium, fontWeight: '800' },
+  menuCopy: { flex: 1 },
+  menuTitle: { color: colors.text, fontSize: typography.bodyMedium, fontWeight: '800' },
+  menuDescription: { color: colors.textMuted, fontSize: 12, marginTop: 3 },
+  menuChevron: { color: colors.textSubdued, fontSize: 28, lineHeight: 30, marginLeft: 10 },
   disabledButton: { opacity: 0.55 },
 });

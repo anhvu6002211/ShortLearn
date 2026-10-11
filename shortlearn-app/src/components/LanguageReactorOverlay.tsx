@@ -1,12 +1,15 @@
 import React from 'react';
 import {
   ActivityIndicator,
+  Modal,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { colors, radii, touchTarget, typography } from '../styles/theme';
 import { CARD_LABEL_COLORS, WordLearningState } from '../types/learning';
 
 export interface SubtitleCue {
@@ -82,7 +85,7 @@ export const LanguageReactorOverlay: React.FC<LanguageReactorOverlayProps> = ({
             </Text>
           </TouchableOpacity>
           {onNextShort && (
-            <TouchableOpacity style={[styles.ctrlBtn, styles.ctrlBtnHighlight]} onPress={onNextShort}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Short tiếp" style={[styles.ctrlBtn, styles.ctrlBtnHighlight]} onPress={onNextShort}>
               <Text style={styles.ctrlBtnHighlightText}>Short tiếp ⏭</Text>
             </TouchableOpacity>
           )}
@@ -115,6 +118,8 @@ export const LanguageReactorOverlay: React.FC<LanguageReactorOverlayProps> = ({
           return (
             <TouchableOpacity
               key={`word-${index}`}
+              accessibilityRole="button"
+              accessibilityLabel={`Tra từ ${cleanWord}`}
               activeOpacity={0.55}
               onPress={() => onWordPress(cleanWord, currentCue.en_text)}
               onLongPress={() => onWordLongPress?.(cleanWord, currentCue.en_text)}
@@ -146,11 +151,14 @@ export const LanguageReactorOverlay: React.FC<LanguageReactorOverlayProps> = ({
       </Text>
 
       <View style={styles.controlBar}>
-        <TouchableOpacity style={styles.ctrlBtn} onPress={onReplayCue}>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Phát lại câu" style={styles.ctrlBtn} onPress={onReplayCue}>
           <Text style={styles.ctrlBtnText}>↻ Lại câu</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
+          accessibilityRole="switch"
+          accessibilityLabel="Tự động dừng sau mỗi câu"
+          accessibilityState={{ checked: autoPauseEnabled }}
           style={[styles.ctrlBtn, autoPauseEnabled && styles.ctrlBtnActive]}
           onPress={onToggleAutoPause}
         >
@@ -159,282 +167,108 @@ export const LanguageReactorOverlay: React.FC<LanguageReactorOverlayProps> = ({
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.ctrlBtn} onPress={onNextCue}>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Câu tiếp" style={styles.ctrlBtn} onPress={onNextCue}>
           <Text style={styles.ctrlBtnText}>Câu tiếp ❯</Text>
         </TouchableOpacity>
 
         {onNextShort && (
-          <TouchableOpacity style={[styles.ctrlBtn, styles.ctrlBtnHighlight]} onPress={onNextShort}>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Short tiếp" style={[styles.ctrlBtn, styles.ctrlBtnHighlight]} onPress={onNextShort}>
             <Text style={styles.ctrlBtnHighlightText}>Short ❯❯</Text>
           </TouchableOpacity>
         )}
       </View>
 
-      {wordLookupVisible && (
-        <View style={styles.wordPopover}>
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel="Đóng cửa sổ tra từ"
-            hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-            style={styles.popoverCloseButton}
-            onPress={onCloseWordLookup}
-          >
-            <Text style={styles.popoverCloseText}>×</Text>
-          </TouchableOpacity>
-          <Text style={styles.popoverWord} numberOfLines={2}>{selectedWord}</Text>
-          <View style={styles.popoverDivider} />
-          {wordLookupLoading ? (
-            <ActivityIndicator size="small" color="#72F5C5" style={styles.popoverLoader} />
-          ) : (
-            <Text style={styles.popoverMeaning} numberOfLines={4}>
-              {wordMeaning || 'Đang tra nghĩa...'}
-            </Text>
-          )}
-          <View style={styles.popoverActions}>
+      <Modal
+        animationType="slide"
+        transparent
+        visible={wordLookupVisible}
+        onRequestClose={onCloseWordLookup}
+      >
+        <View style={styles.sheetRoot}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Đóng cửa sổ tra từ" style={styles.sheetBackdrop} onPress={onCloseWordLookup} />
+          <View style={styles.wordSheet}>
+            <View style={styles.sheetHandle} />
+            <View style={styles.sheetHeader}>
+              <View>
+                <Text style={styles.sheetEyebrow}>TRA TỪ TRONG NGỮ CẢNH</Text>
+                <Text style={styles.sheetWord} numberOfLines={1}>{selectedWord}</Text>
+              </View>
+              <TouchableOpacity accessibilityRole="button" accessibilityLabel="Đóng cửa sổ tra từ" style={styles.sheetCloseButton} onPress={onCloseWordLookup}>
+                <Text style={styles.sheetCloseText}>×</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.sheetMeaningCard}>
+              <Text style={styles.sheetMeaningLabel}>NGHĨA TIẾNG VIỆT</Text>
+              {wordLookupLoading ? (
+                <ActivityIndicator size="small" color="#38BDF8" style={styles.sheetLoader} />
+              ) : (
+                <Text style={styles.sheetMeaning}>{wordMeaning || 'Đang tra nghĩa...'}</Text>
+              )}
+            </View>
+            <View style={styles.sheetContextCard}>
+              <Text style={styles.sheetContextLabel}>CÂU GỐC</Text>
+              <Text style={styles.sheetContext} numberOfLines={2}>{currentCue?.en_text}</Text>
+            </View>
             <TouchableOpacity
-              accessibilityLabel="Đóng nghĩa từ"
-              style={[styles.popoverAction, styles.popoverConfirm]}
-              onPress={onCloseWordLookup}
-            >
-              <Text style={styles.popoverConfirmText}>✓</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+              accessibilityRole="button"
               accessibilityLabel="Lưu từ vào flashcard"
-              style={[styles.popoverAction, styles.popoverSave]}
+              style={[styles.sheetSaveButton, (wordSaving || wordLookupLoading) && styles.sheetSaveDisabled]}
               onPress={onSaveWord}
               disabled={wordSaving || wordLookupLoading}
             >
-              {wordSaving ? (
-                <ActivityIndicator size="small" color="#F5C451" />
-              ) : (
-                <Text style={styles.popoverSaveText}>▣</Text>
-              )}
+              {wordSaving ? <ActivityIndicator size="small" color="#052E24" /> : <Text style={styles.sheetSaveText}>Lưu Flashcard</Text>}
+            </TouchableOpacity>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Để sau" style={styles.sheetCancelButton} onPress={onCloseWordLookup}>
+              <Text style={styles.sheetCancelText}>Để sau</Text>
             </TouchableOpacity>
           </View>
         </View>
-      )}
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  mainStrip: {
-    flex: 1,
-    backgroundColor: '#191B1E',
-    paddingHorizontal: 10,
-    paddingTop: 8,
-    paddingBottom: 7,
-    justifyContent: 'space-between',
-  },
-  emptyStrip: {
-    flex: 1,
-    backgroundColor: '#191B1E',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-  },
-  emptyHeader: {
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  emptyIcon: {
-    fontSize: 22,
-    marginBottom: 4,
-  },
-  emptyText: {
-    color: '#8C929B',
-    fontSize: 13,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  sentenceScroll: {
-    maxHeight: 76,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#393D42',
-  },
-  wordsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingBottom: 7,
-  },
-  wordToken: {
-    marginRight: 3,
-    marginBottom: 4,
-    paddingHorizontal: 2,
-    paddingVertical: 1,
-    borderRadius: 2,
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
-  },
-  wordTokenSelected: {
-    backgroundColor: '#4B4E53',
-  },
-  wordText: {
-    color: '#F4F5F7',
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: '500',
-  },
-  wordLearning: {
-    color: '#FF9D42',
-  },
-  wordLater: {
-    color: '#777C84',
-  },
-  punctText: {
-    color: '#C9CED5',
-    fontSize: 16,
-    lineHeight: 21,
-    marginRight: 3,
-    marginBottom: 4,
-  },
-  translationText: {
-    color: '#E7E9ED',
-    fontSize: 14,
-    lineHeight: 19,
-    fontWeight: '600',
-    textAlign: 'left',
-    marginVertical: 4,
-  },
-  controlBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#393D42',
-    paddingTop: 6,
-    alignItems: 'center',
-  },
-  ctrlBtn: {
-    paddingVertical: 5,
-    paddingHorizontal: 9,
-    borderRadius: 6,
-    backgroundColor: '#292C31',
-  },
-  ctrlBtnActive: {
-    backgroundColor: 'rgba(88, 243, 192, 0.12)',
-    borderColor: '#58F3C0',
-    borderWidth: 1,
-  },
-  ctrlBtnText: {
-    color: '#C7CBD1',
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  ctrlBtnActiveText: {
-    color: '#72F5C5',
-    fontWeight: '700',
-  },
-  ctrlBtnHighlight: {
-    backgroundColor: 'rgba(255, 157, 66, 0.12)',
-    borderColor: '#FF9D42',
-    borderWidth: 1,
-  },
-  ctrlBtnHighlightText: {
-    color: '#FFB46F',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  wordPopover: {
-    position: 'absolute',
-    top: 4,
-    right: 12,
-    width: 154,
-    minHeight: 132,
-    zIndex: 100,
-    elevation: 24,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#50545A',
-    backgroundColor: '#34373C',
-    paddingHorizontal: 10,
-    paddingTop: 7,
-    paddingBottom: 8,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.45,
-    shadowRadius: 8,
-  },
-  popoverWord: {
-    alignSelf: 'center',
-    maxWidth: '72%',
-    color: '#E4DB72',
-    backgroundColor: '#484B50',
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    fontSize: 15,
-    lineHeight: 19,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  popoverCloseButton: {
-    position: 'absolute',
-    top: 5,
-    right: 5,
-    zIndex: 2,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#25282D',
-    borderWidth: 1,
-    borderColor: '#5D6269',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  popoverCloseText: {
-    color: '#F0F1F3',
-    fontSize: 18,
-    lineHeight: 20,
-    fontWeight: '700',
-  },
-  popoverDivider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#50545A',
-    marginVertical: 7,
-  },
-  popoverLoader: {
-    marginVertical: 12,
-  },
-  popoverMeaning: {
-    color: '#F0F1F3',
-    fontSize: 15,
-    lineHeight: 21,
-    fontWeight: '600',
-    textAlign: 'center',
-    minHeight: 42,
-  },
-  popoverActions: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
-    marginTop: 8,
-  },
-  popoverAction: {
-    width: 36,
-    height: 27,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  popoverConfirm: {
-    borderWidth: 2,
-    borderColor: '#72F5C5',
-    backgroundColor: 'rgba(88, 243, 192, 0.12)',
-  },
-  popoverConfirmText: {
-    color: '#E8FFF6',
-    fontSize: 18,
-    lineHeight: 20,
-    fontWeight: '800',
-  },
-  popoverSave: {
-    backgroundColor: '#4A4D52',
-  },
-  popoverSaveText: {
-    color: '#F5C451',
-    fontSize: 18,
-    lineHeight: 20,
-    fontWeight: '800',
-  },
+  mainStrip: { flex: 1, backgroundColor: colors.surface, paddingHorizontal: 14, paddingTop: 10, paddingBottom: 9, justifyContent: 'space-between' },
+  emptyStrip: { flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 16 },
+  emptyHeader: { alignItems: 'center', marginBottom: 12 },
+  emptyIcon: { fontSize: 22, marginBottom: 4 },
+  emptyText: { color: colors.textMuted, fontSize: typography.bodySmall, fontWeight: '500', textAlign: 'center' },
+  sentenceScroll: { maxHeight: 76, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderStrong },
+  wordsRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', alignItems: 'center', paddingBottom: 7 },
+  wordToken: { marginRight: 3, marginBottom: 4, paddingHorizontal: 2, paddingVertical: 1, borderRadius: radii.sm, borderBottomWidth: 2, borderBottomColor: 'transparent' },
+  wordTokenSelected: { backgroundColor: 'rgba(168,85,247,0.25)' },
+  wordText: { color: colors.text, fontSize: typography.bodyLarge, lineHeight: 21, fontWeight: '700' },
+  wordLearning: { color: colors.vietnamese },
+  wordLater: { color: colors.textSubdued },
+  punctText: { color: colors.textMuted, fontSize: typography.bodyLarge, lineHeight: 21, marginRight: 3, marginBottom: 4 },
+  translationText: { color: colors.vietnamese, fontSize: typography.bodyMedium, lineHeight: 19, fontWeight: '600', textAlign: 'left', marginVertical: 4 },
+  controlBar: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.borderStrong, paddingTop: 6, alignItems: 'center' },
+  ctrlBtn: { minHeight: touchTarget, paddingVertical: 6, paddingHorizontal: 9, borderRadius: radii.lg, backgroundColor: colors.surfaceOverlay, borderWidth: 1, borderColor: colors.border },
+  ctrlBtnActive: { backgroundColor: 'rgba(56,189,248,0.14)', borderColor: colors.primary, borderWidth: 1 },
+  ctrlBtnText: { color: colors.textMuted, fontSize: typography.label, fontWeight: '700' },
+  ctrlBtnActiveText: { color: colors.primaryLight, fontWeight: '800' },
+  ctrlBtnHighlight: { backgroundColor: 'rgba(168,85,247,0.15)', borderColor: 'rgba(168,85,247,0.65)', borderWidth: 1 },
+  ctrlBtnHighlightText: { color: '#D8B4FE', fontSize: typography.label, fontWeight: '800' },
+  sheetRoot: { flex: 1, justifyContent: 'flex-end' },
+  sheetBackdrop: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(2,6,23,0.72)' },
+  wordSheet: { backgroundColor: colors.surfaceOverlay, borderTopLeftRadius: radii.sheet, borderTopRightRadius: radii.sheet, borderWidth: 1, borderBottomWidth: 0, borderColor: colors.borderStrong, paddingHorizontal: 20, paddingBottom: 28 },
+  sheetHandle: { width: 38, height: 4, borderRadius: 2, backgroundColor: colors.textSubdued, alignSelf: 'center', marginTop: 10, marginBottom: 16 },
+  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  sheetEyebrow: { color: colors.primary, fontSize: 10, letterSpacing: 1.35, fontWeight: '900' },
+  sheetWord: { color: colors.text, fontSize: 29, fontWeight: '900', marginTop: 4, maxWidth: 250 },
+  sheetCloseButton: { minWidth: touchTarget, minHeight: touchTarget, borderRadius: radii.pill, backgroundColor: colors.surfaceElevated, alignItems: 'center', justifyContent: 'center' },
+  sheetCloseText: { color: colors.textMuted, fontSize: 25, lineHeight: 28 },
+  sheetMeaningCard: { marginTop: 20, padding: 16, borderRadius: radii.xl, backgroundColor: colors.surfaceElevated, borderWidth: 1, borderColor: 'rgba(168,85,247,0.25)' },
+  sheetMeaningLabel: { color: '#C084FC', fontSize: 10, fontWeight: '900', letterSpacing: 1.15 },
+  sheetLoader: { marginVertical: 16 },
+  sheetMeaning: { color: colors.text, fontSize: 18, fontWeight: '700', lineHeight: 26, marginTop: 6 },
+  sheetContextCard: { marginTop: 10, paddingHorizontal: 4 },
+  sheetContextLabel: { color: colors.textSubdued, fontSize: 10, fontWeight: '900', letterSpacing: 1.15 },
+  sheetContext: { color: colors.textMuted, fontSize: typography.bodyMedium, lineHeight: 21, marginTop: 5, fontStyle: 'italic' },
+  sheetSaveButton: { minHeight: 52, borderRadius: radii.lg, backgroundColor: colors.success, alignItems: 'center', justifyContent: 'center', marginTop: 22 },
+  sheetSaveDisabled: { opacity: 0.55 },
+  sheetSaveText: { color: '#052E24', fontSize: 15, fontWeight: '900' },
+  sheetCancelButton: { minHeight: touchTarget, alignItems: 'center', justifyContent: 'center', marginTop: 5 },
+  sheetCancelText: { color: colors.textMuted, fontSize: typography.bodyMedium, fontWeight: '800' },
 });

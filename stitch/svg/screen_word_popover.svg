@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <defs>
+    <linearGradient id="videoBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#181824"/>
+      <stop offset="50%" stop-color="#2a2238"/>
+      <stop offset="100%" stop-color="#0d111a"/>
+    </linearGradient>
+    <linearGradient id="dockBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+    <filter id="shadowHeavy" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base (Shorts player darkened) -->
+  <rect width="390" height="844" fill="#000000"/>
+  <rect x="0" y="44" width="390" height="520" fill="url(#videoBg)" opacity="0.6"/>
+
+  <!-- Dim overlay backdrop -->
+  <rect width="390" height="844" fill="#000000" fill-opacity="0.55"/>
+
+  <!-- Status Bar -->
+  <g id="StatusBar">
+    <text x="24" y="32" fill="#FFFFFF" font-family="-apple-system, Roboto, sans-serif" font-size="13" font-weight="600">11:42</text>
+    <g transform="translate(320, 20)">
+      <path d="M0 12 L4 12 L4 8 L8 8 L8 4 L12 4 L12 0 L16 0 L16 12 Z" fill="#FFFFFF"/>
+      <path d="M22 2 A12 12 0 0 1 34 2 M24 6 A8 8 0 0 1 32 6 M27 10 A3 3 0 0 1 29 10" stroke="#FFFFFF" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <rect x="42" y="2" width="18" height="10" rx="2" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+      <rect x="44" y="4" width="12" height="6" rx="1" fill="#4ADE80"/>
+      <rect x="61" y="5" width="2" height="4" rx="0.5" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- Language Reactor Subtitle Dock Base -->
+  <g id="DockBase" transform="translate(0, 564)">
+    <rect width="390" height="216" fill="url(#dockBg)" stroke="#38BDF8" stroke-width="1.5" stroke-opacity="0.35"/>
+    <text x="24" y="40" fill="#38BDF8" font-family="sans-serif" font-size="16" font-weight="700">This</text>
+    <text x="70" y="40" fill="#38BDF8" font-family="sans-serif" font-size="16" font-weight="700">fast</text>
+    <text x="24" y="100" fill="#CBD5E1" font-family="sans-serif" font-size="15" font-weight="500">Nhanh thế này</text>
+  </g>
+
+  <!-- Interactive Word Lookup Popover Card (Language Reactor Style) -->
+  <g id="WordPopoverCard" transform="translate(210, 520)" filter="url(#shadowHeavy)">
+    <!-- Container Card -->
+    <rect width="164" height="175" rx="16" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+
+    <!-- Word Tag Header -->
+    <rect x="52" y="16" width="60" height="28" rx="8" fill="#0F172A" stroke="#475569" stroke-width="1"/>
+    <text x="82" y="35" fill="#FBBF24" font-family="sans-serif" font-size="14" font-weight="800" text-anchor="middle">cold</text>
+
+    <!-- Meaning -->
+    <text x="82" y="76" fill="#FFFFFF" font-family="sans-serif" font-size="15" font-weight="700" text-anchor="middle">lạnh lẽo</text>
+    <text x="82" y="96" fill="#94A3B8" font-family="sans-serif" font-size="12" font-weight="500" text-anchor="middle">/koʊld/</text>
+
+    <!-- Action Buttons Row -->
+    <g transform="translate(24, 115)">
+      <!-- Save to Flashcard (Check button) -->
+      <rect x="0" y="0" width="50" height="42" rx="12" fill="#047857" stroke="#10B981" stroke-width="1.5"/>
+      <path d="M16 21 L22 27 L34 15" stroke="#FFFFFF" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Mark as Known/Later (Square button) -->
+      <rect x="64" y="0" width="50" height="42" rx="12" fill="#334155" stroke="#475569" stroke-width="1.5"/>
+      <rect x="80" y="13" width="16" height="16" rx="3" fill="none" stroke="#FBBF24" stroke-width="2.5"/>
+    </g>
+  </g>
+
+  <!-- Bottom Navigation Bar -->
+  <g id="BottomNav" transform="translate(0, 772)">
+    <rect width="390" height="72" fill="#0B0F19" stroke="#1E293B" stroke-width="1"/>
+    <!-- Tab 1 -->
+    <g transform="translate(20, 10)">
+      <text x="55" y="22" font-size="20" text-anchor="middle">🎬</text>
+      <text x="55" y="42" fill="#38BDF8" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">Shorts</text>
+    </g>
+    <!-- Tab 2 -->
+    <g transform="translate(140, 10)">
+      <text x="55" y="22" font-size="20" text-anchor="middle">🔖</text>
+      <circle cx="68" cy="10" r="7" fill="#EF4444"/>
+      <text x="68" y="14" fill="#FFFFFF" font-family="sans-serif" font-size="9" font-weight="900" text-anchor="middle">1</text>
+      <text x="55" y="42" fill="#64748B" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">Đã lưu</text>
+    </g>
+    <!-- Tab 3 -->
+    <g transform="translate(260, 10)">
+      <text x="55" y="22" font-size="20" text-anchor="middle">👤</text>
+      <text x="55" y="42" fill="#64748B" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">Tài khoản</text>
+    </g>
+  </g>
+</svg>

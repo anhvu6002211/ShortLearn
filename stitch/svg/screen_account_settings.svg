@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="390" height="844" fill="#090D16"/>
+
+  <!-- Status Bar -->
+  <g id="StatusBar">
+    <text x="24" y="32" fill="#FFFFFF" font-family="-apple-system, Roboto, sans-serif" font-size="13" font-weight="600">11:47</text>
+    <g transform="translate(320, 20)">
+      <path d="M0 12 L4 12 L4 8 L8 8 L8 4 L12 4 L12 0 L16 0 L16 12 Z" fill="#FFFFFF"/>
+      <path d="M22 2 A12 12 0 0 1 34 2 M24 6 A8 8 0 0 1 32 6 M27 10 A3 3 0 0 1 29 10" stroke="#FFFFFF" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <rect x="42" y="2" width="18" height="10" rx="2" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+      <rect x="44" y="4" width="12" height="6" rx="1" fill="#4ADE80"/>
+      <rect x="61" y="5" width="2" height="4" rx="0.5" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- Top Bar / Settings Icon -->
+  <circle cx="350" cy="74" r="18" fill="#1E293B"/>
+  <text x="350" y="80" fill="#94A3B8" font-family="sans-serif" font-size="16" text-anchor="middle">⚙️</text>
+
+  <!-- Hero Header -->
+  <g id="Hero" transform="translate(195, 78)" text-anchor="middle">
+    <polygon points="185,14 205,26 185,38" fill="#EF4444" transform="translate(-195, 0)"/>
+    <text x="0" y="74" fill="#F8FAFC" font-family="sans-serif" font-size="24" font-weight="800">Tài khoản YouTube</text>
+    <text x="0" y="100" fill="#94A3B8" font-family="sans-serif" font-size="13" font-weight="400">
+      Liên kết kênh của bạn để ShortLearn có thể dùng dữ
+    </text>
+    <text x="0" y="118" fill="#94A3B8" font-family="sans-serif" font-size="13" font-weight="400">
+      liệu YouTube đã được bạn cấp quyền.
+    </text>
+  </g>
+
+  <!-- Card 1: Chưa liên kết tài khoản -->
+  <g id="ConnectCard" transform="translate(20, 220)">
+    <rect width="350" height="158" rx="16" fill="#151D2A" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <text x="20" y="34" fill="#F8FAFC" font-family="sans-serif" font-size="17" font-weight="800">Chưa liên kết tài khoản</text>
+    <text x="20" y="60" fill="#94A3B8" font-family="sans-serif" font-size="13" font-weight="400">
+      Đăng nhập Google để cho phép ShortLearn đọc
+    </text>
+    <text x="20" y="78" fill="#94A3B8" font-family="sans-serif" font-size="13" font-weight="400">
+      thông tin kênh YouTube cơ bản của bạn.
+    </text>
+
+    <!-- Google Login Button -->
+    <rect x="20" y="98" width="310" height="44" rx="12" fill="#FFFFFF"/>
+    <text x="175" y="126" fill="#0F172A" font-family="sans-serif" font-size="14" font-weight="700" text-anchor="middle">
+      <tspan font-weight="900" fill="#EA4335">G</tspan>  Đăng nhập với Google
+    </text>
+  </g>
+
+  <!-- Card 2: Cài đặt hiển thị giai đoạn học tập -->
+  <g id="SettingsCard" transform="translate(20, 396)">
+    <rect width="350" height="350" rx="16" fill="#151D2A" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+    <text x="20" y="30" fill="#F97316" font-family="sans-serif" font-size="11" font-weight="800" letter-spacing="1">TỪ VỰNG</text>
+    <text x="20" y="54" fill="#F8FAFC" font-family="sans-serif" font-size="17" font-weight="800">Hiển thị Giai đoạn học tập</text>
+    <text x="20" y="76" fill="#94A3B8" font-family="sans-serif" font-size="12">Màu chữ thể hiện mức độ cần học. Màu thẻ cũ được giữ</text>
+    <text x="20" y="92" fill="#94A3B8" font-family="sans-serif" font-size="12">lại dưới dạng gạch chân.</text>
+
+    <!-- Stage Legend Box -->
+    <rect x="20" y="108" width="310" height="74" rx="10" fill="#0D131F"/>
+    <!-- Stage 1 -->
+    <circle cx="36" cy="126" r="4" fill="#FFFFFF"/>
+    <text x="48" y="130" fill="#E2E8F0" font-family="sans-serif" font-size="12">Trắng · Đã biết / Gợi ý</text>
+    <!-- Stage 2 -->
+    <circle cx="36" cy="146" r="4" fill="#F97316"/>
+    <text x="48" y="150" fill="#E2E8F0" font-family="sans-serif" font-size="12">Cam · Đang học</text>
+    <!-- Stage 3 -->
+    <circle cx="36" cy="166" r="4" fill="#64748B"/>
+    <text x="48" y="170" fill="#E2E8F0" font-family="sans-serif" font-size="12">Xám · Để sau</text>
+
+    <!-- Switch Row 1: Tô màu theo giai đoạn -->
+    <g transform="translate(20, 198)">
+      <text x="0" y="16" fill="#F8FAFC" font-family="sans-serif" font-size="14" font-weight="700">Tô màu theo giai đoạn</text>
+      <text x="0" y="34" fill="#64748B" font-family="sans-serif" font-size="11">Hiển thị trắng, cam hoặc xám trong phụ đề.</text>
+      <!-- Switch ON -->
+      <rect x="260" y="6" width="46" height="24" rx="12" fill="#F97316"/>
+      <circle cx="294" cy="18" r="9" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Switch Row 2: Gạch chân màu thẻ -->
+    <g transform="translate(20, 248)">
+      <text x="0" y="16" fill="#F8FAFC" font-family="sans-serif" font-size="14" font-weight="700">Gạch chân màu thẻ</text>
+      <text x="0" y="34" fill="#64748B" font-family="sans-serif" font-size="11">Hiển thị nhãn đỏ, xanh lá, vàng và xanh dương.</text>
+      <!-- Switch ON -->
+      <rect x="260" y="6" width="46" height="24" rx="12" fill="#F97316"/>
+      <circle cx="294" cy="18" r="9" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Switch Row 3: Nhấn giữ để đổi màu thẻ -->
+    <g transform="translate(20, 298)">
+      <text x="0" y="16" fill="#F8FAFC" font-family="sans-serif" font-size="14" font-weight="700">Nhấn giữ để đổi màu thẻ</text>
+      <text x="0" y="34" fill="#64748B" font-family="sans-serif" font-size="11">Tương đương thao tác nhấp chuột phải trên máy tính.</text>
+      <!-- Switch OFF -->
+      <rect x="260" y="6" width="46" height="24" rx="12" fill="#334155"/>
+      <circle cx="272" cy="18" r="9" fill="#94A3B8"/>
+    </g>
+  </g>
+
+  <!-- Bottom Navigation Bar -->
+  <g id="BottomNav" transform="translate(0, 772)">
+    <rect width="390" height="72" fill="#0B0F19" stroke="#1E293B" stroke-width="1"/>
+    <!-- Tab 1 -->
+    <g transform="translate(20, 10)">
+      <text x="55" y="22" font-size="20" text-anchor="middle">🎬</text>
+      <text x="55" y="42" fill="#64748B" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">Shorts</text>
+    </g>
+    <!-- Tab 2 -->
+    <g transform="translate(140, 10)">
+      <text x="55" y="22" font-size="20" text-anchor="middle">🔖</text>
+      <circle cx="68" cy="10" r="7" fill="#EF4444"/>
+      <text x="68" y="14" fill="#FFFFFF" font-family="sans-serif" font-size="9" font-weight="900" text-anchor="middle">1</text>
+      <text x="55" y="42" fill="#64748B" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">Đã lưu</text>
+    </g>
+    <!-- Tab 3 (Active) -->
+    <g transform="translate(260, 10)">
+      <text x="55" y="22" font-size="20" text-anchor="middle">👤</text>
+      <text x="55" y="42" fill="#38BDF8" font-family="sans-serif" font-size="11" font-weight="800" text-anchor="middle">Tài khoản</text>
+    </g>
+  </g>
+</svg>

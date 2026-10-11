@@ -231,7 +231,7 @@ function ShortLearnApp() {
   const [currentVideoId, setCurrentVideoId] = useState<string>('');
   const [currentPlatform, setCurrentPlatform] = useState<VideoPlatform>('youtube');
   const [webViewUri, setWebViewUri] = useState<string>(YOUTUBE_SHORTS_HOME_URL);
-  const [isPlatformPickerVisible, setIsPlatformPickerVisible] = useState<boolean>(false);
+  const [isPlatformPickerVisible, setIsPlatformPickerVisible] = useState<boolean>(true);
   const [isShortPickerVisible, setIsShortPickerVisible] = useState<boolean>(false);
   const [shortPickerPlatform, setShortPickerPlatform] = useState<VideoPlatform>('youtube');
   const [shortUrlInput, setShortUrlInput] = useState<string>('');
@@ -252,6 +252,7 @@ function ShortLearnApp() {
   const [shortsViewportHeight, setShortsViewportHeight] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasNoCaptions, setHasNoCaptions] = useState<boolean>(false);
+  const [subtitleError, setSubtitleError] = useState<string | null>(null);
 
   // Tráº¡ng thÃ¡i Popup Tá»« vá»±ng Language Reactor
   const [selectedWord, setSelectedWord] = useState<string>('');
@@ -487,7 +488,11 @@ function ShortLearnApp() {
       };
       await saveYouTubeSession(session);
       setYouTubeSession(session);
-      setYouTubeNotice('ÄÃ£ liÃªn káº¿t tÃ i khoáº£n YouTube.');
+      setYouTubeNotice('Đã liên kết tài khoản YouTube.');
+      setShortPickerPlatform('youtube');
+      resetSubtitlesForVideo(null, 'youtube');
+      setWebViewUri(YOUTUBE_SHORTS_HOME_URL);
+      navigateToMainTab('shorts');
     } catch (error) {
       if (isErrorWithCode(error) && error.code === statusCodes.SIGN_IN_CANCELLED) {
         setYouTubeNotice('ÄÄƒng nháº­p Ä‘Ã£ Ä‘Æ°á»£c há»§y.');
@@ -741,11 +746,22 @@ function ShortLearnApp() {
           if (!pollResponse.ok) continue;
           const pollPayload = await pollResponse.json();
           if (applyReadySubtitles(pollPayload)) return true;
-          if (pollPayload?.status === 'FAILED') break;
+          if (pollPayload?.status === 'FAILED') {
+            setSubtitleError('Không thể tạo phụ đề cho video này. Bạn vẫn có thể xem video hoặc thử lại.');
+            break;
+          }
+        }
+        if (requestId === subtitleRequestIdRef.current && subtitleSourceRef.current === 'none') {
+          setSubtitleError(current => current ?? 'AI đang xử lý lâu hơn dự kiến. Hãy thử lại sau.');
         }
       }
-    } catch {
-      // Phá»¥ Ä‘á» tá»« WebView váº«n lÃ  nguá»“n chÃ­nh khi dá»‹ch vá»¥ ná»n táº¡m thá»i khÃ´ng kháº£ dá»¥ng.
+    } catch (error) {
+      if (requestId === subtitleRequestIdRef.current) {
+        setSubtitleError(error instanceof Error && error.message
+          ? error.message
+          : 'Không kết nối được dịch vụ phụ đề. Kiểm tra mạng rồi thử lại.');
+      }
+      // Phụ đề từ WebView vẫn là nguồn chính khi dịch vụ nền tạm thời không khả dụng.
     } finally {
       if (requestId === subtitleRequestIdRef.current) setLoading(false);
     }
@@ -776,6 +792,7 @@ function ShortLearnApp() {
         subtitlesRef.current = [];
         activeCueRef.current = null;
         setHasNoCaptions(false);
+        setSubtitleError(null);
         setActiveCue(null);
         setSubtitles([]);
         setCurrentPlatform(messagePlatform);
@@ -1027,27 +1044,20 @@ function ShortLearnApp() {
   };
 
   const handleSelectPlatform = (platform: VideoPlatform) => {
-    setIsPlatformPickerVisible(false);
-    setShortPickerPlatform(platform);
-    if (platform === currentPlatform) {
-      webViewRef.current?.postMessage(JSON.stringify({ action: 'RESUME_VIDEO' }));
+    if (platform === 'tiktok') {
+      handleOpenTikTokAccount();
       return;
     }
-    resetSubtitlesForVideo(null, platform);
-    setWebViewUri(platform === 'youtube' ? YOUTUBE_SHORTS_HOME_URL : TIKTOK_HOME_URL);
+    setIsPlatformPickerVisible(false);
+    void handleYouTubeSignIn();
   };
 
   const handleOpenTikTokAccount = () => {
     setIsPlatformPickerVisible(false);
     setShortPickerPlatform('tiktok');
-    if (currentPlatform !== 'tiktok') {
-      resetSubtitlesForVideo(null, 'tiktok');
-      setWebViewUri(TIKTOK_HOME_URL);
-    }
+    resetSubtitlesForVideo(null, 'tiktok');
+    setWebViewUri('https://www.tiktok.com/login');
     navigateToMainTab('shorts');
-    setTimeout(() => {
-      webViewRef.current?.postMessage(JSON.stringify({ action: 'RESUME_VIDEO' }));
-    }, 250);
   };
 
   const handleOpenYouTubeAccount = () => {
@@ -1149,8 +1159,8 @@ function ShortLearnApp() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar
-        barStyle={activeTab === 'review' ? 'dark-content' : 'light-content'}
-        backgroundColor={activeTab === 'review' ? '#F7F8FC' : '#000000'}
+        barStyle="light-content"
+        backgroundColor="#090D16"
       />
 
       <AuthStack
@@ -1181,6 +1191,7 @@ function ShortLearnApp() {
                 isVisible={activeTab === 'shorts'}
                 learningDisplayPreferences={learningDisplayPreferences}
                 loading={loading}
+                subtitleError={subtitleError}
                 selectedWord={selectedWord}
                 shortsViewportHeight={shortsViewportHeight}
                 subtitles={subtitles}
@@ -1193,14 +1204,13 @@ function ShortLearnApp() {
                 onCloseWordLookup={handleCloseAndResume}
                 onNextCue={handleNextCue}
                 onNextShort={handleNextShort}
-                onOpenShortPicker={() => {
-                  setShortPickerPlatform(currentPlatform);
-                  setShortUrlError(null);
-                  setIsShortPickerVisible(true);
-                  webViewRef.current?.postMessage(JSON.stringify({ action: 'PAUSE_VIDEO' }));
-                }}
                 onPrevShort={handlePrevShort}
                 onReplayCue={handleReplayCue}
+                onRetrySubtitles={() => {
+                  if (!currentVideoIdRef.current) return;
+                  setSubtitleError(null);
+                  void fetchSubtitlesFromServer(currentVideoIdRef.current, currentPlatformRef.current);
+                }}
                 onSaveWord={handleSaveToSRS}
                 onTranscriptCuePress={handleTranscriptCuePress}
                 onTranscriptScroll={handleTranscriptScroll}
@@ -1239,23 +1249,9 @@ function ShortLearnApp() {
               />
             ) : (
               <AccountScreen
-                accountPlatform={accountPlatform}
-                isDisconnectingYouTube={isDisconnectingYouTube}
-                isExpoGo={isExpoGo}
-                isGoogleOAuthConfigured={isGoogleOAuthConfigured}
-                isLoadingYouTubeSession={isLoadingYouTubeSession}
-                isSigningInYouTube={isSigningInYouTube}
-                learningDisplayPreferences={learningDisplayPreferences}
-                youTubeNotice={youTubeNotice}
-                youTubeSession={youTubeSession}
-                onAccountPlatformChange={setAccountPlatform}
-                onDisconnectYouTube={handleYouTubeDisconnect}
-                onLearningDisplayChange={updateLearningDisplayPreferences}
                 onOpenSettings={() => setIsSettingsOpen(true)}
-                onOpenTikTok={handleOpenTikTokAccount}
                 onOpenOnboarding={() => navigationRef.navigate('Onboarding')}
-                onOpenYouTube={handleOpenYouTubeAccount}
-                onSignInYouTube={handleYouTubeSignIn}
+                onLoginTikTok={handleOpenTikTokAccount}
                 savedCount={savedItems.length}
                 dueCount={savedDueCount}
               />

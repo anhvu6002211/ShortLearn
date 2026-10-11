@@ -1,18 +1,29 @@
 {
   "expo": {
-    "name": "shortlearn-app",
+    "name": "ShortLearn",
     "slug": "shortlearn-app",
     "version": "1.0.0",
     "scheme": "shortlearn",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
+    "icon": "./assets/branding/shortlearn-mark.png",
     "android": {
       "package": "com.shortlearn.app",
-      "usesCleartextTraffic": true
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/branding/shortlearn-mark.png",
+        "backgroundColor": "#090D16"
+      }
     },
     "plugins": [
       "expo-secure-store",
-      "expo-splash-screen"
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/branding/shortlearn-lockup.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#090D16"
+        }
+      ]
     ],
     "extra": {
       "eas": {

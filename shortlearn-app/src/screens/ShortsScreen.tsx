@@ -12,10 +12,11 @@ import { FlashList, FlashListRef } from '@shopify/flash-list';
 import { WebView } from 'react-native-webview';
 import { LanguageReactorOverlay, SubtitleCue } from '../components/LanguageReactorOverlay';
 import { ShortVideoWebView } from '../components/ShortVideoWebView';
-import { EmptyState, LoadingState } from '../components/common/StateViews';
+import { EmptyState, ErrorState, LoadingState } from '../components/common/StateViews';
 import { TranscriptCueRow } from '../components/TranscriptCueRow';
 import { LearningDisplayPreferences } from '../services/learningPreferences';
 import { VideoPlatform } from '../services/videoPlatform';
+import { colors, radii, spacing, typography } from '../styles/theme';
 import { WordLearningState } from '../types/learning';
 
 interface ShortsScreenProps {
@@ -31,6 +32,7 @@ interface ShortsScreenProps {
   isVisible: boolean;
   learningDisplayPreferences: LearningDisplayPreferences;
   loading: boolean;
+  subtitleError: string | null;
   selectedWord: string;
   shortsViewportHeight: number;
   subtitles: SubtitleCue[];
@@ -43,9 +45,9 @@ interface ShortsScreenProps {
   onCloseWordLookup: () => void;
   onNextCue: () => void;
   onNextShort: () => void;
-  onOpenShortPicker: () => void;
   onPrevShort: () => void;
   onReplayCue: () => void;
+  onRetrySubtitles: () => void;
   onSaveWord: () => void | Promise<void>;
   onTranscriptCuePress: (cue: SubtitleCue) => void;
   onTranscriptScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
@@ -69,6 +71,7 @@ export const ShortsScreen: React.FC<ShortsScreenProps> = ({
   isVisible,
   learningDisplayPreferences,
   loading,
+  subtitleError,
   selectedWord,
   shortsViewportHeight,
   subtitles,
@@ -81,9 +84,9 @@ export const ShortsScreen: React.FC<ShortsScreenProps> = ({
   onCloseWordLookup,
   onNextCue,
   onNextShort,
-  onOpenShortPicker,
   onPrevShort,
   onReplayCue,
+  onRetrySubtitles,
   onSaveWord,
   onTranscriptCuePress,
   onTranscriptScroll,
@@ -133,20 +136,10 @@ export const ShortsScreen: React.FC<ShortsScreenProps> = ({
                 onMessage={handleWebViewMessage}
               />
 
-              <View style={styles.videoTopBar}>
-                <TouchableOpacity
-                  accessibilityRole="button"
-                  accessibilityLabel={`Mở video ${currentPlatform === 'youtube' ? 'YouTube' : 'TikTok'} từ liên kết`}
-                  style={styles.openShortButton}
-                  onPress={onOpenShortPicker}
-                >
-                  <Text style={styles.openShortButtonText}>＋</Text>
-                </TouchableOpacity>
-              </View>
 
               {loading && (
                 <View style={styles.statusBadge} pointerEvents="none">
-                  <ActivityIndicator size="small" color="#38BDF8" />
+                  <ActivityIndicator size="small" color={colors.primary} />
                   <Text style={styles.statusText}>Đang nạp phụ đề song ngữ...</Text>
                 </View>
               )}
@@ -204,12 +197,18 @@ export const ShortsScreen: React.FC<ShortsScreenProps> = ({
       ListEmptyComponent={(
         <View style={styles.transcriptEmptyVirtual}>
           {loading ? (
-            <LoadingState message="Đang tạo bản chép lời..." />
+            <LoadingState message="AI đang xử lý phụ đề..." />
+          ) : subtitleError ? (
+            <ErrorState
+              title="Chưa tải được phụ đề"
+              message={subtitleError}
+              onRetry={onRetrySubtitles}
+            />
           ) : (
             <EmptyState
               title={hasNoCaptions ? 'Video chưa có bản chép lời' : 'Đang chờ video bắt đầu'}
               message={hasNoCaptions
-                ? 'Vuốt sang video khác để tiếp tục học.'
+                ? 'Video không có phụ đề khả dụng. Vuốt sang video khác để tiếp tục học.'
                 : 'Bản chép lời sẽ xuất hiện khi video bắt đầu.'}
             />
           )}
@@ -224,115 +223,44 @@ const styles = StyleSheet.create({
   learningView: { flex: 1 },
   hiddenView: { display: 'none' },
   learningScroll: { flex: 1 },
-  learningScrollContent: { backgroundColor: '#000000', paddingBottom: 12 },
+  learningScrollContent: { backgroundColor: colors.canvas, paddingBottom: spacing.lg },
   shortsViewport: { minHeight: 520 },
-  videoContainer: { flex: 1, position: 'relative', backgroundColor: '#000000' },
-  videoTopBar: {
-    position: 'absolute',
-    top: 14,
-    left: 14,
-    right: 14,
-    zIndex: 80,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  openShortButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#38BDF8',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.35,
-    shadowRadius: 6,
-    elevation: 7,
-  },
-  openShortButtonText: { color: '#082F49', fontSize: 27, fontWeight: '500', lineHeight: 29 },
+  videoContainer: { flex: 1, position: 'relative', backgroundColor: '#05070C' },
+
   subtitleDock: {
-    height: 190,
-    backgroundColor: '#0F172A',
-    borderTopWidth: 2,
-    borderTopColor: 'rgba(56, 189, 248, 0.35)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 12,
+    height: 190, backgroundColor: colors.surface, borderTopWidth: 1,
+    borderTopColor: 'rgba(168,85,247,0.46)', shadowColor: '#000',
+    shadowOffset: { width: 0, height: -5 }, shadowOpacity: 0.38, shadowRadius: 12, elevation: 14,
   },
   transcriptPanel: {
-    minHeight: 41,
-    marginHorizontal: 8,
-    marginTop: 6,
-    marginBottom: 0,
-    backgroundColor: '#050B13',
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    borderColor: '#334155',
-    borderRadius: 10,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    overflow: 'hidden',
+    minHeight: 44, marginHorizontal: spacing.md, marginTop: 10, marginBottom: 0,
+    backgroundColor: colors.surface, borderWidth: 1, borderBottomWidth: 0,
+    borderColor: colors.border, borderRadius: radii.lg, borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0, overflow: 'hidden',
   },
   transcriptHeader: {
-    height: 41,
-    paddingHorizontal: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: '#334155',
+    height: 41, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colors.borderStrong,
   },
-  transcriptTitle: { color: '#F8FAFC', fontSize: 13, fontWeight: '800' },
-  transcriptSource: { color: '#94A3B8', fontSize: 8, fontWeight: '800', letterSpacing: 2 },
+  transcriptTitle: { color: colors.text, fontSize: typography.bodySmall, fontWeight: '800' },
+  transcriptSource: { color: colors.textMuted, fontSize: 8, fontWeight: '800', letterSpacing: 2 },
   transcriptEmptyVirtual: {
-    minHeight: 176,
-    marginHorizontal: 8,
-    marginBottom: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-    backgroundColor: '#050B13',
-    borderWidth: 1,
-    borderTopWidth: 0,
-    borderColor: '#334155',
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    minHeight: 176, marginHorizontal: spacing.sm, marginBottom: 4, alignItems: 'center',
+    justifyContent: 'center', paddingHorizontal: spacing.xl, backgroundColor: colors.canvas,
+    borderWidth: 1, borderTopWidth: 0, borderColor: colors.borderStrong,
+    borderBottomLeftRadius: radii.lg, borderBottomRightRadius: radii.lg,
   },
-  transcriptEmptyText: {
-    color: '#64748B',
-    fontSize: 12,
-    lineHeight: 18,
-    textAlign: 'center',
-    marginTop: 8,
-  },
-  transcriptFooter: { height: 8 },
+  transcriptEmptyText: { color: colors.textSubdued, fontSize: 12, lineHeight: 18, textAlign: 'center', marginTop: spacing.sm },
+  transcriptFooter: { height: spacing.sm },
   statusBadge: {
-    position: 'absolute',
-    top: 72,
-    right: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.85)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    zIndex: 10000,
-    borderWidth: 1,
-    borderColor: 'rgba(56, 189, 248, 0.3)',
+    position: 'absolute', top: 72, right: spacing.lg, flexDirection: 'row', alignItems: 'center',
+    backgroundColor: 'rgba(15,23,42,0.88)', paddingHorizontal: spacing.md, paddingVertical: 6,
+    borderRadius: radii.pill, zIndex: 10000, borderWidth: 1, borderColor: colors.primaryBorder,
   },
-  statusText: { color: '#38BDF8', fontSize: 12, marginLeft: 6, fontWeight: '600' },
+  statusText: { color: colors.primary, fontSize: 12, marginLeft: 6, fontWeight: '600' },
   noCaptionBadge: {
-    position: 'absolute',
-    top: 72,
-    alignSelf: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-    zIndex: 10000,
+    position: 'absolute', top: 72, alignSelf: 'center', backgroundColor: 'rgba(9,13,22,0.88)',
+    paddingHorizontal: 14, paddingVertical: 6, borderRadius: radii.pill, zIndex: 10000,
   },
-  noCaptionText: { color: '#94A3B8', fontSize: 12, fontWeight: '500' },
+  noCaptionText: { color: colors.textMuted, fontSize: 12, fontWeight: '500' },
 });

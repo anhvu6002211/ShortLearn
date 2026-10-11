@@ -166,9 +166,147 @@ npx expo run:android --device
 
 Sau khi mở bản development build, vào tab **Tài khoản** để đăng nhập, đổi tài khoản hoặc ngắt liên kết. Phiên truy cập ngắn hạn được mã hóa trong bộ nhớ an toàn của thiết bị; app không lưu mật khẩu hay refresh token.
 
+#### Đăng nhập TikTok
+
+- Chọn TikTok ở màn hình nền tảng sẽ mở trang đăng nhập TikTok trong WebView.
+- Đăng nhập bằng **phone / email / username** không cần TikTok Developer App; cookie chỉ lưu cục bộ trong WebView của thiết bị.
+- Google/Facebook bên trong WebView có thể bị nhà cung cấp OAuth chặn. Luồng phát hành ổn định cho các phương thức này cần TikTok Login Kit, Client Key và redirect URI đã đăng ký.
+- ShortLearn không đọc hoặc lưu mật khẩu, OTP hay cookie TikTok.
+
+#### Plan kiểm tra giao diện TikTok
+
+**Chuẩn bị**
+
+- Dùng development build trên Android; đặt màn hình portrait khoảng `390×844 dp`.
+- Chạy Metro và API Gateway; với USB/emulator, reverse cổng `8081` và `5000` như hướng dẫn trên.
+- Chuẩn bị một URL TikTok công khai có lời thoại/phụ đề và một URL không có phụ đề; không dùng video yêu cầu đăng nhập hoặc giới hạn vùng.
+
+**Checklist**
+
+1. Tại tab **Khám phá**, chọn **TikTok**, dán URL rồi bấm **Mở video để học**.
+2. Xác nhận video tải trong vùng phát, không có màn hình đen, vòng loading vô hạn, popup cài TikTok hoặc crash.
+3. Kiểm tra vùng video, top action, subtitle dock và bottom navigation không chồng lấn; xoay lại portrait nếu hệ thống đổi hướng.
+4. Tap video để phát/tạm dừng; vuốt lên/xuống; xác nhận cử chỉ không làm mất bottom navigation hoặc remount WebView.
+5. Chuyển **TikTok → Khám phá → TikTok**; video/WebView phải giữ trạng thái thay vì tải lại từ đầu.
+6. Với video có phụ đề, kiểm tra câu Anh–Việt, replay, câu tiếp, Short tiếp và auto-pause. Chạm một từ để mở bottom sheet; sheet không che nút đóng/lưu.
+7. Với video không phụ đề, xác nhận trạng thái thông báo rõ ràng; app vẫn cho vuốt tiếp và không kẹt loading.
+8. Tắt/bật mạng trong lúc tải; xác nhận error/offline có thể phục hồi bằng retry hoặc mở lại URL.
+9. Nghe trực tiếp để xác nhận auto-unmute. ADB chỉ chứng minh tap/swipe không crash, không chứng minh âm thanh phát đúng.
+10. Kiểm tra `adb logcat` không có `FATAL EXCEPTION`, `ReactNativeJS ERROR`, `TypeError` hoặc `Invariant Violation`.
+
+**Tiêu chí pass**
+
+- URL TikTok công khai tải/phát ổn định; không crash hoặc runtime error.
+- WebView giữ cùng instance khi đổi tab; tap/swipe và các control học hoạt động.
+- Layout, safe area, touch target và bottom sheet đúng ở viewport mục tiêu.
+- Phụ đề/empty/error/offline hiển thị đúng; auto-unmute được xác nhận bằng nghe trực tiếp.
+
+#### Build APK release cục bộ
+
+```powershell
+cd shortlearn-app
+npm install
+npm run typecheck
+npx expo prebuild --platform android --no-install
+# Giữ workaround libc++ trong android/build.gradle trên Windows nếu đường dẫn SDK chứa khoảng trắng.
+cd android
+.\gradlew.bat assembleRelease
+```
+
+APK được tạo tại `shortlearn-app/android/app/build/outputs/apk/release/app-release.apk`. Bản phát hành thực tế phải dùng keystore riêng; debug keystore hiện chỉ phục vụ build và kiểm thử cục bộ.
+
 ---
 
-### 2. Khởi chạy Toàn bộ Hạ tầng Backend (Tùy chọn)
+### 2. Plan HTTPS công khai 0 đồng bằng Cloudflare Tunnel
+
+Mục tiêu: cho APK trên mạng ngoài gọi API Gateway đang chạy tại máy phát triển mà không mở port router. Cloudflare cấp URL HTTPS công khai; MySQL, Redis, RabbitMQ và AI worker vẫn chạy cục bộ bằng Docker.
+
+> Đây là cấu hình demo/beta. Máy tính phải luôn bật, Docker/backend/worker phải chạy và Quick Tunnel sẽ đổi URL sau mỗi lần khởi động lại. Không dùng cho production hoặc dữ liệu quan trọng.
+
+#### Bước 1 — Chuẩn bị dịch vụ cục bộ
+
+```powershell
+# Tại thư mục gốc repository
+Copy-Item .env.example .env -ErrorAction SilentlyContinue
+docker compose up -d mysql redis rabbitmq
+
+# Terminal 1
+npm install --prefix backend
+npm run dev --prefix backend
+
+# Terminal 2
+.\ai-worker\.venv\Scripts\python.exe -m src.worker
+```
+
+Xác nhận API sẵn sàng trước khi tạo tunnel:
+
+```powershell
+curl.exe http://127.0.0.1:5000/health
+curl.exe http://127.0.0.1:5000/health/ready
+```
+
+Cả hai endpoint phải trả trạng thái thành công; readiness phải xác nhận MySQL, Redis và RabbitMQ hoạt động.
+
+#### Bước 2 — Cài Cloudflare Tunnel
+
+```powershell
+winget install --id Cloudflare.cloudflared
+cloudflared --version
+```
+
+Nếu `winget` không có, tải `cloudflared-windows-amd64.exe` từ trang phát hành chính thức của Cloudflare và đổi tên thành `cloudflared.exe`.
+
+#### Bước 3 — Mở Quick Tunnel HTTPS
+
+```powershell
+cloudflared tunnel --url http://127.0.0.1:5000
+```
+
+Giữ terminal này mở. Sao chép URL dạng:
+
+```text
+https://random-name.trycloudflare.com
+```
+
+Không thêm `/api/v1`; app tự thêm prefix API.
+
+#### Bước 4 — Build APK trỏ vào tunnel
+
+Cập nhật `shortlearn-app/.env`:
+
+```dotenv
+EXPO_PUBLIC_API_URL=https://random-name.trycloudflare.com
+```
+
+Sau đó build lại vì biến `EXPO_PUBLIC_*` được đóng vào JavaScript bundle:
+
+```powershell
+cd shortlearn-app
+npm run typecheck
+cd android
+.\gradlew.bat assembleRelease
+```
+
+APK nằm tại `shortlearn-app/android/app/build/outputs/apk/release/app-release.apk`.
+
+#### Bước 5 — Nghiệm thu từ mạng ngoài
+
+1. Tắt Wi-Fi điện thoại, dùng 4G/5G.
+2. Cài APK mới; đăng ký/đăng nhập ShortLearn.
+3. Kiểm tra `/health`, tạo phụ đề, lưu từ và tải phiên ôn tập.
+4. Kiểm tra backend không tin `X-Forwarded-For` từ nguồn không đáng tin; giữ rate limit hiện có.
+5. Xác nhận log không chứa token, OTP, mật khẩu hoặc cookie.
+6. Dừng `cloudflared`; app phải hiển thị lỗi mạng/retry thay vì loading vô hạn.
+
+#### Điều kiện hoàn thành
+
+- Thiết bị ngoài LAN gọi API qua HTTPS thành công.
+- Không mở port router; firewall không cần public cổng `5000`.
+- Backend/worker test vẫn pass; APK typecheck, build, cài và cold launch pass.
+- URL tunnel chỉ nằm trong `.env`, không hardcode hoặc commit.
+- Khi URL Quick Tunnel đổi, cập nhật `.env` và build APK lại.
+
+### 3. Khởi chạy Toàn bộ Hạ tầng Backend (Tùy chọn)
 Dành cho việc phát triển hệ thống lưu trữ đồng bộ và worker AI:
 
 ```bash

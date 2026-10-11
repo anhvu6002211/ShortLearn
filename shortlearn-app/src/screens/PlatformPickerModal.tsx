@@ -16,41 +16,54 @@ interface PlatformPickerProps {
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.72)', justifyContent: 'flex-end' },
-  card: {
-    backgroundColor: '#0B0F19',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 32,
-    borderTopWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
-  },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
-  title: { color: '#F8FAFC', fontSize: 18, fontWeight: '800' },
-  description: { color: '#94A3B8', fontSize: 13, marginTop: 4 },
-  closeButton: { padding: 8 },
-  closeText: { color: '#94A3B8', fontSize: 22, fontWeight: '700' },
-  row: { flexDirection: 'row', gap: 12 },
-  option: {
+  backdrop: {
     flex: 1,
-    backgroundColor: '#1E293B',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: 'transparent',
-    padding: 16,
+    backgroundColor: '#070A12',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  glowTop: {
+    position: 'absolute', top: -160, left: -100, width: 360, height: 360,
+    borderRadius: 180, backgroundColor: 'rgba(168,85,247,0.20)',
+  },
+  glowBottom: {
+    position: 'absolute', right: -120, bottom: -150, width: 380, height: 380,
+    borderRadius: 190, backgroundColor: 'rgba(37,244,238,0.12)',
+  },
+  card: { width: '100%', maxWidth: 560, alignSelf: 'center' },
+  header: { alignItems: 'center', marginBottom: 32 },
+  eyebrow: {
+    color: '#25F4EE', fontSize: 12, fontWeight: '900', letterSpacing: 2.4,
+    marginBottom: 10,
+  },
+  title: { color: '#F8FAFC', fontSize: 30, lineHeight: 36, fontWeight: '900', textAlign: 'center' },
+  description: { color: '#94A3B8', fontSize: 15, lineHeight: 22, marginTop: 10, textAlign: 'center' },
+  row: { gap: 16 },
+  option: {
+    minHeight: 190,
+    backgroundColor: 'rgba(30,41,59,0.82)',
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.10)',
+    padding: 24,
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  optionYouTubeActive: { borderColor: '#FF335F', backgroundColor: 'rgba(255, 0, 51, 0.10)' },
-  optionTikTokActive: { borderColor: '#25F4EE', backgroundColor: 'rgba(37, 244, 238, 0.08)' },
-  logo: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
+  optionYouTubeActive: { borderColor: '#FF335F', backgroundColor: 'rgba(255,0,51,0.12)' },
+  optionTikTokActive: { borderColor: '#25F4EE', backgroundColor: 'rgba(37,244,238,0.10)' },
+  logo: {
+    width: 104, height: 104, borderRadius: 32, alignItems: 'center', justifyContent: 'center',
+    marginRight: 22, shadowColor: '#000', shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.45, shadowRadius: 14, elevation: 10,
+  },
   youtubeLogo: { backgroundColor: '#FF0033' },
-  tiktokLogo: { backgroundColor: '#050505', borderWidth: 2, borderColor: '#25F4EE' },
-  youtubePlayIcon: { color: '#FFFFFF', fontSize: 22 },
-  tiktokNoteIcon: { color: '#FFFFFF', fontSize: 22, fontWeight: '900' },
-  optionTitle: { color: '#F8FAFC', fontSize: 15, fontWeight: '800' },
-  optionCaption: { color: '#94A3B8', fontSize: 11, marginTop: 2 },
+  tiktokLogo: { backgroundColor: '#050505', borderWidth: 3, borderColor: '#25F4EE' },
+  youtubePlayIcon: { color: '#FFFFFF', fontSize: 46 },
+  tiktokNoteIcon: { color: '#FFFFFF', fontSize: 48, fontWeight: '900' },
+  optionCopy: { flex: 1 },
+  optionTitle: { color: '#F8FAFC', fontSize: 25, fontWeight: '900' },
+  optionCaption: { color: '#CBD5E1', fontSize: 14, marginTop: 5 },
+  optionAction: { color: '#25F4EE', fontSize: 13, fontWeight: '800', marginTop: 14 },
 });
 
 export const PlatformPickerModal: React.FC<PlatformPickerProps> = ({
@@ -59,24 +72,15 @@ export const PlatformPickerModal: React.FC<PlatformPickerProps> = ({
   onClose,
   onSelectPlatform,
 }) => (
-  <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+  <Modal visible={visible} animationType="fade" onRequestClose={onClose}>
     <View style={styles.backdrop}>
-      <TouchableOpacity
-        accessibilityRole="button"
-        accessibilityLabel="Đóng bộ chọn nền tảng"
-        activeOpacity={1}
-        style={StyleSheet.absoluteFill}
-        onPress={onClose}
-      />
+      <View style={styles.glowTop} pointerEvents="none" />
+      <View style={styles.glowBottom} pointerEvents="none" />
       <View style={styles.card}>
         <View style={styles.header}>
-          <View>
-            <Text style={styles.title}>Chọn nền tảng Shorts</Text>
-            <Text style={styles.description}>Bạn muốn học với video từ đâu?</Text>
-          </View>
-          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Đóng" style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeText}>×</Text>
-          </TouchableOpacity>
+          <Text style={styles.eyebrow}>SHORTLEARN</Text>
+          <Text style={styles.title}>Bạn muốn học ở đâu?</Text>
+          <Text style={styles.description}>Chọn nền tảng để mở ngay luồng video ngắn.</Text>
         </View>
         <View style={styles.row}>
           <TouchableOpacity
@@ -86,8 +90,11 @@ export const PlatformPickerModal: React.FC<PlatformPickerProps> = ({
             onPress={() => onSelectPlatform('youtube')}
           >
             <View style={[styles.logo, styles.youtubeLogo]}><Text style={styles.youtubePlayIcon}>▶</Text></View>
-            <Text style={styles.optionTitle}>YouTube</Text>
-            <Text style={styles.optionCaption}>Shorts</Text>
+            <View style={styles.optionCopy}>
+              <Text style={styles.optionTitle}>YouTube</Text>
+              <Text style={styles.optionCaption}>Khám phá YouTube Shorts</Text>
+              <Text style={styles.optionAction}>MỞ SHORTS  →</Text>
+            </View>
           </TouchableOpacity>
           <TouchableOpacity
             accessibilityRole="button"
@@ -96,8 +103,11 @@ export const PlatformPickerModal: React.FC<PlatformPickerProps> = ({
             onPress={() => onSelectPlatform('tiktok')}
           >
             <View style={[styles.logo, styles.tiktokLogo]}><Text style={styles.tiktokNoteIcon}>♪</Text></View>
-            <Text style={styles.optionTitle}>TikTok</Text>
-            <Text style={styles.optionCaption}>For You</Text>
+            <View style={styles.optionCopy}>
+              <Text style={styles.optionTitle}>TikTok</Text>
+              <Text style={styles.optionCaption}>Khám phá TikTok For You</Text>
+              <Text style={styles.optionAction}>MỞ FOR YOU  →</Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>

@@ -96,12 +96,10 @@ android {
         versionName "1.0.0"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
-
     }
     signingConfigs {
         debug {
-            // Use the standard Android debug key so its SHA-1 matches the
-            // Android OAuth client registered for this local development build.
+            // Keep local builds compatible with the installed app and registered OAuth SHA-1.
             storeFile file(System.getProperty('user.home') + '/.android/debug.keystore')
             storePassword 'android'
             keyAlias 'androiddebugkey'

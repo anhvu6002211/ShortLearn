@@ -29,6 +29,16 @@ export const ShortVideoWebView = React.memo<ShortVideoWebViewProps>(({
     injectedJavaScript={injectedScript}
     onLoadEnd={onLoadEnd}
     onMessage={onMessage}
+    onShouldStartLoadWithRequest={(request) => {
+      const url = request.url.toLowerCase();
+      if (!url.startsWith('http://') && !url.startsWith('https://')) return false;
+      if (platform === 'tiktok') {
+        return url.includes('tiktok.com/') || url.includes('tiktokcdn.com/');
+      }
+      return url.includes('youtube.com/') || url.includes('googlevideo.com/');
+    }}
+    onOpenWindow={() => undefined}
+    setSupportMultipleWindows={false}
     style={styles.webView}
     allowsInlineMediaPlayback
     mediaPlaybackRequiresUserAction={false}

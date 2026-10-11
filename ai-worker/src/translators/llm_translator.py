@@ -3,7 +3,7 @@ import logging
 from typing import List, Dict, Any, Optional
 from groq import Groq
 import google.generativeai as genai
-from ..core.config import GEMINI_API_KEY, GEMINI_MODEL, GROQ_API_KEY, PRIMARY_LLM
+from ..core.config import GEMINI_API_KEY, GEMINI_MODEL, GROQ_API_KEY, GROQ_MODEL, PRIMARY_LLM
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +120,7 @@ def translate_with_groq(
     system_prompt = _build_system_prompt(previous_context)
 
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model=GROQ_MODEL,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": json.dumps(input_data, ensure_ascii=False)}
@@ -194,7 +194,7 @@ def translate_subtitles(
 
     if PRIMARY_LLM == "groq" and GROQ_API_KEY:
         try:
-            logger.info("🧠 Translating via Groq LLaMA-3.3...")
+            logger.info("🧠 Translating via Groq (%s)...", GROQ_MODEL)
             return normalize_translations(translate_with_groq(chunks, previous_context), chunks)
         except Exception as e:
             logger.error(f"❌ Groq translation failed: {e}")
@@ -210,7 +210,7 @@ def translate_subtitles(
 
     if PRIMARY_LLM != "groq" and GROQ_API_KEY:
         try:
-            logger.info("🧠 Fallback translating via Groq...")
+            logger.info("🧠 Fallback translating via Groq (%s)...", GROQ_MODEL)
             return normalize_translations(translate_with_groq(chunks, previous_context), chunks)
         except Exception as e:
             logger.error(f"❌ Groq fallback translation failed: {e}")

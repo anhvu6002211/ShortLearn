@@ -15,6 +15,62 @@ export const TIKTOK_INJECTED_SCRIPT = `
   var observedVideos = new WeakSet();
   var observedTracks = new WeakSet();
   var shortLearnActive = true;
+  var FEED_IDS_KEY = 'shortlearn:tiktok-feed-ids';
+  var FEED_URLS_KEY = 'shortlearn:tiktok-feed-urls';
+  var feedIds = [];
+  var feedUrls = {};
+
+  try {
+    var savedFeedIds = JSON.parse(sessionStorage.getItem(FEED_IDS_KEY) || '[]');
+    var savedFeedUrls = JSON.parse(sessionStorage.getItem(FEED_URLS_KEY) || '{}');
+    if (Array.isArray(savedFeedIds)) feedIds = savedFeedIds.filter(function(id) { return /^\\d{5,32}$/.test(String(id)); });
+    if (savedFeedUrls && typeof savedFeedUrls === 'object') feedUrls = savedFeedUrls;
+  } catch (e) {}
+
+  function rememberFeedItems(payload) {
+    try {
+      var items = payload && (payload.itemList || payload.item_list || payload.items || payload.aweme_list);
+      if (!Array.isArray(items)) return;
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i] || {};
+        var id = String(item.id || item.aweme_id || '');
+        if (!/^\\d{5,32}$/.test(id)) continue;
+        if (feedIds.indexOf(id) === -1) feedIds.push(id);
+        var author = item.author || {};
+        var username = String(author.uniqueId || author.unique_id || item.author_unique_id || '');
+        if (username) feedUrls[id] = 'https://www.tiktok.com/@' + encodeURIComponent(username) + '/video/' + id;
+      }
+      sessionStorage.setItem(FEED_IDS_KEY, JSON.stringify(feedIds));
+      sessionStorage.setItem(FEED_URLS_KEY, JSON.stringify(feedUrls));
+    } catch (e) {}
+  }
+
+  try {
+    var originalFetch = window.fetch;
+    window.fetch = function() {
+      return originalFetch.apply(this, arguments).then(function(response) {
+        try {
+          var url = String(response.url || '');
+          if (url.indexOf('/api/recommend/item_list/') !== -1 || url.indexOf('/api/preload/item_list/') !== -1) {
+            response.clone().json().then(rememberFeedItems).catch(function() {});
+          }
+        } catch (e) {}
+        return response;
+      });
+    };
+
+    var originalXhrOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url) {
+      this.__shortLearnFeedRequest = String(url || '').indexOf('/api/recommend/item_list/') !== -1 ||
+        String(url || '').indexOf('/api/preload/item_list/') !== -1;
+      if (this.__shortLearnFeedRequest) {
+        this.addEventListener('load', function() {
+          try { rememberFeedItems(JSON.parse(this.responseText)); } catch (e) {}
+        });
+      }
+      return originalXhrOpen.apply(this, arguments);
+    };
+  } catch (e) {}
 
   function send(type, payload) {
     if (!shortLearnActive) return;
@@ -28,22 +84,70 @@ export const TIKTOK_INJECTED_SCRIPT = `
     } catch (e) {}
   }
 
+  function videoIdFrom(value) {
+    var match = String(value || '').match(/\\\/(?:video|v|player\\\/v1)\\\/(\\d{5,32})(?:[/?#]|$)/i);
+    return match && match[1] ? match[1] : '';
+  }
+
   function getVideoId() {
-    var match = location.pathname.match(/\\\/(?:video|v|player\\\/v1)\\\/(\\d{5,32})(?:\\\/|$)/i);
-    if (match && match[1]) return match[1];
+    var directId = videoIdFrom(location.href);
+    if (directId) return directId;
 
     try {
       var canonical = document.querySelector('link[rel="canonical"]');
-      var canonicalHref = canonical && canonical.getAttribute('href');
-      var canonicalMatch = canonicalHref && canonicalHref.match(/\\\/(?:video|v|player\\\/v1)\\\/(\\d{5,32})(?:[/?#]|$)/i);
-      if (canonicalMatch && canonicalMatch[1]) return canonicalMatch[1];
+      var canonicalId = videoIdFrom(canonical && canonical.getAttribute('href'));
+      if (canonicalId) return canonicalId;
     } catch (e) {}
 
     try {
       var playerFrame = document.querySelector('iframe[src*="tiktok.com/player/v1/"]');
-      var frameSrc = playerFrame && playerFrame.getAttribute('src');
-      var frameMatch = frameSrc && frameSrc.match(/player\\\/v1\\\/(\\d{5,32})(?:[/?#]|$)/i);
-      if (frameMatch && frameMatch[1]) return frameMatch[1];
+      var frameId = videoIdFrom(playerFrame && playerFrame.getAttribute('src'));
+      if (frameId) return frameId;
+    } catch (e) {}
+
+    // TikTok For You keeps /foryou in the address bar. Find the ID on the
+    // card containing the currently playing/most-visible video instead.
+    try {
+      var node = getActiveVideo();
+      for (var depth = 0; node && depth < 9; depth++, node = node.parentElement) {
+        if (node.getAttribute) {
+          var attributes = ['data-video-id', 'data-item-id', 'data-id'];
+          for (var a = 0; a < attributes.length; a++) {
+            var attributeId = String(node.getAttribute(attributes[a]) || '').match(/^\\d{5,32}$/);
+            if (attributeId) return attributeId[0];
+          }
+        }
+        var ownLink = node.matches && node.matches('a[href*="/video/"]') ? node : null;
+        var nearbyLink = ownLink || (node.querySelector && node.querySelector('a[href*="/video/"]'));
+        var nearbyId = videoIdFrom(nearbyLink && nearbyLink.getAttribute('href'));
+        if (nearbyId) return nearbyId;
+      }
+
+      var links = document.querySelectorAll('a[href*="/video/"]');
+      var bestId = '';
+      var bestArea = 0;
+      for (var i = 0; i < links.length; i++) {
+        var rect = links[i].getBoundingClientRect();
+        var visibleWidth = Math.max(0, Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0));
+        var visibleHeight = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
+        var area = visibleWidth * visibleHeight;
+        var linkId = videoIdFrom(links[i].getAttribute('href'));
+        if (linkId && area > bestArea) {
+          bestId = linkId;
+          bestArea = area;
+        }
+      }
+      if (bestId) return bestId;
+
+      var resources = performance.getEntriesByType('resource');
+      for (var r = resources.length - 1; r >= 0; r--) {
+        var resourceUrl = String(resources[r].name || '');
+        if (resourceUrl.indexOf('/api/item/availability/') === -1) continue;
+        var itemIdsMatch = resourceUrl.match(/[?&]itemIds=([^&]+)/);
+        if (!itemIdsMatch) continue;
+        var itemIds = decodeURIComponent(itemIdsMatch[1]).match(/\\d{5,32}/g);
+        if (itemIds && itemIds[0]) return itemIds[0];
+      }
     } catch (e) {}
 
     return '';
@@ -205,8 +309,23 @@ export const TIKTOK_INJECTED_SCRIPT = `
     '[class*="CaptionText"]'
   ].join(',');
 
+  function dismissAppPrompt() {
+    try {
+      var candidates = document.querySelectorAll('button, [role="button"]');
+      for (var i = 0; i < candidates.length; i++) {
+        var text = String(candidates[i].innerText || candidates[i].textContent || '').trim().toLowerCase();
+        var label = String(candidates[i].getAttribute('aria-label') || '').trim().toLowerCase();
+        if (text === 'not now' || text === 'không phải bây giờ' || label === 'close' || label === 'đóng') {
+          candidates[i].click();
+          return;
+        }
+      }
+    } catch (e) {}
+  }
+
   function scanCaptions(root) {
     if (!shortLearnActive) return;
+    dismissAppPrompt();
     try {
       if (!root || root.nodeType !== 1) return;
       if (root.matches && root.matches(captionSelector)) forwardCaption(root.textContent || root.innerText);
@@ -234,7 +353,59 @@ export const TIKTOK_INJECTED_SCRIPT = `
     } catch (e) {}
   }
 
+  function storedFeedVideoIds() {
+    return feedIds.slice();
+  }
+
+  function feedVideoIds() {
+    var ids = storedFeedVideoIds();
+    var currentId = lastVideoId || getVideoId();
+    if (currentId && ids.indexOf(currentId) === -1) ids.push(currentId);
+
+    try {
+      var resources = performance.getEntriesByType('resource');
+      for (var r = resources.length - 1; r >= 0; r--) {
+        var resourceUrl = String(resources[r].name || '');
+        if (resourceUrl.indexOf('/api/item/availability/') === -1) continue;
+        var match = resourceUrl.match(/[?&]itemIds=([^&]+)/);
+        if (!match) continue;
+        var discovered = decodeURIComponent(match[1]).match(/\\d{5,32}/g) || [];
+        for (var i = 0; i < discovered.length; i++) {
+          if (ids.indexOf(discovered[i]) === -1) ids.push(discovered[i]);
+        }
+      }
+
+      var links = document.querySelectorAll('a[href*="/video/"]');
+      for (var l = 0; l < links.length; l++) {
+        var linkId = videoIdFrom(links[l].getAttribute('href'));
+        if (linkId && ids.indexOf(linkId) === -1) ids.push(linkId);
+      }
+      feedIds = ids;
+      sessionStorage.setItem(FEED_IDS_KEY, JSON.stringify(feedIds));
+    } catch (e) {}
+    return ids;
+  }
+
+  function openFeedVideo(offset) {
+    var ids = feedVideoIds();
+    if (!ids.length) return false;
+    var currentId = lastVideoId || getVideoId();
+    var currentIndex = ids.indexOf(currentId);
+    var targetIndex = currentIndex >= 0 ? currentIndex + offset : (offset > 0 ? 1 : 0);
+    if (targetIndex < 0 || targetIndex >= ids.length) return false;
+    var targetId = ids[targetIndex];
+    var targetUrl = feedUrls[targetId];
+    if (!targetUrl) {
+      var matchingLink = document.querySelector('a[href*="/video/' + targetId + '"]');
+      targetUrl = matchingLink && matchingLink.href;
+    }
+    if (!targetUrl) return false;
+    location.href = targetUrl;
+    return true;
+  }
+
   function nextVideo() {
+    if (openFeedVideo(1)) return;
     var button = document.querySelector(
       '[data-e2e="arrow-right"], [data-e2e="arrow-down"], button[aria-label*="next" i], button[aria-label*="tiếp" i]'
     );
@@ -243,6 +414,7 @@ export const TIKTOK_INJECTED_SCRIPT = `
   }
 
   function previousVideo() {
+    if (openFeedVideo(-1)) return;
     var button = document.querySelector(
       '[data-e2e="arrow-left"], [data-e2e="arrow-up"], button[aria-label*="previous" i], button[aria-label*="trước" i]'
     );
