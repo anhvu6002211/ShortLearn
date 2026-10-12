@@ -13,11 +13,8 @@ import {
   Platform,
   TextInput,
   KeyboardAvoidingView,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   BackHandler,
 } from 'react-native';
-import { FlashListRef } from '@shopify/flash-list';
 import { WebView } from 'react-native-webview';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -206,10 +203,6 @@ const runWithConcurrency = async <T,>(
 function ShortLearnApp() {
   const { authenticatedRequest, isAuthenticated, isRestoring } = useAuth();
   const webViewRef = useRef<WebView>(null);
-  const transcriptListRef = useRef<FlashListRef<SubtitleCue>>(null);
-  const transcriptAutoScrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isTranscriptVisibleRef = useRef(false);
-  const transcriptFollowPausedUntilRef = useRef(0);
   const pendingReplayRef = useRef<{
     videoId: string;
     time: number;
@@ -298,64 +291,6 @@ function ShortLearnApp() {
     });
     return result;
   }, [savedItems]);
-
-  const transcriptIndexByStartTime = useMemo(() => {
-    const index = new Map<number, number>();
-    subtitles.forEach((cue, cueIndex) => index.set(cue.start_time, cueIndex));
-    return index;
-  }, [subtitles]);
-
-  const activeTranscriptIndex = activeCue
-    ? transcriptIndexByStartTime.get(activeCue.start_time) ?? -1
-    : -1;
-
-  const handleTranscriptScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    // The transcript starts immediately after the full-height Shorts header.
-    // Requiring a deliberate scroll keeps it hidden on first load as designed.
-    isTranscriptVisibleRef.current = event.nativeEvent.contentOffset.y >= 72;
-  }, []);
-
-  const pauseTranscriptFollowing = useCallback(() => {
-    // Give the learner time to read another cue without the active cue pulling
-    // the list away. Following resumes on a later cue after this quiet period.
-    transcriptFollowPausedUntilRef.current = Date.now() + 4_000;
-  }, []);
-
-  useEffect(() => {
-    if (
-      activeTranscriptIndex < 0 ||
-      !isTranscriptVisibleRef.current ||
-      Date.now() < transcriptFollowPausedUntilRef.current
-    ) {
-      return;
-    }
-
-    if (transcriptAutoScrollTimerRef.current) {
-      clearTimeout(transcriptAutoScrollTimerRef.current);
-    }
-
-    transcriptAutoScrollTimerRef.current = setTimeout(() => {
-      if (
-        !isTranscriptVisibleRef.current ||
-        Date.now() < transcriptFollowPausedUntilRef.current
-      ) {
-        return;
-      }
-
-      transcriptListRef.current?.scrollToIndex({
-        index: activeTranscriptIndex,
-        animated: true,
-        viewPosition: 0.32,
-      });
-    }, 90);
-
-    return () => {
-      if (transcriptAutoScrollTimerRef.current) {
-        clearTimeout(transcriptAutoScrollTimerRef.current);
-        transcriptAutoScrollTimerRef.current = null;
-      }
-    };
-  }, [activeTranscriptIndex]);
 
   const clearSubtitleWaitTimer = useCallback(() => {
     if (subtitleWaitTimerRef.current) {
@@ -990,15 +925,6 @@ function ShortLearnApp() {
     }
   };
 
-  const handleTranscriptCuePress = useCallback((cue: SubtitleCue) => {
-    activeCueRef.current = cue;
-    setActiveCue(cue);
-    webViewRef.current?.postMessage(JSON.stringify({
-      action: 'SEEK_TO',
-      time: cue.start_time,
-    }));
-  }, []);
-
   const resetSubtitlesForVideo = (videoId: string | null, platform: VideoPlatform) => {
     subtitleRequestIdRef.current += 1;
     subtitleGenerationRef.current += 1;
@@ -1014,9 +940,6 @@ function ShortLearnApp() {
     setLoading(Boolean(videoId));
     setSubtitles([]);
     setActiveCue(null);
-    isTranscriptVisibleRef.current = false;
-    transcriptFollowPausedUntilRef.current = 0;
-    transcriptListRef.current?.scrollToOffset({ offset: 0, animated: false });
     if (videoId) armSubtitleWaitTimer(videoId, platform);
   };
 
@@ -1045,7 +968,11 @@ function ShortLearnApp() {
 
   const handleSelectPlatform = (platform: VideoPlatform) => {
     if (platform === 'tiktok') {
-      handleOpenTikTokAccount();
+      setIsPlatformPickerVisible(false);
+      setShortPickerPlatform('tiktok');
+      resetSubtitlesForVideo(null, 'tiktok');
+      setWebViewUri(TIKTOK_HOME_URL);
+      navigateToMainTab('shorts');
       return;
     }
     setIsPlatformPickerVisible(false);
@@ -1191,11 +1118,8 @@ function ShortLearnApp() {
                 isVisible={activeTab === 'shorts'}
                 learningDisplayPreferences={learningDisplayPreferences}
                 loading={loading}
-                subtitleError={subtitleError}
                 selectedWord={selectedWord}
                 shortsViewportHeight={shortsViewportHeight}
-                subtitles={subtitles}
-                transcriptListRef={transcriptListRef}
                 uri={webViewUri}
                 webViewRef={webViewRef}
                 wordLearningStates={wordLearningStates}
@@ -1206,15 +1130,7 @@ function ShortLearnApp() {
                 onNextShort={handleNextShort}
                 onPrevShort={handlePrevShort}
                 onReplayCue={handleReplayCue}
-                onRetrySubtitles={() => {
-                  if (!currentVideoIdRef.current) return;
-                  setSubtitleError(null);
-                  void fetchSubtitlesFromServer(currentVideoIdRef.current, currentPlatformRef.current);
-                }}
                 onSaveWord={handleSaveToSRS}
-                onTranscriptCuePress={handleTranscriptCuePress}
-                onTranscriptScroll={handleTranscriptScroll}
-                onTranscriptScrollBegin={pauseTranscriptFollowing}
                 onToggleAutoPause={() => updateLearningDisplayPreferences({
                   autoPauseEnabled: !learningDisplayPreferences.autoPauseEnabled,
                 })}

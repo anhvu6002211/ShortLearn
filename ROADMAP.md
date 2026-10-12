@@ -76,11 +76,11 @@
   - [x] **UI-7 — Cá nhân/cài đặt:** [`AccountScreen.tsx`](shortlearn-app/src/screens/AccountScreen.tsx), [`SettingsScreen.tsx`](shortlearn-app/src/screens/SettingsScreen.tsx); giữ auth, runtime stats và preference thật.
   - [x] **UI-8 — Brand assets:** app icon, adaptive icon và splash dùng assets hiện có qua [`app.json`](shortlearn-app/app.json); không sửa trực tiếp `android/`.
   - [x] **Kiểm tra tự động:** `npm run typecheck` và `npx expo config --type public` pass sau batch UI-8; `npm run typecheck` pass lại sau QA Android.
-  - [ ] **QA-1 — Layout 390×844:** 5 màn hình, safe area, bottom navigation và bàn phím Explore đã kiểm tra trên emulator `1080×2337 @ 443 dpi`; còn bottom sheet tra từ sau wipe.
-  - [ ] **QA-2 — WebView regression:** cùng instance `RNCWebView` (`84b4708`) vẫn mounted qua Shorts → Explore → Shorts; URL YouTube/TikTok nạp, tap/swipe không crash; sau offline/reconnect WebView được tạo lại bình thường (`2800be7`); logcat sạch `FATAL EXCEPTION`/`ReactNativeJS ERROR`/`TypeError`/`Invariant Violation`; còn nghe auto-unmute và kiểm tra replay/câu tiếp/Short tiếp/auto-pause với subtitle thật.
+  - [x] **QA-1 — Layout 390×844:** 5 màn hình, safe area, bottom navigation và bàn phím Explore đã kiểm tra trên emulator `1080×2337 @ 443 dpi`; khu Bản chép lời đã bỏ theo quyết định sản phẩm, còn bottom sheet tra từ sau wipe.
+  - [ ] **QA-2 — WebView regression:** cùng instance `RNCWebView` (`84b4708`) vẫn mounted qua Shorts → Explore → Shorts; URL YouTube/TikTok nạp, tap/swipe không crash; TikTok public feed lấy được video ID thật `7691926048987958580`; sau offline/reconnect WebView được tạo lại bình thường (`2800be7`); logcat sạch `FATAL EXCEPTION`/`ReactNativeJS ERROR`/`TypeError`/`Invariant Violation`; còn nghe auto-unmute và kiểm tra replay/câu tiếp/Short tiếp/auto-pause với subtitle thật.
   - [ ] **QA-3 — Learning regression:** Account guest và Review empty state đã kiểm tra với backend qua `adb reverse`; còn lưu từ, tải lại app, bốn rating FSRS, đổi tài khoản và số liệu thật sau wipe.
   - [ ] **QA-4 — Trạng thái và accessibility:** label/touch target chính và empty state đã kiểm tra; chu kỳ tắt/bật Wi‑Fi phục hồi về `MainActivity` không crash/runtime error; còn xác nhận UI error/retry của video, loading, TalkBack focus và contrast trên thiết bị thật.
-  - [ ] **QA-5 — Brand/native:** development build cài/chạy thành công; còn xác nhận trực quan launcher adaptive icon và splash/lockup đầy đủ.
+  - [ ] **QA-5 — Brand/native:** development build cài/chạy thành công; release không-transcript build/cài đè/cold launch pass; còn xác nhận trực quan launcher adaptive icon và splash/lockup đầy đủ.
   - **DoD tổng:** QA-1 → QA-5 pass trên thiết bị Android thật; không đổi API contract hoặc behavior học tập.
 
 - [ ] **Regression tối thiểu.**
@@ -109,23 +109,30 @@
   - DoD: copy rõ ràng, retry có giới hạn/backoff, không loading vô hạn và log không lộ dữ liệu nhạy cảm.
 
 - [ ] **TikTok fallback ổn định.**
-  - Không bắt đăng nhập tuyệt đối: thêm “Tiếp tục với feed công khai”; chỉ yêu cầu login khi TikTok chặn.
-  - Phone/email/username tiếp tục chạy trong WebView; Google/Facebook không được coi là ổn định khi chưa có Login Kit.
-  - Khi feed không trả ID/video, hiển thị fallback mở URL công khai hoặc thử lại; không giả lập username/canonical URL.
-  - Chỉ tích hợp Login Kit khi có Client Key, redirect URI, scope tối thiểu và app review.
-  - DoD: public/login/failure flow đều thoát được, đổi video và subtitle reset đúng, không bypass chính sách TikTok.
+  - [x] Chọn TikTok mở public For You feed, không ép đăng nhập; đăng nhập phone/email/username vẫn giữ riêng trong Cá nhân.
+  - [x] Feed TikTok thật tải trên emulator mà không cần tài khoản; bridge gửi video ID thật `7691926048987958580`; `MainActivity` giữ foreground; release build/cài đè pass; logcat sạch runtime error.
+  - [x] Khu Bản chép lời/loading card đã bỏ khỏi UI theo quyết định sản phẩm; phụ đề song ngữ, tra từ và AI nền vẫn giữ; typecheck và release smoke test pass.
+  - Google/Facebook không được coi là ổn định trong WebView; chỉ tích hợp Login Kit khi có Client Key, redirect URI, scope tối thiểu và app review.
+  - [ ] Nghiệm thu login/failure, đổi video và subtitle reset đúng; cả Gemini và Groq hiện `429`, AI worker đã tạm dừng để tránh retry tốn quota; queue được bảo toàn `34 ready / 0 active`, DLQ `72`; lần chạy sau dùng Gemini primary, `LLM_BATCH_SIZE=12`.
+  - DoD: public/login/failure flow đều thoát được, không giả lập username/canonical URL và không bypass chính sách TikTok.
 
 ### P2 — Phát hành sau khi beta đã pass
 
 - [ ] **Release signing, HTTPS-only và store build.**
   - Tạo release keystore riêng ngoài repository/secret store; tăng `versionCode` mỗi bản; production tắt cleartext HTTP.
-  - Xuất AAB cho Google Play; tách `expo-dev-client` khỏi production. APK arm64 chỉ tạo khi cần phân phối nội bộ.
+  - Xuất AAB cho Google Play; APK arm64 chỉ tạo khi cần phân phối nội bộ.
+  - [x] Đã gỡ `expo-dev-client` cùng dev launcher/menu khỏi dependency tree và production build; typecheck, release build, cài đè và cold launch pass; logcat không có crash/runtime error.
+  - [x] APK production-test hiện tại `79,686,316` bytes, SHA-256 `E056EC7D442F0CCF0948DB8B0F32237E95F84447EE43E8611AC1F991CBCBE0D7`; gỡ dev client không giảm đáng kể APK 4 ABI.
+  - [x] `bundleRelease` tạo AAB `41,088,794` bytes, SHA-256 `793A29139AC53A12B05B11A10299EF68AD87711EEE686B9B2F25B2F5CA9C304B`; `jarsigner` verify pass nhưng certificate vẫn là `CN=Android Debug`, chỉ dùng kiểm chứng, không upload production.
   - DoD: APK/AAB ký đúng key, nâng cấp được, production không chứa dev launcher/menu, build/cold launch pass.
 
 - [ ] **Audit dependency có kiểm soát.**
-  - Phân loại `npm audit` runtime/dev và khả năng khai thác; không chạy `npm audit fix --force`.
-  - Chỉ nâng theo ma trận Expo/RN; mỗi batch chạy typecheck, Expo Doctor, release build và smoke test.
-  - DoD: có disposition cho 9 moderate/28 high hiện tại; lỗi runtime có đường xử lý; không tạo regression native.
+  - [x] Đã phân loại `npm audit`: toàn bộ `9 moderate / 28 high / 0 critical`; production `8 moderate / 27 high / 0 critical`; đa số thuộc Expo CLI/Metro/RN transitive tooling.
+  - [x] Không chạy `npm audit fix --force`; đề xuất tự động downgrade Expo 57 → 44 và RN 0.86 → 0.72 bị loại vì sai ma trận hiện tại.
+  - [x] Đã bỏ khai báo trực tiếp `expo-modules-core`; Expo vẫn cung cấp `57.0.21` transitively; typecheck và release build pass.
+  - [x] Expo Doctor cải thiện `18/21` → `20/21`; chỉ còn cảnh báo app config không tự sync vì repository giữ native `android/`.
+  - [ ] Theo dõi bản vá tương thích Expo SDK 57/RN 0.86; không nâng dependency riêng lẻ khi upstream chưa xác nhận.
+  - DoD: có disposition cho mọi advisory; lỗi runtime có đường xử lý; không tạo regression native.
 
 - [ ] **Privacy, Terms và xóa tài khoản.**
   - Public Terms/Privacy nêu dữ liệu, retention, third party và contact; thêm API/UI xóa tài khoản cùng dữ liệu liên quan.
