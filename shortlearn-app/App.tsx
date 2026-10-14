@@ -997,9 +997,7 @@ function ShortLearnApp() {
   const handleOpenShortFromLink = () => {
     const target = parseVideoTarget(shortUrlInput, 'youtube');
     if (!target || target.platform !== 'youtube') {
-      setShortUrlError(shortPickerPlatform === 'youtube'
-        ? 'DÃ¡n liÃªn káº¿t YouTube há»£p lá»‡ hoáº·c mÃ£ video gá»“m 11 kÃ½ tá»±.'
-        : 'DÃ¡n liÃªn káº¿t TikTok há»£p lá»‡ hoáº·c mÃ£ video TikTok.');
+      setShortUrlError('Dán liên kết YouTube hợp lệ hoặc mã video gồm 11 ký tự.');
       return;
     }
 
