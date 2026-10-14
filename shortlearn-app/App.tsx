@@ -47,13 +47,12 @@ import {
 import {
   createYouTubeTarget,
   parseVideoTarget,
-  TIKTOK_HOME_URL,
   VideoPlatform,
   VideoTarget,
   YOUTUBE_SHORTS_HOME_URL,
 } from './src/services/videoPlatform';
-import { TIKTOK_INJECTED_SCRIPT } from './src/webview/tiktokBridge';
 import { YOUTUBE_INJECTED_SCRIPT } from './src/webview/youtubeBridge';
+import { ExternalCaptionsModal } from './src/screens/ExternalCaptionsModal';
 import { MainTab, AuthStackParamList } from './src/navigation/types';
 import { AuthStack } from './src/navigation/AuthStack';
 import { MainTabs } from './src/navigation/MainTabs';
@@ -223,6 +222,7 @@ function ShortLearnApp() {
   const [isBottomNavVisible, setIsBottomNavVisible] = useState<boolean>(true);
   const [currentVideoId, setCurrentVideoId] = useState<string>('');
   const [currentPlatform, setCurrentPlatform] = useState<VideoPlatform>('youtube');
+  const [externalCaptionsVisible, setExternalCaptionsVisible] = useState(false);
   const [webViewUri, setWebViewUri] = useState<string>(YOUTUBE_SHORTS_HOME_URL);
   const [isPlatformPickerVisible, setIsPlatformPickerVisible] = useState<boolean>(true);
   const [isShortPickerVisible, setIsShortPickerVisible] = useState<boolean>(false);
@@ -272,9 +272,7 @@ function ShortLearnApp() {
   const [isDisconnectingYouTube, setIsDisconnectingYouTube] = useState<boolean>(false);
   const [youTubeNotice, setYouTubeNotice] = useState<string | null>(null);
   const isExpoGo = Constants.appOwnership === 'expo';
-  const activeInjectedScript = currentPlatform === 'tiktok'
-    ? TIKTOK_INJECTED_SCRIPT
-    : YOUTUBE_INJECTED_SCRIPT;
+  const activeInjectedScript = YOUTUBE_INJECTED_SCRIPT;
   const wordLearningStates = useMemo<Record<string, WordLearningState>>(() => {
     const result: Record<string, WordLearningState> = {};
     savedItems.forEach((item) => {
@@ -955,7 +953,8 @@ function ShortLearnApp() {
   };
 
   const handleExploreTarget = (url: string, platform: VideoPlatform) => {
-    const target = parseVideoTarget(url, platform);
+    const target = platform === 'youtube' ? parseVideoTarget(url, 'youtube') : null;
+    if (target?.platform !== 'youtube') return;
     if (!target) return;
     openVideoTarget(target);
     navigateToMainTab('shorts');
@@ -966,25 +965,14 @@ function ShortLearnApp() {
     webViewRef.current?.postMessage(JSON.stringify({ action: 'RESUME_VIDEO' }));
   };
 
-  const handleSelectPlatform = (platform: VideoPlatform) => {
-    if (platform === 'tiktok') {
-      setIsPlatformPickerVisible(false);
-      setShortPickerPlatform('tiktok');
-      resetSubtitlesForVideo(null, 'tiktok');
-      setWebViewUri('https://www.tiktok.com/login');
-      navigateToMainTab('shorts');
-      return;
-    }
+  const handleSelectPlatform = (_platform: VideoPlatform) => {
     setIsPlatformPickerVisible(false);
     void handleYouTubeSignIn();
   };
 
-  const handleOpenTikTokAccount = () => {
+  const handleOpenExternalCaptions = () => {
     setIsPlatformPickerVisible(false);
-    setShortPickerPlatform('tiktok');
-    resetSubtitlesForVideo(null, 'tiktok');
-    setWebViewUri('https://www.tiktok.com/login');
-    navigateToMainTab('shorts');
+    setExternalCaptionsVisible(true);
   };
 
   const handleOpenYouTubeAccount = () => {
@@ -1007,11 +995,9 @@ function ShortLearnApp() {
   };
 
   const handleOpenShortFromLink = () => {
-    const target = parseVideoTarget(shortUrlInput, shortPickerPlatform);
-    if (!target) {
-      setShortUrlError(shortPickerPlatform === 'youtube'
-        ? 'DÃ¡n liÃªn káº¿t YouTube há»£p lá»‡ hoáº·c mÃ£ video gá»“m 11 kÃ½ tá»±.'
-        : 'DÃ¡n liÃªn káº¿t TikTok há»£p lá»‡ hoáº·c mÃ£ video TikTok.');
+    const target = parseVideoTarget(shortUrlInput, 'youtube');
+    if (!target || target.platform !== 'youtube') {
+      setShortUrlError('Dán liên kết YouTube hợp lệ hoặc mã video gồm 11 ký tự.');
       return;
     }
 
@@ -1100,7 +1086,7 @@ function ShortLearnApp() {
             onTabPress={(tab) => {
               webViewRef.current?.postMessage(JSON.stringify({ action: 'PAUSE_VIDEO' }));
               if (tab === 'shorts') {
-                setShortPickerPlatform(currentPlatform);
+                setShortPickerPlatform('youtube');
                 setIsPlatformPickerVisible(true);
               }
             }}
@@ -1167,7 +1153,6 @@ function ShortLearnApp() {
               <AccountScreen
                 onOpenSettings={() => setIsSettingsOpen(true)}
                 onOpenOnboarding={() => navigationRef.navigate('Onboarding')}
-                onLoginTikTok={handleOpenTikTokAccount}
                 savedCount={savedItems.length}
                 dueCount={savedDueCount}
               />
@@ -1182,7 +1167,10 @@ function ShortLearnApp() {
         currentPlatform={currentPlatform}
         onClose={closePlatformPicker}
         onSelectPlatform={handleSelectPlatform}
+        onOpenExternalCaptions={handleOpenExternalCaptions}
       />
+
+      <ExternalCaptionsModal visible={externalCaptionsVisible} onClose={() => setExternalCaptionsVisible(false)} />
 
       <ShortUrlPickerModal
         visible={isShortPickerVisible}
@@ -1191,10 +1179,6 @@ function ShortLearnApp() {
         error={shortUrlError}
         onClose={closeShortPicker}
         onOpen={handleOpenShortFromLink}
-        onPlatformChange={(p) => {
-          setShortPickerPlatform(p);
-          setShortUrlError(null);
-        }}
         onUrlChange={(val) => {
           setShortUrlInput(val);
           if (shortUrlError) setShortUrlError(null);

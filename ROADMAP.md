@@ -170,6 +170,8 @@
 
 ### Backlog sau beta — Chỉ mở khi có nhu cầu hoặc số liệu
 
+- **Android external captions (Hearth-like) — POC sau MVP:** đã thêm điểm vào chế độ thử nghiệm và tận dụng Whisper microphone on-device, chưa có overlay chạy ngoài ShortLearn. Triển khai tiếp Android native (foreground service + SYSTEM_ALERT_WINDOW + MediaProjection/AudioPlaybackCapture theo quyền được cấp), ASR streaming/VAD, dịch Anh–Việt, tra từ và đồng bộ Flashcard; có nút dừng, thông báo riêng tư, không ghi âm mặc định. Kiểm thử TikTok/Instagram/YouTube gốc, tai nghe Bluetooth, app nền, độ trễ và trường hợp nguồn chặn capture. Không bypass DRM/đăng nhập và không hứa tương thích mọi app.
+- **Phạm vi mobile UI:** thay lựa chọn TikTok WebView trong ShortLearn bằng lối vào External Captions Lab; giữ YouTube WebView làm chế độ học chính. Mã backend TikTok chưa bị xóa để tránh migration/compatibility ngoài phạm vi.
 - **Browser extension desktop:** chỉ cân nhắc sau WEB-2; overlay trên trang YouTube/TikTok thật, cần review quyền và vẫn dùng backend/worker chung.
 - **Subtitle cache cục bộ:** chỉ làm khi đo thấy mở lại video chậm hoặc có yêu cầu xem subtitle offline; khi đó dùng key đủ ngôn ngữ, TTL và size cap.
 - **Offline queue save/review:** chỉ làm khi người dùng cần học offline; phải có idempotency và conflict policy trước.

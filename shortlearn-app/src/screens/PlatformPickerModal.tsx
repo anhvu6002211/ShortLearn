@@ -13,6 +13,7 @@ interface PlatformPickerProps {
   currentPlatform: VideoPlatform;
   onClose: () => void;
   onSelectPlatform: (platform: VideoPlatform) => void;
+  onOpenExternalCaptions: () => void;
 }
 
 const styles = StyleSheet.create({
@@ -50,16 +51,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   optionYouTubeActive: { borderColor: '#FF335F', backgroundColor: 'rgba(255,0,51,0.12)' },
-  optionTikTokDisabled: { opacity: 0.48 },
+  optionExternal: { borderColor: 'rgba(56,189,248,0.50)', backgroundColor: 'rgba(56,189,248,0.07)' },
   logo: {
     width: 104, height: 104, borderRadius: 32, alignItems: 'center', justifyContent: 'center',
     marginRight: 22, shadowColor: '#000', shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.45, shadowRadius: 14, elevation: 10,
   },
   youtubeLogo: { backgroundColor: '#FF0033' },
-  tiktokLogo: { backgroundColor: '#050505', borderWidth: 3, borderColor: '#25F4EE' },
+  externalLogo: { backgroundColor: '#12334D', borderWidth: 2, borderColor: '#38BDF8' },
   youtubePlayIcon: { color: '#FFFFFF', fontSize: 46 },
-  tiktokNoteIcon: { color: '#FFFFFF', fontSize: 48, fontWeight: '900' },
+  externalIcon: { color: '#7DD3FC', fontSize: 40, fontWeight: '900' },
   optionCopy: { flex: 1 },
   optionTitle: { color: '#F8FAFC', fontSize: 25, fontWeight: '900' },
   optionCaption: { color: '#CBD5E1', fontSize: 14, marginTop: 5 },
@@ -71,6 +72,7 @@ export const PlatformPickerModal: React.FC<PlatformPickerProps> = ({
   currentPlatform,
   onClose,
   onSelectPlatform,
+  onOpenExternalCaptions,
 }) => (
   <Modal visible={visible} animationType="fade" onRequestClose={onClose}>
     <View style={styles.backdrop}>
@@ -80,7 +82,7 @@ export const PlatformPickerModal: React.FC<PlatformPickerProps> = ({
         <View style={styles.header}>
           <Text style={styles.eyebrow}>SHORTLEARN</Text>
           <Text style={styles.title}>Bạn muốn học ở đâu?</Text>
-          <Text style={styles.description}>Chọn nền tảng để mở ngay luồng video ngắn.</Text>
+          <Text style={styles.description}>Xem Shorts trong app hoặc thử công nghệ phụ đề ngoài ứng dụng.</Text>
         </View>
         <View style={styles.row}>
           <TouchableOpacity
@@ -98,16 +100,15 @@ export const PlatformPickerModal: React.FC<PlatformPickerProps> = ({
           </TouchableOpacity>
           <TouchableOpacity
             accessibilityRole="button"
-            accessibilityLabel="TikTok đang phát triển"
-            accessibilityState={{ disabled: true }}
-            disabled
-            style={[styles.option, styles.optionTikTokDisabled]}
+            accessibilityLabel="Thử nghiệm phụ đề ngoài ứng dụng"
+            style={[styles.option, styles.optionExternal]}
+            onPress={onOpenExternalCaptions}
           >
-            <View style={[styles.logo, styles.tiktokLogo]}><Text style={styles.tiktokNoteIcon}>♪</Text></View>
+            <View style={[styles.logo, styles.externalLogo]}><Text style={styles.externalIcon}>◎</Text></View>
             <View style={styles.optionCopy}>
-              <Text style={styles.optionTitle}>TikTok</Text>
-              <Text style={styles.optionCaption}>Chế độ đang phát triển</Text>
-              <Text style={styles.optionAction}>SẮP RA MẮT</Text>
+              <Text style={styles.optionTitle}>Phụ đề nổi</Text>
+              <Text style={styles.optionCaption}>Giống Hearth · thử nghiệm microphone</Text>
+              <Text style={styles.optionAction}>MỞ BẢN THỬ  →</Text>
             </View>
           </TouchableOpacity>
         </View>

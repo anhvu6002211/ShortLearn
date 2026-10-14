@@ -9,11 +9,11 @@ interface ExploreScreenProps {
 
 export const ExploreScreen: React.FC<ExploreScreenProps> = ({ onOpenTarget }) => {
   const [url, setUrl] = useState('');
-  const [platform, setPlatform] = useState<VideoPlatform>('youtube');
+  const platform: VideoPlatform = 'youtube';
   const [error, setError] = useState<string | null>(null);
   const open = () => {
     if (!parseVideoTarget(url, platform)) {
-      setError('Dán liên kết Shorts hoặc TikTok hợp lệ.');
+      setError('Dán liên kết YouTube Shorts hợp lệ.');
       return;
     }
     setError(null);
@@ -31,34 +31,17 @@ export const ExploreScreen: React.FC<ExploreScreenProps> = ({ onOpenTarget }) =>
 
       <View style={styles.linkCard}>
         <Text style={styles.cardLabel}>NGUỒN VIDEO</Text>
-        <View style={styles.switcher}>
-          {(['youtube', 'tiktok'] as VideoPlatform[]).map((item) => {
-            const active = platform === item;
-            return (
-              <TouchableOpacity
-                key={item}
-                accessibilityRole="button"
-                accessibilityLabel={item === 'youtube' ? 'Chọn YouTube Shorts' : 'Chọn TikTok'}
-                accessibilityState={{ selected: active }}
-                onPress={() => { setPlatform(item); setError(null); }}
-                style={[styles.platform, active && (item === 'youtube' ? styles.youtubeActive : styles.tiktokActive)]}
-              >
-                <Text style={[styles.platformGlyph, item === 'youtube' ? styles.youtubeGlyph : styles.tiktokGlyph]}>{item === 'youtube' ? '▶' : '♪'}</Text>
-                <Text style={[styles.platformText, active && styles.platformTextActive]}>{item === 'youtube' ? 'YouTube Shorts' : 'TikTok'}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        <Text style={styles.hint}>YouTube Shorts</Text>
 
         <Text style={styles.inputLabel}>LIÊN KẾT VIDEO</Text>
         <TextInput
           accessibilityLabel="Liên kết video"
-          accessibilityHint="Dán liên kết YouTube Shorts hoặc TikTok công khai"
+          accessibilityHint="Dán liên kết YouTube Shorts công khai"
           value={url}
           onChangeText={(value) => { setUrl(value); if (error) setError(null); }}
           onSubmitEditing={open}
           returnKeyType="go"
-          placeholder={platform === 'youtube' ? 'https://youtube.com/shorts/...' : 'https://www.tiktok.com/@...'}
+          placeholder="https://youtube.com/shorts/..."
           placeholderTextColor={colors.textSubdued}
           autoCapitalize="none"
           autoCorrect={false}

@@ -17,7 +17,6 @@ import { colors, radii, spacing, touchTarget, typography } from '../styles/theme
 interface AccountScreenProps {
   onOpenSettings: () => void;
   onOpenOnboarding: () => void;
-  onLoginTikTok: () => void;
   savedCount: number;
   dueCount: number;
 }
@@ -25,7 +24,6 @@ interface AccountScreenProps {
 export const AccountScreen: React.FC<AccountScreenProps> = ({
   onOpenSettings,
   onOpenOnboarding,
-  onLoginTikTok,
   savedCount,
   dueCount,
 }) => {
@@ -82,19 +80,6 @@ export const AccountScreen: React.FC<AccountScreenProps> = ({
           <Text style={styles.shortLearnSignInText}>Đăng nhập ShortLearn</Text>
         </TouchableOpacity>
       )}
-
-      <Text style={styles.sectionTitle}>TÀI KHOẢN NỀN TẢNG</Text>
-      <View style={styles.tikTokAccountCard}>
-        <View style={styles.comingSoonIcon}><Text style={styles.comingSoonGlyph}>♪</Text></View>
-        <View style={styles.comingSoonCopy}>
-          <Text style={styles.comingSoonEyebrow}>TIKTOK WEB</Text>
-          <Text style={styles.comingSoonTitle}>Đăng nhập TikTok</Text>
-          <Text style={styles.comingSoonText}>Mở trang đăng nhập chính thức trong trình phát. ShortLearn không đọc mật khẩu.</Text>
-        </View>
-        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Đăng nhập TikTok" onPress={onLoginTikTok} style={styles.tikTokLoginButton}>
-          <Text style={styles.tikTokLoginButtonText}>Đăng nhập</Text>
-        </TouchableOpacity>
-      </View>
 
       <Text style={styles.sectionTitle}>TÙY CHỈNH</Text>
       <View style={styles.menuCard}>
