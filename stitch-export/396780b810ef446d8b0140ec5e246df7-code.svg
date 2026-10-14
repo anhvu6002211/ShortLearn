@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
+  <defs>
+    <linearGradient id="markGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="65%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#A78BFA"/>
+    </linearGradient>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#38BDF8" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Left Side: Distinct Geometric 'S' Play-Subtitle Icon (220x220) -->
+  <g transform="translate(60, 90)" filter="url(#softGlow)">
+    <!-- Streamlined 'S' Ribbon with Play & Subtitle Integration -->
+    <path d="M 50 65 C 50 35 75 15 110 15 L 175 15 C 205 15 225 35 225 65 C 225 95 200 115 170 115 L 105 115 C 90 115 80 125 80 140 C 80 155 90 165 105 165 L 180 165 C 215 165 240 185 240 215 C 240 245 215 265 175 265 L 100 265 C 65 265 40 245 40 215"
+          fill="none"
+          stroke="url(#markGrad)"
+          stroke-width="30"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+          
+    <!-- Integrated Play arrowhead accent -->
+    <polygon points="120,78 158,102 120,126" fill="#38BDF8"/>
+    
+    <!-- Subtitle sound/language bar accent -->
+    <rect x="110" y="200" width="45" height="12" rx="6" fill="#38BDF8"/>
+    <rect x="165" y="200" width="40" height="12" rx="6" fill="#A78BFA"/>
+  </g>
+
+  <!-- Right Side: Clean Modern Wordmark -->
+  <g transform="translate(360, 225)">
+    <!-- "Short" in High-Contrast White / Off-White (#F8FAFC) -->
+    <text x="0" y="0" 
+          fill="#F8FAFC" 
+          font-family="system-ui, -apple-system, 'Plus Jakarta Sans', 'Inter', sans-serif" 
+          font-size="108" 
+          font-weight="800" 
+          letter-spacing="-1.5px">Short</text>
+    
+    <!-- "Learn" in Electric Sky Blue (#38BDF8) -->
+    <text x="315" y="0" 
+          fill="#38BDF8" 
+          font-family="system-ui, -apple-system, 'Plus Jakarta Sans', 'Inter', sans-serif" 
+          font-size="108" 
+          font-weight="700" 
+          letter-spacing="-1.5px">Learn</text>
+          
+    <!-- Small Category / Tagline Pill -->
+    <g transform="translate(620, -78)">
+      <rect width="130" height="34" rx="17" fill="#0F172A" stroke="#38BDF8" stroke-width="1.5" stroke-opacity="0.4"/>
+      <text x="65" y="23" 
+            fill="#38BDF8" 
+            font-family="system-ui, sans-serif" 
+            font-size="14" 
+            font-weight="700" 
+            text-anchor="middle" 
+            letter-spacing="1px">SHORTS AI</text>
+    </g>
+
+    <!-- Subtitle / Positioning text below -->
+    <text x="6" y="44" 
+          fill="#94A3B8" 
+          font-family="system-ui, -apple-system, 'Plus Jakarta Sans', 'Inter', sans-serif" 
+          font-size="22" 
+          font-weight="500" 
+          letter-spacing="0.5px">Learn English through Short Videos</text>
+  </g>
+</svg>

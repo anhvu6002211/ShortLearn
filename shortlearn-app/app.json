@@ -9,6 +9,9 @@
     "icon": "./assets/branding/shortlearn-mark.png",
     "android": {
       "package": "com.shortlearn.app",
+      "permissions": [
+        "RECORD_AUDIO"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/branding/shortlearn-mark.png",
         "backgroundColor": "#090D16"

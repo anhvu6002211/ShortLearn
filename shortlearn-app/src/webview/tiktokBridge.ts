@@ -153,6 +153,19 @@ export const TIKTOK_INJECTED_SCRIPT = `
     return '';
   }
 
+  function dismissKnownBlockingPrompt() {
+    try {
+      var controls = document.querySelectorAll('button, [role="button"]');
+      for (var i = 0; i < controls.length; i++) {
+        var label = String(controls[i].innerText || controls[i].textContent || '').replace(/\s+/g, ' ').trim();
+        if (label === 'Got it' || label === 'Return to TikTok') {
+          controls[i].click();
+          return;
+        }
+      }
+    } catch (e) {}
+  }
+
   function reportVideoChange() {
     if (!shortLearnActive) return;
     var videoId = getVideoId();
@@ -486,6 +499,7 @@ export const TIKTOK_INJECTED_SCRIPT = `
   }
 
   applyStyles();
+  dismissKnownBlockingPrompt();
   reportVideoChange();
   bindAllVideos();
   scanCaptions(document.documentElement);
@@ -493,6 +507,7 @@ export const TIKTOK_INJECTED_SCRIPT = `
   try {
     var observer = new MutationObserver(function(records) {
       if (!shortLearnActive) return;
+      dismissKnownBlockingPrompt();
       reportVideoChange();
       for (var i = 0; i < records.length; i++) {
         for (var j = 0; j < records[i].addedNodes.length; j++) {
@@ -520,6 +535,7 @@ export const TIKTOK_INJECTED_SCRIPT = `
 
   setInterval(function() {
     if (!shortLearnActive) return;
+    dismissKnownBlockingPrompt();
     reportVideoChange();
     bindAllVideos();
     var video = getActiveVideo();

@@ -1,0 +1,128 @@
+﻿[
+    {
+        "id":  "106b4e6b1f314964ad8fa5c87ee863a7",
+        "title":  "ShortLearn App Icon Mark",
+        "deviceType":  null,
+        "width":  "1024",
+        "height":  "1024",
+        "image":  "106b4e6b1f314964ad8fa5c87ee863a7-preview.png",
+        "code":  "106b4e6b1f314964ad8fa5c87ee863a7-code.svg"
+    },
+    {
+        "id":  "396780b810ef446d8b0140ec5e246df7",
+        "title":  "ShortLearn Horizontal Brand Lockup",
+        "deviceType":  null,
+        "width":  "1200",
+        "height":  "512",
+        "image":  "396780b810ef446d8b0140ec5e246df7-preview.png",
+        "code":  "396780b810ef446d8b0140ec5e246df7-code.svg"
+    },
+    {
+        "id":  "addfcd1a0e7f4dd5bc9f873c42a6bfd3",
+        "title":  "ShortLearn - Biáº¿n Shorts thÃ nh bÃ i há»c tiáº¿ng Anh",
+        "deviceType":  "DESKTOP",
+        "width":  "2560",
+        "height":  "3096",
+        "image":  "addfcd1a0e7f4dd5bc9f873c42a6bfd3-preview.png",
+        "code":  "addfcd1a0e7f4dd5bc9f873c42a6bfd3-code.html"
+    },
+    {
+        "id":  "43daaf5926c84d05b540a4bceb11c817",
+        "title":  "ShortLearn - Tráº¡ng thÃ¡i lá»—i \u0026 Fallback",
+        "deviceType":  "DESKTOP",
+        "width":  "2560",
+        "height":  "3142",
+        "image":  "43daaf5926c84d05b540a4bceb11c817-preview.png",
+        "code":  "43daaf5926c84d05b540a4bceb11c817-code.html"
+    },
+    {
+        "id":  "c698b21e2743482b893e404935684ea5",
+        "title":  "ShortLearn - KhÃ´ng gian há»c táº­p song ngá»¯",
+        "deviceType":  "DESKTOP",
+        "width":  "2560",
+        "height":  "2596",
+        "image":  "c698b21e2743482b893e404935684ea5-preview.png",
+        "code":  "c698b21e2743482b893e404935684ea5-code.html"
+    },
+    {
+        "id":  "03ae98dacb5a4a029d83693d46350980",
+        "title":  "ShortLearn - Äang xá»­ lÃ½ video",
+        "deviceType":  "DESKTOP",
+        "width":  "2560",
+        "height":  "2796",
+        "image":  "03ae98dacb5a4a029d83693d46350980-preview.png",
+        "code":  "03ae98dacb5a4a029d83693d46350980-code.html"
+    },
+    {
+        "id":  "1720fed20b684613ab28e44381c695fb",
+        "title":  "ShortLearn - Äang xá»­ lÃ½ video (Chuáº©n hÃ³a)",
+        "deviceType":  "DESKTOP",
+        "width":  "2560",
+        "height":  "2552",
+        "image":  "1720fed20b684613ab28e44381c695fb-preview.png",
+        "code":  "1720fed20b684613ab28e44381c695fb-code.html"
+    },
+    {
+        "id":  "dae171e4645b4d418da5f60a247ab27b",
+        "title":  "ShortLearn Mobile - DÃ¡n liÃªn káº¿t bÃ i há»c",
+        "deviceType":  "MOBILE",
+        "width":  "780",
+        "height":  "1966",
+        "image":  "dae171e4645b4d418da5f60a247ab27b-preview.png",
+        "code":  "dae171e4645b4d418da5f60a247ab27b-code.html"
+    },
+    {
+        "id":  "103a5e531a2848fdb1c6c5ddaafebccf",
+        "title":  "ShortLearn Mobile - KhÃ´ng gian há»c táº­p song ngá»¯",
+        "deviceType":  "MOBILE",
+        "width":  "780",
+        "height":  "2498",
+        "image":  "103a5e531a2848fdb1c6c5ddaafebccf-preview.png",
+        "code":  "103a5e531a2848fdb1c6c5ddaafebccf-code.html"
+    },
+    {
+        "id":  "bc5e87d22ceb4544a3c3658c48a8b80f",
+        "title":  "ShortLearn Mobile - Äang xá»­ lÃ½ video",
+        "deviceType":  "MOBILE",
+        "width":  "780",
+        "height":  "2392",
+        "image":  "bc5e87d22ceb4544a3c3658c48a8b80f-preview.png",
+        "code":  "bc5e87d22ceb4544a3c3658c48a8b80f-code.html"
+    },
+    {
+        "id":  "d6f409d855454739804bc380ce70013a",
+        "title":  "ShortLearn Mobile - Tráº¡ng thÃ¡i lá»—i \u0026 Fallback",
+        "deviceType":  "MOBILE",
+        "width":  "780",
+        "height":  "1954",
+        "image":  "d6f409d855454739804bc380ce70013a-preview.png",
+        "code":  "d6f409d855454739804bc380ce70013a-code.html"
+    },
+    {
+        "id":  "1af32d52c6d24a6aa3ed64fce8e56157",
+        "title":  "ShortLearn Mobile - XÃ¡c thá»±c \u0026 ÄÄƒng nháº­p",
+        "deviceType":  "MOBILE",
+        "width":  "780",
+        "height":  "1768",
+        "image":  "1af32d52c6d24a6aa3ed64fce8e56157-preview.png",
+        "code":  "1af32d52c6d24a6aa3ed64fce8e56157-code.html"
+    },
+    {
+        "id":  "555b5859144140b5bfaef6755fab0abb",
+        "title":  "ShortLearn Mobile - Ã”n táº­p Flashcard FSRS",
+        "deviceType":  "MOBILE",
+        "width":  "780",
+        "height":  "1768",
+        "image":  "555b5859144140b5bfaef6755fab0abb-preview.png",
+        "code":  "555b5859144140b5bfaef6755fab0abb-code.html"
+    },
+    {
+        "id":  "5b37523d9c4b468db417e35eb17b4651",
+        "title":  "ShortLearn Mobile - TÃ i khoáº£n \u0026 CÃ i Ä‘áº·t",
+        "deviceType":  "MOBILE",
+        "width":  "780",
+        "height":  "2826",
+        "image":  "5b37523d9c4b468db417e35eb17b4651-preview.png",
+        "code":  "5b37523d9c4b468db417e35eb17b4651-code.html"
+    }
+]

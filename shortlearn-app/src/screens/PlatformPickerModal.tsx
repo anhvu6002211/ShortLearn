@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   optionYouTubeActive: { borderColor: '#FF335F', backgroundColor: 'rgba(255,0,51,0.12)' },
-  optionTikTokActive: { borderColor: '#25F4EE', backgroundColor: 'rgba(37,244,238,0.10)' },
+  optionTikTokDisabled: { opacity: 0.48 },
   logo: {
     width: 104, height: 104, borderRadius: 32, alignItems: 'center', justifyContent: 'center',
     marginRight: 22, shadowColor: '#000', shadowOffset: { width: 0, height: 8 },
@@ -98,15 +98,16 @@ export const PlatformPickerModal: React.FC<PlatformPickerProps> = ({
           </TouchableOpacity>
           <TouchableOpacity
             accessibilityRole="button"
-            accessibilityLabel="Mở TikTok"
-            style={[styles.option, currentPlatform === 'tiktok' && styles.optionTikTokActive]}
-            onPress={() => onSelectPlatform('tiktok')}
+            accessibilityLabel="TikTok đang phát triển"
+            accessibilityState={{ disabled: true }}
+            disabled
+            style={[styles.option, styles.optionTikTokDisabled]}
           >
             <View style={[styles.logo, styles.tiktokLogo]}><Text style={styles.tiktokNoteIcon}>♪</Text></View>
             <View style={styles.optionCopy}>
               <Text style={styles.optionTitle}>TikTok</Text>
-              <Text style={styles.optionCaption}>Khám phá TikTok For You</Text>
-              <Text style={styles.optionAction}>MỞ FOR YOU  →</Text>
+              <Text style={styles.optionCaption}>Chế độ đang phát triển</Text>
+              <Text style={styles.optionAction}>SẮP RA MẮT</Text>
             </View>
           </TouchableOpacity>
         </View>

@@ -1,0 +1,15 @@
+{
+  "name": "ShortLearn — Học tiếng Anh từ Shorts",
+  "short_name": "ShortLearn",
+  "description": "Biến YouTube Shorts thành bài học tiếng Anh với phụ đề Anh–Việt.",
+  "lang": "vi",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#051424",
+  "theme_color": "#051424",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

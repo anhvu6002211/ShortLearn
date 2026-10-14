@@ -2,6 +2,7 @@ import React from 'react';
 import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { LearningDisplayPreferences } from '../services/learningPreferences';
 import { LearningDisplaySettings } from '../components/LearningDisplaySettings';
+import { WhisperMicPoc } from '../components/WhisperMicPoc';
 import { colors, radii, spacing, touchTarget, typography } from '../styles/theme';
 
 interface SettingsScreenProps {
@@ -51,6 +52,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
     <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>PHỤ ĐỀ & TỪ VỰNG</Text><Text style={styles.sectionMeta}>Cá nhân hóa</Text></View>
     <LearningDisplaySettings preferences={preferences} onChange={onChange} />
+
+    <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>THỬ NGHIỆM</Text><Text style={styles.sectionMeta}>On-device</Text></View>
+    <WhisperMicPoc />
 
     <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>RIÊNG TƯ</Text></View>
     <View style={styles.group}>

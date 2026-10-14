@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Outfit:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#051424;color:#d4e4fa;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'on-primary': '#490080', 'on-background': '#d4e4fa', 'primary-fixed': '#f0dbff', 'on-error': '#690005', 'tertiary': '#ffb2b8', 'background': '#051424', 'error': '#ffb4ab', 'outline': '#988d9f', 'on-tertiary': '#67001d', 'surface-container-low': '#0d1c2d', 'tertiary-fixed-dim': '#ffb2b8', 'primary-container': '#b76dff', 'on-secondary': '#003735', 'on-secondary-fixed': '#00201f', 'inverse-on-surface': '#233143', 'on-error-container': '#ffdad6', 'on-surface-variant': '#cfc2d6', 'secondary-fixed-dim': '#00ddd8', 'on-tertiary-container': '#5b0018', 'secondary': '#affffb', 'primary': '#ddb7ff', 'surface': '#051424', 'surface-variant': '#273647', 'surface-tint': '#ddb7ff', 'on-surface': '#d4e4fa', 'tertiary-container': '#ff506d', 'on-primary-container': '#400071', 'inverse-primary': '#842bd2', 'outline-variant': '#4d4354', 'secondary-fixed': '#35fbf5', 'error-container': '#93000a', 'surface-bright': '#2c3a4c', 'surface-container-high': '#1c2b3c', 'on-secondary-fixed-variant': '#00504d', 'on-tertiary-fixed-variant': '#91002c', 'on-primary-fixed': '#2c0051', 'secondary-container': '#05ece7', 'on-tertiary-fixed': '#40000e', 'inverse-surface': '#d4e4fa', 'primary-fixed-dim': '#ddb7ff', 'on-primary-fixed-variant': '#6900b3', 'tertiary-fixed': '#ffdadb', 'surface-container-highest': '#273647', 'on-secondary-container': '#006764', 'surface-container-lowest': '#010f1f', 'surface-container': '#122131', 'surface-dim': '#051424' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-lg': '1.5rem', 'gutter': '1.5rem', 'space-xs': '0.25rem', 'margin': '2rem', 'space-md': '1rem', 'gutter-mobile': '0.75rem', 'margin-mobile': '1rem', 'space-sm': '0.5rem', 'space-xl': '2.5rem' }, fontFamily: { 'label-sm': ['Plus Jakarta Sans'], 'title-md': ['Plus Jakarta Sans'], 'headline-lg': ['Outfit'], 'headline-sm': ['Outfit'], 'label-md': ['Plus Jakarta Sans'], 'code-sm': ['JetBrains Mono'], 'headline-lg-mobile': ['Outfit'], 'transcript-vi': ['Plus Jakarta Sans'], 'body-sm': ['Plus Jakarta Sans'], 'display-lg': ['Outfit'], 'body-md': ['Plus Jakarta Sans'], 'body-lg': ['Plus Jakarta Sans'], 'display-lg-mobile': ['Outfit'], 'transcript-en': ['Plus Jakarta Sans'], 'headline-md': ['Outfit'] }, fontSize: { 'label-sm': ['11px', { lineHeight: '14px', letterSpacing: '0.04em', fontWeight: '700' }], 'title-md': ['16px', { lineHeight: '24px', fontWeight: '600' }], 'headline-lg': ['28px', { lineHeight: '36px', letterSpacing: '-0.02em', fontWeight: '600' }], 'headline-sm': ['18px', { lineHeight: '24px', fontWeight: '600' }], 'label-md': ['13px', { lineHeight: '16px', letterSpacing: '0.01em', fontWeight: '600' }], 'code-sm': ['12px', { lineHeight: '16px', fontWeight: '500' }], 'headline-lg-mobile': ['24px', { lineHeight: '32px', letterSpacing: '-0.01em', fontWeight: '600' }], 'transcript-vi': ['13px', { lineHeight: '20px', fontWeight: '400' }], 'body-sm': ['12px', { lineHeight: '18px', fontWeight: '400' }], 'display-lg': ['40px', { lineHeight: '48px', letterSpacing: '-0.02em', fontWeight: '700' }], 'body-md': ['14px', { lineHeight: '22px', fontWeight: '400' }], 'body-lg': ['16px', { lineHeight: '26px', fontWeight: '400' }], 'display-lg-mobile': ['30px', { lineHeight: '38px', letterSpacing: '-0.01em', fontWeight: '700' }], 'transcript-en': ['15px', { lineHeight: '24px', fontWeight: '500' }], 'headline-md': ['22px', { lineHeight: '28px', letterSpacing: '-0.01em', fontWeight: '600' }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen flex flex-col selection:bg-secondary/30 selection:text-secondary"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl"><div class="h-16 px-gutter-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="ShortLearn Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1XForm4C_CgR3UeILEwq1W0ot3-IQEc6UTaI1rNbgVFWlZSCQY8aRTcOySiTUJCEZ4M5muKfLfs4sg308zjctSk3QC6FfSV3LqTDKoIXgRPZBxg71tel93f6MevgJmKPnJt-Pw3JEyRwDScILRvtsHspXBq1MeEXLAMiSCIzebk2UMJ-7enecWN-jCZDUYVwlot2JJCsla2_I30k3WI3RDZ26GM0JdTuo99O0RPXbAStJ-wwZ79rdz0dN8"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate tracking-tight">ShortLearn</span><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-pulse"></span>PWA</span></div><span class="font-label-sm text-label-sm text-on-surface-variant truncate">Học Ngay</span></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow-[0_0_12px_rgba(221,183,255,0.25)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-20 bg-surface min-h-[calc(100vh-5rem)]"><div class="flex flex-col w-full pb-6">
+<!-- PWA Offline Notice Bar (Safe Banner) -->
+<div class="w-full bg-surface-container-high px-gutter-mobile py-2.5 flex items-center justify-between gap-space-sm mb-3">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-tertiary text-[20px] flex-shrink-0 animate-pulse">cloud_off</span>
+<span class="font-body-sm text-body-sm text-on-surface truncate">Chế độ ngoại tuyến: Video mới cần mạng, bài học đã lưu sẵn sàng.</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container-lowest px-2 py-0.5 rounded-full flex-shrink-0">PWA</span>
+</div>
+<div class="px-gutter-mobile flex flex-col gap-3.5">
+<!-- Screen Header Block -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between gap-2">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Xử lý trạng thái &amp; Ngoại lệ</h2>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-semibold">Minh bạch 100%</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Phản hồi trung thực, luôn duy trì học tập ngay cả khi có sự cố kỹ thuật.</p>
+</div>
+<!-- Support Ticket Box -->
+<div class="bg-surface-container rounded-xl p-3 flex items-center justify-between gap-2 shadow-sm">
+<div class="flex items-center gap-2 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-variant flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-secondary text-[18px]">bug_report</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Mã yêu cầu hỗ trợ</span>
+<span class="font-code-sm text-code-sm text-secondary font-medium truncate select-all" id="ticketId">req_err_shortlearn_403yt</span>
+</div>
+</div>
+<button class="h-10 min-w-[48px] px-3 rounded-lg bg-surface-variant hover:bg-surface-bright active:scale-95 transition-all text-on-surface flex items-center gap-1 font-label-md text-label-md flex-shrink-0" id="copyBtn" onclick="copySupportCode()">
+<span class="material-symbols-outlined text-[16px] text-secondary" id="copyIcon">content_copy</span>
+<span id="copyText">Sao chép</span>
+</button>
+</div>
+<!-- Scenario Switcher (Horizontal Chips) -->
+<div class="flex flex-col gap-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Chọn kịch bản mô phỏng</span>
+<div class="flex gap-2 overflow-x-auto pb-1 -mx-gutter-mobile px-gutter-mobile no-scrollbar" id="chipTrack">
+<button class="scenario-btn h-10 px-3.5 rounded-full font-label-md text-label-md flex items-center gap-1.5 whitespace-nowrap transition-all bg-secondary text-on-secondary shadow-md font-semibold" data-tab="1" onclick="switchTab(1)">
+<span class="material-symbols-outlined text-[16px]">hearing</span>
+<span>Chưa có phụ đề</span>
+</button>
+<button class="scenario-btn h-10 px-3.5 rounded-full font-label-md text-label-md flex items-center gap-1.5 whitespace-nowrap transition-all bg-surface-container text-on-surface hover:bg-surface-container-high" data-tab="2" onclick="switchTab(2)">
+<span class="material-symbols-outlined text-[16px]">link_off</span>
+<span>Liên kết không hợp lệ</span>
+</button>
+<button class="scenario-btn h-10 px-3.5 rounded-full font-label-md text-label-md flex items-center gap-1.5 whitespace-nowrap transition-all bg-surface-container text-on-surface hover:bg-surface-container-high" data-tab="3" onclick="switchTab(3)">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span>Video riêng tư</span>
+</button>
+<button class="scenario-btn h-10 px-3.5 rounded-full font-label-md text-label-md flex items-center gap-1.5 whitespace-nowrap transition-all bg-surface-container text-on-surface hover:bg-surface-container-high" data-tab="4" onclick="switchTab(4)">
+<span class="material-symbols-outlined text-[16px]">dns</span>
+<span>Lỗi xử lý</span>
+</button>
+<button class="scenario-btn h-10 px-3.5 rounded-full font-label-md text-label-md flex items-center gap-1.5 whitespace-nowrap transition-all bg-surface-container text-on-surface hover:bg-surface-container-high" data-tab="5" onclick="switchTab(5)">
+<span class="material-symbols-outlined text-[16px]">translate</span>
+<span>Hạn ngạch dịch</span>
+</button>
+<button class="scenario-btn h-10 px-3.5 rounded-full font-label-md text-label-md flex items-center gap-1.5 whitespace-nowrap transition-all bg-surface-container text-on-surface hover:bg-surface-container-high" data-tab="6" onclick="switchTab(6)">
+<span class="material-symbols-outlined text-[16px]">wifi_off</span>
+<span>Mất kết nối</span>
+</button>
+</div>
+</div>
+<!-- Active Scenario Panels Container -->
+<div class="flex flex-col gap-3" id="scenarioPanels">
+<!-- Scenario 1: Missing Captions -> AI Voice Transcription (Active by default) -->
+<div class="scenario-panel flex flex-col gap-3" id="panel-1">
+<div class="bg-surface-container rounded-xl p-4 flex flex-col gap-3 shadow-md">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-full bg-secondary-container/20 text-secondary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">graphic_eq</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Chưa có phụ đề gốc</span>
+<span class="font-label-sm text-label-sm text-secondary">Tự động kích hoạt nhận diện âm thanh</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-full">Kịch bản 01</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 flex flex-col gap-2">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[18px]">info</span>
+<p class="font-body-sm text-body-sm text-on-surface">Video chưa có phụ đề khả dụng từ tác giả.</p>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Hệ thống đang tự động kích hoạt nhận diện giọng nói thông minh để bóc tách câu thoại trực tiếp từ luồng âm thanh gốc.
+            </p>
+</div>
+<!-- Neutral Progress Timeline (Deterministic, Not infinite spinner) -->
+<div class="bg-surface-container-low rounded-lg p-3 flex flex-col gap-2.5">
+<div class="flex items-center justify-between text-on-surface font-label-md text-label-md">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span>
+                Đang chuyển giọng nói thành văn bản
+              </span>
+<span class="font-code-sm text-code-sm text-secondary font-semibold">68% (Khoảng 6 giây)</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-variant overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-500" style="width: 68%;"></div>
+</div>
+<div class="grid grid-cols-3 gap-1 pt-1 text-center font-label-sm text-label-sm">
+<div class="flex flex-col items-center gap-0.5">
+<span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span>
+<span class="text-on-surface">Tách âm thanh</span>
+</div>
+<div class="flex flex-col items-center gap-0.5">
+<span class="material-symbols-outlined text-secondary text-[16px]">radio_button_checked</span>
+<span class="text-secondary font-semibold">Nhận diện câu</span>
+</div>
+<div class="flex flex-col items-center gap-0.5 opacity-50">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">radio_button_unchecked</span>
+<span class="text-on-surface-variant">Khớp mốc giờ</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Scenario 2: Invalid Link -->
+<div class="scenario-panel hidden flex flex-col gap-3" id="panel-2">
+<div class="bg-surface-container rounded-xl p-4 flex flex-col gap-3 shadow-md">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-full bg-error-container/40 text-error flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">link_off</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Liên kết không hợp lệ</span>
+<span class="font-label-sm text-label-sm text-error">Định dạng URL chưa chuẩn</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-full">Kịch bản 02</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 text-on-surface-variant font-body-sm text-body-sm leading-relaxed">
+            Hệ thống chỉ hỗ trợ liên kết dạng ngắn của YouTube Shorts (ví dụ: <code class="font-code-sm text-code-sm text-secondary bg-surface-variant px-1 rounded">youtube.com/shorts/...</code>). Vui lòng kiểm tra lại đường dẫn từ nút Chia sẻ.
+          </div>
+</div>
+</div>
+<!-- Scenario 3: Private / Geo-restricted Video -->
+<div class="scenario-panel hidden flex flex-col gap-3" id="panel-3">
+<div class="bg-surface-container rounded-xl p-4 flex flex-col gap-3 shadow-md">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">lock</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Video riêng tư hoặc bị chặn</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Không thể truy xuất nội dung</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-full">Kịch bản 03</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 text-on-surface-variant font-body-sm text-body-sm leading-relaxed">
+            Tác giả đã cài đặt video này ở chế độ Riêng tư, Giới hạn độ tuổi hoặc chặn theo khu vực địa lý. Bạn vui lòng chọn một Short công khai khác để tiếp tục học.
+          </div>
+</div>
+</div>
+<!-- Scenario 4: Worker/Pipeline Execution Error -->
+<div class="scenario-panel hidden flex flex-col gap-3" id="panel-4">
+<div class="bg-surface-container rounded-xl p-4 flex flex-col gap-3 shadow-md">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-full bg-error-container/40 text-error flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">sync_problem</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Máy chủ xử lý gián đoạn</span>
+<span class="font-label-sm text-label-sm text-error">Mã phản hồi: 502 Bad Gateway</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-full">Kịch bản 04</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 text-on-surface-variant font-body-sm text-body-sm leading-relaxed">
+            Hàng đợi xử lý đang bị tải chậm cục bộ. Dữ liệu âm thanh của bạn đã được lưu tạm an toàn. Nhấn Thử lại để hệ thống phân bổ lượt xử lý mới.
+          </div>
+</div>
+</div>
+<!-- Scenario 5: Translation Quota Exceeded (Bilingual Fallback preserving 100% English transcript) -->
+<div class="scenario-panel hidden flex flex-col gap-3" id="panel-5">
+<div class="bg-surface-container rounded-xl p-4 flex flex-col gap-3 shadow-md">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-full bg-primary/20 text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">g_translate</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Hết hạn ngạch dịch tiếng Việt</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">Bảo toàn 100% transcript tiếng Anh</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-full">Kịch bản 05</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 text-on-surface-variant font-body-sm text-body-sm leading-relaxed">
+            Tạm thời đạt giới hạn dịch thuật tự động. Hệ thống luôn <strong class="text-secondary font-semibold">BẢO TOÀN 100%</strong> transcript tiếng Anh nguyên bản kèm tra từ từng chạm để bạn tiếp tục luyện nghe trọn vẹn.
+          </div>
+<!-- English Preserved Interactive Preview Card -->
+<div class="bg-surface-container-lowest rounded-xl p-3 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-on-surface-variant">00:03 - 00:08</span>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-variant px-2 py-0.5 rounded">Chế độ Nghe thuần Anh</span>
+</div>
+<!-- Clickable Word Chips -->
+<div class="flex flex-wrap items-center gap-1.5 py-1">
+<button class="px-2 py-1 rounded-md bg-surface-variant/70 text-on-surface hover:bg-primary/20 hover:text-primary active:scale-95 transition-all font-transcript-en text-transcript-en">The</button>
+<button class="px-2 py-1 rounded-md bg-secondary/15 text-secondary underline underline-offset-4 active:scale-95 transition-all font-transcript-en text-transcript-en">fastest</button>
+<button class="px-2 py-1 rounded-md bg-surface-variant/70 text-on-surface hover:bg-primary/20 hover:text-primary active:scale-95 transition-all font-transcript-en text-transcript-en">way</button>
+<button class="px-2 py-1 rounded-md bg-surface-variant/70 text-on-surface hover:bg-primary/20 hover:text-primary active:scale-95 transition-all font-transcript-en text-transcript-en">to</button>
+<button class="px-2 py-1 rounded-md bg-surface-variant/70 text-on-surface hover:bg-primary/20 hover:text-primary active:scale-95 transition-all font-transcript-en text-transcript-en">learn</button>
+<button class="px-2 py-1 rounded-md bg-surface-variant/70 text-on-surface hover:bg-primary/20 hover:text-primary active:scale-95 transition-all font-transcript-en text-transcript-en">anything</button>
+<button class="px-2 py-1 rounded-md bg-surface-variant/70 text-on-surface hover:bg-primary/20 hover:text-primary active:scale-95 transition-all font-transcript-en text-transcript-en">new</button>
+</div>
+<div class="flex items-center gap-2 pt-1 text-on-surface-variant font-transcript-vi text-transcript-vi italic">
+<span class="material-symbols-outlined text-[15px] text-tertiary">lock_clock</span>
+<span>Bản dịch nghĩa song ngữ tiếng Việt sẽ được hoàn tất trong ít phút.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Scenario 6: Pure Offline Fallback -->
+<div class="scenario-panel hidden flex flex-col gap-3" id="panel-6">
+<div class="bg-surface-container rounded-xl p-4 flex flex-col gap-3 shadow-md">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-tertiary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">wifi_off</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Mất kết nối mạng</span>
+<span class="font-label-sm text-label-sm text-tertiary">Chuyển sang bộ nhớ máy (Offline)</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-full">Kịch bản 06</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 text-on-surface-variant font-body-sm text-body-sm leading-relaxed">
+            Bạn đang ngoại tuyến. Hãy kết nối Wi-Fi hoặc 4G để nạp thêm video mới. Các bộ thẻ FSRS và bài nghe đã tải về trước đó vẫn hoạt động mượt mà.
+          </div>
+<div class="flex items-center gap-3 bg-surface-container-lowest p-3 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[24px]">folder_special</span>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-title-md text-title-md text-on-surface truncate">Bộ thẻ đã đồng bộ</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">24 thẻ từ vựng sẵn sàng ôn tập</span>
+</div>
+<a class="h-10 px-3 rounded-lg bg-surface-variant text-secondary font-label-md text-label-md flex items-center justify-center flex-shrink-0" href="#">Mở ngay</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Action Deck (Touch Targets >= 48px) -->
+<div class="flex flex-col gap-2.5 pt-2">
+<!-- Primary Retry CTA -->
+<button class="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline-sm text-headline-sm flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-lg font-bold" onclick="triggerRetryAnimation(this)">
+<span class="material-symbols-outlined text-[20px] transition-transform duration-500" id="retryIcon">refresh</span>
+<span>Thử lại (Retry)</span>
+</button>
+<!-- Secondary Pasting CTA -->
+<button class="w-full h-12 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-title-md text-title-md flex items-center justify-center gap-2 active:scale-95 transition-all" onclick="pasteClipboardAction()">
+<span class="material-symbols-outlined text-[20px] text-secondary">content_paste</span>
+<span>Dán liên kết khác</span>
+</button>
+<!-- Tertiary Report Issue Button -->
+<button class="w-full h-12 rounded-xl bg-transparent text-on-surface-variant hover:text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 active:opacity-75 transition-all" onclick="openFeedbackToast()">
+<span class="material-symbols-outlined text-[18px]">support_agent</span>
+<span>Báo cáo sự cố cho kỹ thuật viên</span>
+</button>
+</div>
+<!-- Toast Notification (Hidden by default, triggered on actions) -->
+<div class="fixed bottom-20 left-4 right-4 bg-surface-container-highest text-on-surface p-3.5 rounded-xl shadow-2xl flex items-center justify-between gap-3 opacity-0 pointer-events-none transition-all duration-300 z-50" id="interactiveToast">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-secondary text-[20px] flex-shrink-0" id="toastIcon">check_circle</span>
+<span class="font-body-sm text-body-sm truncate" id="toastMsg">Đã sao chép mã lỗi vào khay nhớ tạm!</span>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface p-1" onclick="hideToast()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  function switchTab(scenarioIndex) {
+    // Hide all panels
+    const panels = document.querySelectorAll('.scenario-panel');
+    panels.forEach(p => p.classList.add('hidden'));
+
+    // Show active panel
+    const activePanel = document.getElementById('panel-' + scenarioIndex);
+    if (activePanel) {
+      activePanel.classList.remove('hidden');
+    }
+
+    // Update buttons styling
+    const buttons = document.querySelectorAll('.scenario-btn');
+    buttons.forEach(btn => {
+      const tabNum = parseInt(btn.getAttribute('data-tab'));
+      if (tabNum === scenarioIndex) {
+        btn.className = "scenario-btn h-10 px-3.5 rounded-full font-label-md text-label-md flex items-center gap-1.5 whitespace-nowrap transition-all bg-secondary text-on-secondary shadow-md font-semibold";
+      } else {
+        btn.className = "scenario-btn h-10 px-3.5 rounded-full font-label-md text-label-md flex items-center gap-1.5 whitespace-nowrap transition-all bg-surface-container text-on-surface hover:bg-surface-container-high";
+      }
+    });
+  }
+
+  function showToast(msg, icon = 'check_circle') {
+    const toast = document.getElementById('interactiveToast');
+    const toastMsg = document.getElementById('toastMsg');
+    const toastIcon = document.getElementById('toastIcon');
+    if (!toast) return;
+
+    toastMsg.innerText = msg;
+    toastIcon.innerText = icon;
+    toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+    toast.classList.add('opacity-100', 'translate-y-0');
+
+    setTimeout(() => {
+      hideToast();
+    }, 3200);
+  }
+
+  function hideToast() {
+    const toast = document.getElementById('interactiveToast');
+    if (toast) {
+      toast.classList.add('opacity-0', 'pointer-events-none');
+      toast.classList.remove('opacity-100');
+    }
+  }
+
+  function copySupportCode() {
+    const code = document.getElementById('ticketId').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      const copyText = document.getElementById('copyText');
+      const copyIcon = document.getElementById('copyIcon');
+      copyText.innerText = "Đã chép";
+      copyIcon.innerText = "done";
+      showToast("Đã chép mã: " + code, "content_copy");
+
+      setTimeout(() => {
+        copyText.innerText = "Sao chép";
+        copyIcon.innerText = "content_copy";
+      }, 2500);
+    }).catch(() => {
+      showToast("Mã lỗi: req_err_shortlearn_403yt", "content_copy");
+    });
+  }
+
+  function triggerRetryAnimation(btn) {
+    const icon = document.getElementById('retryIcon');
+    if (icon) {
+      icon.classList.add('rotate-180');
+      setTimeout(() => icon.classList.remove('rotate-180'), 600);
+    }
+    showToast("Đang kiểm tra và kết nối lại máy chủ...", "autorenew");
+  }
+
+  function pasteClipboardAction() {
+    showToast("Sẵn sàng nhận liên kết YouTube Shorts mới", "link");
+  }
+
+  function openFeedbackToast() {
+    showToast("Đã chuyển tiếp thông tin lỗi tới đội ngũ phát triển", "send");
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-low/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-secondary"><div class="h-16 flex items-center justify-around px-space-xs"><a class="flex-1 min-w-[48px] min-h-[48px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="hoc-ngay" href="#"><span class="material-symbols-outlined text-[22px]">play_circle</span><span class="font-label-sm text-label-sm">Học ngay</span></a><a class="flex-1 min-w-[48px] min-h-[48px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="on-tap" href="#"><span class="material-symbols-outlined text-[22px]">style</span><span class="font-label-sm text-label-sm">Ôn tập</span></a><a class="flex-1 min-w-[48px] min-h-[48px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="da-luu" href="#"><span class="material-symbols-outlined text-[22px]">bookmarks</span><span class="font-label-sm text-label-sm">Đã lưu</span></a><a class="flex-1 min-w-[48px] min-h-[48px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="tai-khoan" href="#"><span class="material-symbols-outlined text-[22px]">account_circle</span><span class="font-label-sm text-label-sm">Tài khoản</span></a></div></nav></body></html>

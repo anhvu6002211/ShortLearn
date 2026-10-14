@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Outfit:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#051424;color:#d4e4fa;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'on-primary': '#490080', 'on-background': '#d4e4fa', 'primary-fixed': '#f0dbff', 'on-error': '#690005', 'tertiary': '#ffb2b8', 'background': '#051424', 'error': '#ffb4ab', 'outline': '#988d9f', 'on-tertiary': '#67001d', 'surface-container-low': '#0d1c2d', 'tertiary-fixed-dim': '#ffb2b8', 'primary-container': '#b76dff', 'on-secondary': '#003735', 'on-secondary-fixed': '#00201f', 'inverse-on-surface': '#233143', 'on-error-container': '#ffdad6', 'on-surface-variant': '#cfc2d6', 'secondary-fixed-dim': '#00ddd8', 'on-tertiary-container': '#5b0018', 'secondary': '#affffb', 'primary': '#ddb7ff', 'surface': '#051424', 'surface-variant': '#273647', 'surface-tint': '#ddb7ff', 'on-surface': '#d4e4fa', 'tertiary-container': '#ff506d', 'on-primary-container': '#400071', 'inverse-primary': '#842bd2', 'outline-variant': '#4d4354', 'secondary-fixed': '#35fbf5', 'error-container': '#93000a', 'surface-bright': '#2c3a4c', 'surface-container-high': '#1c2b3c', 'on-secondary-fixed-variant': '#00504d', 'on-tertiary-fixed-variant': '#91002c', 'on-primary-fixed': '#2c0051', 'secondary-container': '#05ece7', 'on-tertiary-fixed': '#40000e', 'inverse-surface': '#d4e4fa', 'primary-fixed-dim': '#ddb7ff', 'on-primary-fixed-variant': '#6900b3', 'tertiary-fixed': '#ffdadb', 'surface-container-highest': '#273647', 'on-secondary-container': '#006764', 'surface-container-lowest': '#010f1f', 'surface-container': '#122131', 'surface-dim': '#051424' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-lg': '1.5rem', 'gutter': '1.5rem', 'space-xs': '0.25rem', 'margin': '2rem', 'space-md': '1rem', 'gutter-mobile': '0.75rem', 'margin-mobile': '1rem', 'space-sm': '0.5rem', 'space-xl': '2.5rem' }, fontFamily: { 'label-sm': ['Plus Jakarta Sans'], 'title-md': ['Plus Jakarta Sans'], 'headline-lg': ['Outfit'], 'headline-sm': ['Outfit'], 'label-md': ['Plus Jakarta Sans'], 'code-sm': ['JetBrains Mono'], 'headline-lg-mobile': ['Outfit'], 'transcript-vi': ['Plus Jakarta Sans'], 'body-sm': ['Plus Jakarta Sans'], 'display-lg': ['Outfit'], 'body-md': ['Plus Jakarta Sans'], 'body-lg': ['Plus Jakarta Sans'], 'display-lg-mobile': ['Outfit'], 'transcript-en': ['Plus Jakarta Sans'], 'headline-md': ['Outfit'] }, fontSize: { 'label-sm': ['11px', { lineHeight: '14px', letterSpacing: '0.04em', fontWeight: '700' }], 'title-md': ['16px', { lineHeight: '24px', fontWeight: '600' }], 'headline-lg': ['28px', { lineHeight: '36px', letterSpacing: '-0.02em', fontWeight: '600' }], 'headline-sm': ['18px', { lineHeight: '24px', fontWeight: '600' }], 'label-md': ['13px', { lineHeight: '16px', letterSpacing: '0.01em', fontWeight: '600' }], 'code-sm': ['12px', { lineHeight: '16px', fontWeight: '500' }], 'headline-lg-mobile': ['24px', { lineHeight: '32px', letterSpacing: '-0.01em', fontWeight: '600' }], 'transcript-vi': ['13px', { lineHeight: '20px', fontWeight: '400' }], 'body-sm': ['12px', { lineHeight: '18px', fontWeight: '400' }], 'display-lg': ['40px', { lineHeight: '48px', letterSpacing: '-0.02em', fontWeight: '700' }], 'body-md': ['14px', { lineHeight: '22px', fontWeight: '400' }], 'body-lg': ['16px', { lineHeight: '26px', fontWeight: '400' }], 'display-lg-mobile': ['30px', { lineHeight: '38px', letterSpacing: '-0.01em', fontWeight: '700' }], 'transcript-en': ['15px', { lineHeight: '24px', fontWeight: '500' }], 'headline-md': ['22px', { lineHeight: '28px', letterSpacing: '-0.01em', fontWeight: '600' }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen flex flex-col selection:bg-secondary/30 selection:text-secondary"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl"><div class="h-16 px-gutter-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="ShortLearn Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1XForm4C_CgR3UeILEwq1W0ot3-IQEc6UTaI1rNbgVFWlZSCQY8aRTcOySiTUJCEZ4M5muKfLfs4sg308zjctSk3QC6FfSV3LqTDKoIXgRPZBxg71tel93f6MevgJmKPnJt-Pw3JEyRwDScILRvtsHspXBq1MeEXLAMiSCIzebk2UMJ-7enecWN-jCZDUYVwlot2JJCsla2_I30k3WI3RDZ26GM0JdTuo99O0RPXbAStJ-wwZ79rdz0dN8"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate tracking-tight">ShortLearn</span><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-pulse"></span>PWA</span></div><span class="font-label-sm text-label-sm text-on-surface-variant truncate">Học Ngay</span></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow-[0_0_12px_rgba(221,183,255,0.25)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-20 bg-surface min-h-[calc(100vh-5rem)]"><div class="flex flex-col w-full px-margin-mobile pb-space-lg gap-space-md">
+<!-- Status Chip & Request Identifier Bar -->
+<div class="w-full bg-surface-container-low rounded-xl p-space-sm flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[15px] text-tertiary-container">play_arrow</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Nguồn Shorts</span>
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="font-code-sm text-code-sm text-on-surface truncate" id="req-id-display">req_shortlearn_8f93k2</span>
+<button class="w-6 h-6 flex items-center justify-center rounded text-on-surface-variant hover:text-secondary active:scale-90 transition-transform" id="copy-btn" title="Sao chép mã yêu cầu" type="button">
+<span class="material-symbols-outlined text-[16px]" id="copy-icon">content_copy</span>
+</button>
+</div>
+</div>
+</div>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/15 text-secondary flex-shrink-0">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary-fixed opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary-fixed"></span>
+</span>
+<span class="font-label-sm text-label-sm uppercase font-bold tracking-wider">PROCESSING</span>
+</div>
+</div>
+<!-- Main Hero Card: Video Thumbnail & Heading Context -->
+<div class="w-full bg-surface-container rounded-xl p-space-md flex flex-col gap-space-sm shadow-md relative overflow-hidden">
+<div class="flex items-start gap-space-sm">
+<div class="relative w-20 h-28 rounded-lg overflow-hidden bg-surface-container-highest flex-shrink-0 shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A vertical cinematic video thumbnail frame showing a friendly mentor speaking with clean neon ambient lighting in deep indigo, cyan, and violet tech atmosphere, focused education look, high visual quality" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB71QlGNZvE07PehKTir9wUQIr1b8Cb_E0HEqiI63IK7aEOZR3-ahwLWyOIyP9uAi5nJ56MQrdQRQ9t-5pgQTi1a8gCy_0rVf-zwj8uiEfHzMYahZjaSd744oX-Wer3_AF1QgtIR5_X3NSFW4_qCupxoQw2yJwgBtIlFXK86X7Q0y__L4B4oFDWtvLrUiqWTBfFtzUknb6uoZikvcws2tMkJf_eLF3lF1nvd9R7WlvHOkJqsLMPuhSzDw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent flex items-end p-1.5">
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container-lowest/80 px-1 py-0.5 rounded">Shorts</span>
+</div>
+</div>
+<div class="flex flex-col min-w-0 flex-1 justify-center">
+<div class="inline-flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[16px]">school</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wide">Tiến trình bài học</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-0.5 leading-tight">
+          Đang chuẩn bị bài học song ngữ
+        </h1>
+<p class="font-transcript-vi text-transcript-vi text-on-surface-variant mt-1">
+          ShortLearn đang xử lý video. Transcript tiếng Anh có thể xuất hiện trước bản dịch tiếng Việt.
+        </p>
+</div>
+</div>
+<!-- Honest Indeterminate Animated Progress Bar -->
+<div class="w-full mt-space-xs flex flex-col gap-1.5">
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden relative">
+<div class="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-transparent via-secondary to-primary w-2/5 rounded-full animate-[shimmer_2s_infinite_linear]"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm">
+<span class="inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+          Đang kết nối luồng nội dung
+        </span>
+<span class="text-on-surface-variant italic">Vui lòng giữ màn hình mở</span>
+</div>
+</div>
+</div>
+<!-- Backend-Safe Stepped Processing Pipeline -->
+<div class="w-full bg-surface-container rounded-xl p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between pb-space-xs">
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wider">Các chặng xử lý logic</span>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary/10 px-2 py-0.5 rounded-full">Tự động đồng bộ</span>
+</div>
+<!-- Step 1: Checked Complete -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-high/60 transition-colors">
+<div class="w-7 h-7 rounded-full bg-secondary/20 text-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between gap-1">
+<span class="font-title-md text-title-md text-on-surface">1. Kiểm tra liên kết</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">HOÀN TẤT</span>
+</div>
+<p class="font-transcript-vi text-transcript-vi text-on-surface-variant">Đã xác thực định dạng Shorts hợp lệ từ YouTube.</p>
+</div>
+</div>
+<!-- Step 2: In-Progress / Processing -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-highest/90 shadow-sm transition-colors">
+<div class="w-7 h-7 rounded-full bg-secondary-fixed/20 text-secondary-fixed flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px] animate-spin">sync</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between gap-1">
+<span class="font-title-md text-title-md text-secondary">2. Lấy phụ đề hoặc âm thanh</span>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary/15 px-2 py-0.5 rounded-full font-bold">ĐANG TIẾN HÀNH</span>
+</div>
+<p class="font-transcript-vi text-transcript-vi text-on-surface">Đang tiếp nhận luồng dữ liệu chuẩn từ nguồn máy chủ.</p>
+</div>
+</div>
+<!-- Step 3: Pending AI Processing -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low/50 opacity-90 transition-colors">
+<div class="w-7 h-7 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">subtitles</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between gap-1">
+<span class="font-title-md text-title-md text-on-surface">3. Tạo transcript tiếng Anh</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">CHỜ DỮ LIỆU</span>
+</div>
+<p class="font-transcript-vi text-transcript-vi text-on-surface-variant">Chuẩn bị tách từng từ thành thẻ tương tác nhấn tra cứu.</p>
+</div>
+</div>
+<!-- Step 4: Translation Queued -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low/50 opacity-70 transition-colors">
+<div class="w-7 h-7 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">translate</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between gap-1">
+<span class="font-title-md text-title-md text-on-surface">4. Dịch sang tiếng Việt</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">CHỜ XỬ LÝ</span>
+</div>
+<p class="font-transcript-vi text-transcript-vi text-on-surface-variant">Đồng bộ câu ngữ nghĩa song song với bản gốc.</p>
+</div>
+</div>
+</div>
+<!-- Important User Note (Pedagogical Clarity) -->
+<div class="w-full bg-surface-container-low rounded-xl p-space-md flex gap-space-sm shadow-sm">
+<div class="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">lightbulb</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-title-md text-title-md text-on-surface">Lưu ý quan trọng</span>
+<p class="font-transcript-vi text-transcript-vi text-on-surface-variant mt-0.5">
+        Bản transcript tiếng Anh có thể hoàn thành và hiển thị trước khi bản dịch tiếng Việt hoàn tất. Bạn có thể bắt đầu học và nghe luyện ngay khi transcript tiếng Anh sẵn sàng.
+      </p>
+</div>
+</div>
+<!-- Touch-Optimized Primary and Secondary Action Row (>= 48px Touch Targets) -->
+<div class="flex flex-col gap-space-xs mt-space-xs">
+<button class="w-full min-h-[48px] px-space-md py-3 rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-bright active:scale-[0.98] transition-all flex items-center justify-center gap-space-xs font-title-md text-title-md shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px] text-secondary">content_paste</span>
+<span>Dán liên kết khác</span>
+</button>
+<button class="w-full min-h-[48px] px-space-md py-3 rounded-xl bg-error-container/30 text-error hover:bg-error-container/50 active:scale-[0.98] transition-all flex items-center justify-center gap-space-xs font-title-md text-title-md" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+<span>Hủy xử lý</span>
+</button>
+</div>
+</div>
+<script>
+  (function() {
+    const copyBtn = document.getElementById('copy-btn');
+    const copyIcon = document.getElementById('copy-icon');
+    const reqDisplay = document.getElementById('req-id-display');
+
+    if (copyBtn && reqDisplay) {
+      copyBtn.addEventListener('click', function() {
+        const textToCopy = reqDisplay.innerText.trim();
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          copyIcon.textContent = 'check';
+          copyBtn.classList.add('text-secondary');
+          setTimeout(() => {
+            copyIcon.textContent = 'content_copy';
+            copyBtn.classList.remove('text-secondary');
+          }, 2000);
+        }).catch(() => {
+          copyIcon.textContent = 'check';
+          setTimeout(() => { copyIcon.textContent = 'content_copy'; }, 1500);
+        });
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-low/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-secondary"><div class="h-16 flex items-center justify-around px-space-xs"><a class="flex-1 min-w-[48px] min-h-[48px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="hoc-ngay" href="#"><span class="material-symbols-outlined text-[22px]">play_circle</span><span class="font-label-sm text-label-sm">Học ngay</span></a><a class="flex-1 min-w-[48px] min-h-[48px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="on-tap" href="#"><span class="material-symbols-outlined text-[22px]">style</span><span class="font-label-sm text-label-sm">Ôn tập</span></a><a class="flex-1 min-w-[48px] min-h-[48px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="da-luu" href="#"><span class="material-symbols-outlined text-[22px]">bookmarks</span><span class="font-label-sm text-label-sm">Đã lưu</span></a><a class="flex-1 min-w-[48px] min-h-[48px] flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="tai-khoan" href="#"><span class="material-symbols-outlined text-[22px]">account_circle</span><span class="font-label-sm text-label-sm">Tài khoản</span></a></div></nav></body></html>

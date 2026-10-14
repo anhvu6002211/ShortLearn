@@ -103,9 +103,9 @@
 
 - [ ] **Phân loại lỗi mạng và retry.**
   - [x] Luồng phụ đề phân biệt backend/transport error, worker `FAILED`, AI xử lý quá lâu và video không có subtitle.
-  - [x] Transcript dùng `ErrorState` + nút **Thử lại**; đổi video tự xóa lỗi; video/WebView vẫn hoạt động và không remount khi subtitle lỗi.
+  - [x] Đổi video tự xóa lỗi; video/WebView vẫn hoạt động và không remount khi subtitle lỗi; khu transcript/error card đã bỏ theo quyết định sản phẩm.
   - [x] Typecheck, release build, cài đè, cold launch và logcat pass.
-  - [ ] Nghiệm thu chủ động từng failure mode: mất mạng, dừng tunnel/backend, video giới hạn vùng, worker fail và retry phục hồi.
+  - [ ] Nghiệm thu chủ động từng failure mode: mất mạng, dừng tunnel/backend, video giới hạn vùng, worker fail và retry phục hồi; lỗi cần hiển thị tại subtitle overlay hoặc thông báo không chặn video.
   - DoD: copy rõ ràng, retry có giới hạn/backoff, không loading vô hạn và log không lộ dữ liệu nhạy cảm.
 
 - [ ] **TikTok fallback ổn định.**
@@ -144,8 +144,33 @@
   - Chỉ giảm interval/DOM scan khi số liệu chứng minh bottleneck; không phá bridge, swipe, auto-unmute hoặc caption detection.
   - DoD: có baseline và regression YouTube/TikTok; CPU/RAM không tăng theo số lần đổi video/tab.
 
+### Web responsive/PWA — Client bổ sung sau khi P0 mobile ổn định
+
+- [ ] **WEB-1 — Chốt contract xử lý URL dùng chung.**
+  - Tái sử dụng auth, subtitle request/status, tra/lưu từ và review API hiện có; chuẩn hóa input `platform + canonical video URL/ID` và trạng thái `PENDING | PROCESSING | READY | FAILED`.
+  - YouTube/TikTok dùng extractor riêng ở worker nhưng trả cùng subtitle contract; ưu tiên caption chính thức, fallback tải audio + Whisper.
+  - Lưu transcript tiếng Anh trước; dịch Việt là bước sau để hết quota dịch không chặn toàn bộ phụ đề.
+  - DoD: contract/test backend-worker pass; không tạo API song song hoặc phụ thuộc DOM feed/WebView.
+
+- [ ] **WEB-2 — MVP web responsive: dán URL → xử lý → học.**
+  - Tạo module `shortlearn-web/` sau khi WEB-1 ổn định; chạy trên desktop/mobile browser, có thể Add to Home Screen.
+  - Chỉ gồm đăng nhập, ô URL, trạng thái xử lý, video/embed khi được phép, phụ đề Anh–Việt và retry rõ ràng.
+  - Không làm feed vuốt, browser extension, catalog, notification hoặc UI giả trong MVP.
+  - DoD: URL hợp lệ/không hợp lệ, video có/không caption, worker fail và quota dịch đều có trạng thái hữu hạn; responsive và keyboard-accessible.
+
+- [ ] **WEB-3 — Learning dùng chung tài khoản.**
+  - Tái sử dụng API tra/lưu từ, danh sách đã lưu và bốn rating FSRS; đồng bộ với mobile bằng cùng ShortLearn account.
+  - Ưu tiên cookie HttpOnly/SameSite/Secure thay `localStorage`; hoàn thiện CORS/CSRF và Privacy trước public beta.
+  - DoD: lưu từ trên web xuất hiện ở mobile, review không chấm hai lần và đăng xuất thu hồi session đúng.
+
+- [ ] **WEB-4 — Triển khai HTTPS/PWA.**
+  - Production dùng origin HTTPS ổn định, không dùng Quick Tunnel; service worker không cache token hoặc dữ liệu riêng tư.
+  - SEO cho landing/public policy; trang học/auth không index.
+  - DoD: deploy repeatable, offline shell không giả trạng thái học, accessibility/performance đạt baseline đã chốt.
+
 ### Backlog sau beta — Chỉ mở khi có nhu cầu hoặc số liệu
 
+- **Browser extension desktop:** chỉ cân nhắc sau WEB-2; overlay trên trang YouTube/TikTok thật, cần review quyền và vẫn dùng backend/worker chung.
 - **Subtitle cache cục bộ:** chỉ làm khi đo thấy mở lại video chậm hoặc có yêu cầu xem subtitle offline; khi đó dùng key đủ ngôn ngữ, TTL và size cap.
 - **Offline queue save/review:** chỉ làm khi người dùng cần học offline; phải có idempotency và conflict policy trước.
 - **Crash reporting:** thêm Sentry/Crashlytics khi có người dùng ngoài beta nội bộ; bắt buộc scrub token, OTP, cookie và nội dung riêng tư.
@@ -162,4 +187,5 @@
 4. Hoàn tất QA giao diện, WebView, learning và regression test.
 5. Chốt release signing, HTTPS-only, Privacy/Terms và xóa tài khoản.
 6. Audit dependency; tạo AAB/store build không chứa dev client.
-7. Đo WebView; chỉ tối ưu hoặc mở backlog khi số liệu/nhu cầu chứng minh cần thiết.
+7. Chốt WEB-1; sau đó triển khai WEB-2 theo luồng dán URL, không trì hoãn P0 mobile.
+8. Mở WEB-3/WEB-4 sau khi MVP web pass; extension và tối ưu WebView chỉ mở khi số liệu/nhu cầu chứng minh cần thiết.

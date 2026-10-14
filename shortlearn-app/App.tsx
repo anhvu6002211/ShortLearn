@@ -971,7 +971,7 @@ function ShortLearnApp() {
       setIsPlatformPickerVisible(false);
       setShortPickerPlatform('tiktok');
       resetSubtitlesForVideo(null, 'tiktok');
-      setWebViewUri(TIKTOK_HOME_URL);
+      setWebViewUri('https://www.tiktok.com/login');
       navigateToMainTab('shorts');
       return;
     }

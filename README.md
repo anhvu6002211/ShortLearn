@@ -67,6 +67,12 @@ shortlearn/
 │   ├── app.json                # Cấu hình Expo project
 │   └── package.json            # Dependencies: Expo 57, RN 0.86, react-native-webview
 │
+├── shortlearn-web/             # Web responsive/PWA (Vite + Vanilla JS/CSS)
+│   ├── src/                    # Auth/OTP, lesson, transcript, vocabulary, FSRS review
+│   ├── public/                 # Manifest, icons, static-only service worker
+│   ├── vite.config.js          # Development proxy /api → API Gateway
+│   └── package.json
+│
 ├── backend/                # Trạm trung chuyển API (Node.js & Express - Scaffold)
 │   ├── src/
 │   │   ├── config/             # db.js (MySQL pool), redis.js, rabbitmq.js
@@ -90,7 +96,37 @@ shortlearn/
 
 ## 🚀 Hướng Dẫn Khởi Chạy Nhanh
 
-### 1. Xem giao diện trên máy tính — không cần điện thoại
+### 1. Chạy web responsive/PWA
+
+Web dùng API chung với mobile. Trong development, Vite proxy `/api` tới API Gateway tại `http://localhost:5000`, không cần mở thêm CORS origin.
+
+```powershell
+# Terminal 1: API Gateway
+Set-Location backend
+npm install
+npm start
+
+# Terminal 2: Web
+Set-Location shortlearn-web
+npm install
+npm test
+npm run dev
+```
+
+Mở `http://localhost:5173`. Để đổi backend local, sao chép `shortlearn-web/.env.example` thành `.env` rồi chỉnh `VITE_DEV_API_TARGET`.
+
+Build kiểm tra production:
+
+```powershell
+Set-Location shortlearn-web
+npm test
+npm run build
+npm run preview
+```
+
+Production mặc định gọi API same-origin qua `/api/*`. Nếu frontend và API khác origin, đặt `VITE_API_URL=https://api.example.com` khi build, cấu hình `CORS_ORIGINS` tương ứng ở backend, chỉ dùng HTTPS. Service worker chỉ cache app shell/tài nguyên tĩnh cùng origin; không cache API, token, transcript hoặc dữ liệu tài khoản.
+
+### 2. Xem giao diện mobile trên máy tính — không cần điện thoại
 
 ```bash
 cd shortlearn-app
