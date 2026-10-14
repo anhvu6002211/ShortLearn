@@ -18,7 +18,6 @@ interface ShortUrlPickerProps {
   error: string | null;
   onClose: () => void;
   onOpen: () => void;
-  onPlatformChange: (platform: VideoPlatform) => void;
   onUrlChange: (value: string) => void;
 }
 
@@ -70,7 +69,6 @@ export const ShortUrlPickerModal: React.FC<ShortUrlPickerProps> = ({
   error,
   onClose,
   onOpen,
-  onPlatformChange,
   onUrlChange,
 }) => (
   <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -78,26 +76,12 @@ export const ShortUrlPickerModal: React.FC<ShortUrlPickerProps> = ({
       <View style={styles.backdrop}>
         <View style={styles.card}>
           <View style={styles.handle} />
-          <Text style={styles.title}>Mở {platform === 'youtube' ? 'YouTube Short' : 'video TikTok'}</Text>
-          <Text style={styles.description}>
-            {platform === 'youtube'
-              ? 'Dán liên kết YouTube Shorts, video YouTube hoặc mã video để mở ngay trong chế độ học.'
-              : 'Dán liên kết TikTok hoặc mã video để mở ngay trong chế độ học.'}
-          </Text>
-          <View style={styles.platformRow}>
-            <TouchableOpacity style={[styles.platformButton, platform === 'youtube' && styles.platformButtonActive]} onPress={() => onPlatformChange('youtube')}>
-              <View style={styles.platformIconYoutube}><Text style={styles.platformPlay}>▶</Text></View>
-              <Text style={styles.platformLabel}>YouTube</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.platformButton, platform === 'tiktok' && styles.platformButtonActive]} onPress={() => onPlatformChange('tiktok')}>
-              <View style={styles.platformIconTiktok}><Text style={styles.platformNote}>♪</Text></View>
-              <Text style={styles.platformLabel}>TikTok</Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.title}>Mở YouTube Short</Text>
+          <Text style={styles.description}>Dán liên kết YouTube Shorts, video YouTube hoặc mã video.</Text>
           <TextInput
             value={urlInput}
             onChangeText={onUrlChange}
-            placeholder={platform === 'youtube' ? 'https://youtube.com/shorts/...' : 'https://www.tiktok.com/@user/video/...'}
+            placeholder="https://youtube.com/shorts/..."
             placeholderTextColor="#64748B"
             autoCapitalize="none"
             autoCorrect={false}
@@ -112,7 +96,7 @@ export const ShortUrlPickerModal: React.FC<ShortUrlPickerProps> = ({
               <Text style={styles.cancelText}>Hủy</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.openButton} onPress={onOpen}>
-              <Text style={styles.openText}>Mở {platform === 'youtube' ? 'YouTube' : 'TikTok'}</Text>
+              <Text style={styles.openText}>Mở YouTube</Text>
             </TouchableOpacity>
           </View>
         </View>
