@@ -98,11 +98,11 @@ async function saveVocabulary(req, res) {
 
     const [result] = await db.query(
       `INSERT INTO user_vocabulary
-        (user_id, word, phonetic, meaning, context_sentence, video_id, timestamp_mark,
+        (user_id, word, phonetic, meaning, context_sentence, video_id, timestamp_mark, source_platform,
          difficulty, stability, retrievability, lapses, state,
          srs_stage, repetition_count, ease_factor, interval_days, next_review)
        VALUES
-        (?, ?, ?, ?, ?, ?, ?,
+        (?, ?, ?, ?, ?, ?, ?, ?,
          5.0, 0.0, 0.0, 0, 'new',
          0, 0, 2.5, 0, NOW())
        ON DUPLICATE KEY UPDATE
@@ -110,8 +110,9 @@ async function saveVocabulary(req, res) {
          meaning = VALUES(meaning),
          context_sentence = COALESCE(VALUES(context_sentence), context_sentence),
          video_id = COALESCE(VALUES(video_id), video_id),
-         timestamp_mark = VALUES(timestamp_mark)`,
-      [userId, word, phonetic, meaning, contextSentence, videoId, timestampMark]
+         timestamp_mark = VALUES(timestamp_mark),
+         source_platform = VALUES(source_platform)`,
+      [userId, word, phonetic, meaning, contextSentence, videoId, timestampMark, platform]
     );
 
     const created = result.affectedRows === 1;

@@ -53,6 +53,8 @@ import {
 } from './src/services/videoPlatform';
 import { YOUTUBE_INJECTED_SCRIPT } from './src/webview/youtubeBridge';
 import { ExternalCaptionsModal } from './src/screens/ExternalCaptionsModal';
+import { externalCaptions } from './src/services/externalCaptions';
+import { translateDirect as translateExternalCaption } from './src/services/translation';
 import { MainTab, AuthStackParamList } from './src/navigation/types';
 import { AuthStack } from './src/navigation/AuthStack';
 import { MainTabs } from './src/navigation/MainTabs';
@@ -238,6 +240,40 @@ function ShortLearnApp() {
     else if (tab === 'account') navigationRef.navigate('Main', { screen: 'Account' });
     else navigationRef.navigate('Main', { screen: 'Shorts' });
   }, []);
+
+  useEffect(() => {
+    const captionSubscription = externalCaptions.subscribe(event => {
+      void translateExternalCaption(event.text)
+        .then(translated => externalCaptions.setTranslation(event, translated))
+        .catch(() => undefined);
+    });
+    const lookupSubscription = externalCaptions.subscribeWordLookup(event => {
+      void translateExternalCaption(event.word)
+        .then(meaning => externalCaptions.setLookupResult(event, meaning))
+        .catch(() => externalCaptions.setLookupResult(event, TRANSLATION_UNAVAILABLE_TEXT));
+    });
+    const saveSubscription = externalCaptions.subscribeWordSave(event => {
+      void (async () => {
+        if (!isAuthenticated) {
+          await externalCaptions.setSaveResult(event, 'Cần đăng nhập ShortLearn để lưu Flashcard.');
+          return;
+        }
+        try {
+          const meaning = await translateExternalCaption(event.word);
+          const response = await authenticatedRequest('/vocabulary/save', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ word: event.word, meaning, context_sentence: event.context, platform: 'external_capture', video_id: null, timestamp_mark: null }),
+          });
+          if (!response.ok) throw new Error(await getApiError(response));
+          setReviewRefreshToken(token => token + 1);
+          await externalCaptions.setSaveResult(event, `Đã lưu “${event.word}” vào Flashcard.`);
+        } catch (error) {
+          await externalCaptions.setSaveResult(event, error instanceof Error ? error.message : 'Không thể lưu từ.');
+        }
+      })();
+    });
+    return () => { captionSubscription.remove(); lookupSubscription.remove(); saveSubscription.remove(); };
+  }, [authenticatedRequest, isAuthenticated]);
 
   // Máº·c Ä‘á»‹nh náº¡p sáºµn phá»¥ Ä‘á» Ä‘á»ƒ khoang Language Reactor luÃ´n hiá»ƒn thá»‹ ngay tá»« frame Ä‘áº§u tiÃªn
   const [subtitles, setSubtitles] = useState<SubtitleCue[]>([]);

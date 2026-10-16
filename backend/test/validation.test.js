@@ -19,6 +19,7 @@ test('normalizes vocabulary and request identifiers', () => {
   assert.equal(normalizeYouTubeVideoId('dQw4w9WgXcQ'), 'dQw4w9WgXcQ');
   assert.equal(normalizePlatform('YouTube'), 'youtube');
   assert.equal(normalizePlatform(' TikTok '), 'tiktok');
+  assert.equal(normalizePlatform(' External_Capture '), 'external_capture');
   assert.equal(parseTimestamp('12.345'), 12.35);
 });
 
@@ -40,6 +41,7 @@ test('rejects unsafe IDs and unsupported platforms', () => {
     /valid TikTok/
   );
   assert.throws(() => normalizePlatform('vimeo'), /platform must be one of/);
+  assert.throws(() => normalizePlatformVideoId('dQw4w9WgXcQ', 'external_capture'), /must not include video_id/);
   assert.throws(() => parseTimestamp('-1'), /between 0 and 14400/);
 });
 

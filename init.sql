@@ -154,6 +154,7 @@ CREATE TABLE IF NOT EXISTS user_vocabulary (
     context_sentence TEXT NULL,
     video_id INT NULL,
     timestamp_mark FLOAT NULL,
+    source_platform ENUM('youtube', 'tiktok', 'external_capture') NOT NULL DEFAULT 'youtube',
     
     -- Trường FSRS v5 (Free Spaced Repetition Scheduler)
     difficulty FLOAT DEFAULT 5.0,        -- D ∈ [1, 10]

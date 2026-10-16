@@ -1,6 +1,6 @@
 const YOUTUBE_VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
 const TIKTOK_VIDEO_ID = /^\d{15,32}$/;
-const SUPPORTED_PLATFORMS = Object.freeze(['youtube', 'tiktok']);
+const SUPPORTED_PLATFORMS = Object.freeze(['youtube', 'tiktok', 'external_capture']);
 const LEARNING_STAGES = Object.freeze(['known', 'learning', 'later']);
 const CARD_LABELS = Object.freeze(['red', 'green', 'yellow', 'blue']);
 
@@ -92,6 +92,9 @@ function normalizePlatform(value) {
 
 function normalizePlatformVideoId(value, platform = 'youtube') {
   const normalizedPlatform = normalizePlatform(platform);
+  if (normalizedPlatform === 'external_capture') {
+    throw new TypeError('external_capture must not include video_id.');
+  }
   return normalizedPlatform === 'tiktok'
     ? normalizeTikTokVideoId(value)
     : normalizeYouTubeVideoId(value);

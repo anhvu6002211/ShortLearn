@@ -168,10 +168,63 @@
   - SEO cho landing/public policy; trang học/auth không index.
   - DoD: deploy repeatable, offline shell không giả trạng thái học, accessibility/performance đạt baseline đã chốt.
 
+### Android external captions — YouTube WebView + phụ đề ngoài ứng dụng
+
+> Nhánh triển khai: `feat/youtube-external-captions-poc-20261015`. Không merge `main` trước khi build và nghiệm thu thiết bị. Mọi dấu `[x]` bên dưới chỉ áp dụng cho phần đã kiểm tra; UI/POC không được coi là overlay hoặc capture hoàn chỉnh.
+
+#### Kết quả audit M1 — 15/10/2026
+
+- [x] **Phạm vi UI YouTube-only:** lựa chọn TikTok WebView đã được thay bằng lối vào External Captions Lab; YouTube Shorts tiếp tục dùng WebView, bridge, phụ đề Anh–Việt, tra từ, lưu thẻ và FSRS hiện có. Backend/schema/worker TikTok được giữ để không phá tương thích.
+- [x] **Baseline hiện tại:** [`ExternalCaptionsModal.tsx`](shortlearn-app/src/screens/ExternalCaptionsModal.tsx) chỉ là màn hình lab; [`WhisperMicPoc.tsx`](shortlearn-app/src/components/WhisperMicPoc.tsx) nhận microphone bằng `whisper.rn` + `AudioPcmStreamAdapter`, model `ggml-tiny.bin`. Chưa có MediaProjection, AudioPlaybackCapture, foreground service hoặc `TYPE_APPLICATION_OVERLAY`.
+- [x] **Audit Hearth:** repository tham khảo dùng Apache-2.0. Kiến trúc phù hợp để học mẫu, không sao chép ứng dụng/UI/thương hiệu: một foreground `CaptionCaptureService` sở hữu consent MediaProjection, `AudioRecord`, caption engine và overlay; overlay tách controller/window/config; PCM/VAD/Whisper tách khỏi UI; stop/revoke tập trung giải phóng recorder, projection, jobs và overlay.
+- [x] **Phân loại tái sử dụng:** có thể chuyển thể các pattern lifecycle, state machine, PCM read loop, resampling, VAD gate, tap-through/interactive overlay và test geometry nếu giữ notice/bản quyền Apache-2.0. Phải tự phát triển React Native bridge, Expo config/native registration, tích hợp auth/vocabulary/translation ShortLearn, Smart Subtitle Filter và UX tiếng Việt. Không nhập toàn bộ Hearth hoặc vendored model/thư viện khi chưa audit license riêng.
+- [x] **Giới hạn nền tảng:** AudioPlaybackCapture cần Android 10+ và MediaProjection consent cho từng phiên; ứng dụng nguồn/DRM có thể chặn capture. Không bypass. Khi PCM nội bộ không khả dụng phải báo rõ và chỉ dùng microphone sau khi người dùng chủ động chọn.
+- [x] **Lựa chọn kiến trúc:** Kotlin native module trong ứng dụng RN hiện tại; một foreground service sở hữu tài nguyên dài hạn; RN chỉ preflight/start/stop/observe state. PCM mono 16 kHz signed 16-bit là contract mục tiêu cho Whisper. Không truyền PCM liên tục qua JS bridge; STT/VAD chạy native để giảm latency, GC và pin.
+
+#### M2 — Native service, quyền và overlay thật
+
+- [x] Native module tối thiểu đã khai báo `SYSTEM_ALERT_WINDOW`, `RECORD_AUDIO`, foreground service và `mediaProjection` cho target SDK 36; không thêm dependency.
+- [x] Preflight thật trả Android support, overlay permission và service state; UI có `idle | running | stopped | blocked | error` cùng lỗi permission từ native bridge.
+- [x] Mỗi lần start mở system MediaProjection consent; không lưu consent, không tự chạy sau boot.
+- [x] Foreground service có notification cố định với action Dừng; projection callback, task removal, force-stop và lifecycle service cùng cleanup recorder/projection/overlay.
+- [ ] Overlay `TYPE_APPLICATION_OVERLAY` đã xuất hiện thật trên Instagram, có nút thu gọn/Dừng và drag handler; còn nghiệm thu thủ công kéo, thu gọn, Dừng từ overlay và notification.
+- [x] AudioPlaybackCapture đã đọc PCM thật trên Android 16/API 36: mono, signed PCM 16-bit, 16 kHz; foreground type `mediaProjection`, overlay và projection đều active, không crash.
+- [ ] DoD M2: overlay xuất hiện ngoài ShortLearn và system force-stop giải phóng sạch (`service/projection/overlay=false`); còn xác nhận cả hai nút Dừng và projection revoke bằng thao tác người dùng trước khi đóng M2.
+
+#### M3 — AudioPlaybackCapture → Smart Filter → Whisper → tiếng Anh
+
+- [x] Tạo `AudioPlaybackCaptureConfiguration` từ MediaProjection, `AudioRecord` playback source; zero/silent PCM chuyển sang `blocked` thay vì giả định thành công.
+- [x] Microphone fallback chỉ khởi chạy sau lựa chọn rõ ràng bằng nút riêng khi playback bị `blocked`; UI/notification hiển thị nguồn `Âm thanh nội bộ` hoặc `Microphone`, không tự chuyển nguồn. Build pass; còn nghiệm thu audio thật trên máy thật.
+- [ ] PCM không đi qua JS: đã có buffer giới hạn 8 giây, PCM 16 kHz mono, RMS VAD/windowing và Whisper local JNI; còn benchmark `tiny`/`base` trên cùng bộ mẫu bằng latency, RTF, RAM, pin và lỗi từ.
+- [ ] Smart Subtitle Filter đã có UI ba mức `Nhẹ | Cân bằng | Mạnh`, mặc định `Cân bằng`; native áp dụng profile RMS tương ứng, silence endpoint, loại marker nhạc/im lặng, repetition và duplicate. Còn benchmark false reject/accept và classifier confidence/no-speech/entropy/compression sau audit license; không giả lập chỉ số Whisper chưa được JNI cung cấp.
+- [ ] Đo false rejection của lời nói và false acceptance/hallucination trên mẫu speech, instrumental, vocal music, noise, background music và nhiều người nói. Không công bố độ chính xác 100% hoặc dùng một threshold cho mọi nguồn.
+- [x] Stop/blocked flush generation và buffer cũ; kết quả inference cũ bị loại, câu trùng liên tiếp không hiện lại. Việc nhận biết vuốt/video mới tự động vẫn cần tín hiệu nguồn khả dụng.
+- [ ] DoD M3: JNI, UI ba mức filter và build release đã pass, nhưng còn cần máy thật có model để quan sát ít nhất một nguồn PCM → Whisper → chữ tiếng Anh và nghiệm thu microphone fallback thật.
+
+#### M4 — Song ngữ, tra từ và Flashcard
+
+- [ ] Tiếng Anh luôn hiển thị native độc lập; câu đã lọc phát event tần suất thấp sang RN, dịch Việt tái sử dụng `translation.ts` (LRU cache, Promise dedupe, timeout/fallback) và native generation guard loại kết quả cũ. Typecheck/Kotlin compile pass. Theo quyết định kiến trúc hiện tại, dịch có thể tạm dừng khi Android suspend JS nền; lỗi dịch không xóa câu Anh. Còn nghiệm thu runtime thật.
+- [x] Chỉ câu đã qua Smart Filter mới phát event dịch; PCM không qua JS và audio không upload.
+- [ ] Chế độ tương tác dùng nút `Tra từ` trên handle để mở panel native riêng; caption chính vẫn `FLAG_NOT_TOUCHABLE`, không chặn gesture video. Panel token hóa tối đa 12 từ, phát event lookup/save sang RN, tái dùng dịch và authenticated vocabulary API; payload dùng `platform: external_capture`, `video_id/timestamp_mark = NULL`. Backend lưu `source_platform`, migration idempotent và 39/39 test pass. Còn nghiệm thu Saved Items/FSRS trên tài khoản thật.
+- [x] Không thêm pause/seek/control TikTok, Instagram hoặc YouTube native khi không có API được phép.
+- [ ] DoD M4: luồng song ngữ đã build pass nhưng cần máy thật kiểm tra lỗi dịch vẫn giữ câu Anh; tra/lưu từ tương tác và xác nhận Saved Items/FSRS chưa hoàn thành.
+
+#### M5 — QA, hiệu năng và phát hành thử
+
+- [ ] Ma trận Android 13/14/15/16 theo thiết bị có sẵn; app switch, lock screen, revoke projection/overlay/mic, process death, restart phiên, offline/quota, Bluetooth/có dây, nền nhạc, nhiều người nói, vuốt nhanh. Hiện chỉ smoke-test API 36 emulator; máy thật được người dùng cho phép bỏ qua trong đợt này nên không đánh dấu.
+- [ ] Test TikTok, YouTube và Instagram native riêng; ghi rõ ứng dụng/version nào cho phép hoặc chặn playback capture. Không suy rộng kết quả một app cho mọi app; chưa có máy thật để thu kết quả.
+- [ ] Native status đã instrument `lastInferenceMs`, RTF, transcribed/dropped windows, duplicate và filtered count; typecheck/Kotlin compile pass. Còn thu p50/p95, CPU, RAM, pin/15 phút và false reject/accept trên corpus/máy thật trước khi đặt budget.
+- [ ] Regression YouTube WebView, Google Sign-In, auth/session, phụ đề song ngữ, tra/lưu từ và 4 rating FSRS. Backend full 39/39 test pass; release cold-launch emulator pass, nhưng regression tương tác đầy đủ chưa chạy.
+- [ ] Verification bắt buộc: `npm run typecheck`, Android debug Kotlin compile và release build đã pass; backend `npm run check` và 39/39 test pass. Còn native unit test, smoke thiết bị thật, README/module docs, Apache NOTICE và license model/thư viện trước merge.
+
+#### Blocker/điều kiện trước M2
+
+- Native module/service chưa tồn tại trên nhánh; M2 là thay đổi native bắt buộc, không thể hoàn thành bằng Expo Go hoặc JS-only.
+- Cần Android SDK/emulator hoặc thiết bị Android 10+ để xác nhận MediaProjection và overlay. Build pass không chứng minh playback capture hoạt động.
+- Cần audit chính xác target SDK hiện tại và foreground-service requirements Android 14–16 trước khi khai báo manifest; không thêm dependency cho classifier/model trước benchmark và license review.
+
 ### Backlog sau beta — Chỉ mở khi có nhu cầu hoặc số liệu
 
-- **Android external captions (Hearth-like) — POC sau MVP:** đã thêm điểm vào chế độ thử nghiệm và tận dụng Whisper microphone on-device, chưa có overlay chạy ngoài ShortLearn. Triển khai tiếp Android native (foreground service + SYSTEM_ALERT_WINDOW + MediaProjection/AudioPlaybackCapture theo quyền được cấp), ASR streaming/VAD, dịch Anh–Việt, tra từ và đồng bộ Flashcard; có nút dừng, thông báo riêng tư, không ghi âm mặc định. Kiểm thử TikTok/Instagram/YouTube gốc, tai nghe Bluetooth, app nền, độ trễ và trường hợp nguồn chặn capture. Không bypass DRM/đăng nhập và không hứa tương thích mọi app.
-- **Phạm vi mobile UI:** thay lựa chọn TikTok WebView trong ShortLearn bằng lối vào External Captions Lab; giữ YouTube WebView làm chế độ học chính. Mã backend TikTok chưa bị xóa để tránh migration/compatibility ngoài phạm vi.
 - **Browser extension desktop:** chỉ cân nhắc sau WEB-2; overlay trên trang YouTube/TikTok thật, cần review quyền và vẫn dùng backend/worker chung.
 - **Subtitle cache cục bộ:** chỉ làm khi đo thấy mở lại video chậm hoặc có yêu cầu xem subtitle offline; khi đó dùng key đủ ngôn ngữ, TTL và size cap.
 - **Offline queue save/review:** chỉ làm khi người dùng cần học offline; phải có idempotency và conflict policy trước.
@@ -190,4 +243,5 @@
 5. Chốt release signing, HTTPS-only, Privacy/Terms và xóa tài khoản.
 6. Audit dependency; tạo AAB/store build không chứa dev client.
 7. Chốt WEB-1; sau đó triển khai WEB-2 theo luồng dán URL, không trì hoãn P0 mobile.
-8. Mở WEB-3/WEB-4 sau khi MVP web pass; extension và tối ưu WebView chỉ mở khi số liệu/nhu cầu chứng minh cần thiết.
+8. Hoàn tất M2 external captions trên Android 16: nghiệm thu kéo/thu gọn/Dừng từ overlay và notification, projection revoke; sau đó nối PCM native vào Whisper cho M3.
+9. Mở WEB-3/WEB-4 sau khi MVP web pass; extension và tối ưu WebView chỉ mở khi số liệu/nhu cầu chứng minh cần thiết.
