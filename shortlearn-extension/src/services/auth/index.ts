@@ -1,0 +1,13 @@
+import type { Session } from '../../shared/messages.js';
+declare const chrome: { storage:{local:{get(keys:string[]):Promise<Record<string,unknown>>;set(items:Record<string,unknown>):Promise<void>;remove(keys:string[]):Promise<void>}} };
+const KEY='shortlearn.session';
+export async function loadSession():Promise<Session|null>{const v=await chrome.storage.local.get([KEY]);return (v[KEY] as Session)||null;}
+export async function saveSession(session:Session|null):Promise<void>{if(session)await chrome.storage.local.set({[KEY]:session});else await chrome.storage.local.remove([KEY]);}
+export function normalizeApiUrl(value:string):string{const url=new URL(value);if(url.protocol!=='https:'&&!['localhost','127.0.0.1'].includes(url.hostname))throw new Error('API phải dùng HTTPS.');return url.origin;}
+export async function request(apiUrl:string,path:string,init:RequestInit={},retry=true):Promise<any>{
+ const session=await loadSession(); const response=await fetch(`${apiUrl}${path}`,{...init,headers:{'Content-Type':'application/json',...(session?.tokens.access_token?{Authorization:`Bearer ${session.tokens.access_token}`}:{})}});
+ if(response.status===401&&retry&&session?.tokens.refresh_token&&!path.includes('/auth/')){const refreshed=await request(apiUrl,'/api/v1/auth/refresh',{method:'POST',body:JSON.stringify({refresh_token:session.tokens.refresh_token})},false);await saveSession({...session,tokens:refreshed.tokens});return request(apiUrl,path,init,false);}
+ const payload=await response.json().catch(()=>({}));if(!response.ok)throw new Error(payload.error||'Không thể kết nối ShortLearn.');return payload;
+}
+export async function login(apiUrl:string,email:string,password:string):Promise<Session>{const base=normalizeApiUrl(apiUrl);const session=await request(base,'/api/v1/auth/login',{method:'POST',body:JSON.stringify({email,password,device:{platform:'extension',name:navigator.userAgent.slice(0,80),app_version:'0.1.0'}})},false);await saveSession(session);await chrome.storage.local.set({'shortlearn.apiUrl':base});return session;}
+export async function logout():Promise<void>{const s=await loadSession();const data=await chrome.storage.local.get(['shortlearn.apiUrl']);try{if(s&&data['shortlearn.apiUrl'])await request(data['shortlearn.apiUrl'] as string,'/api/v1/auth/logout',{method:'POST',body:JSON.stringify({refresh_token:s.tokens.refresh_token})},false);}finally{await saveSession(null);}}

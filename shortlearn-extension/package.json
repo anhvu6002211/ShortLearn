@@ -1,0 +1,17 @@
+{
+  "name": "shortlearn-extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc && node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "package": "npm run build && powershell -NoProfile -Command \"Compress-Archive -Path 'dist\\*' -DestinationPath 'shortlearn-extension-0.1.0.zip' -Force\""
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "typescript": "~5.9.3"
+  }
+}

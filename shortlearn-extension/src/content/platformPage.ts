@@ -1,0 +1,5 @@
+import { readPlatformCaption,platformFromHost,platformVideoId } from './platform.js';
+const SOURCE='shortlearn-page';const platform=platformFromHost();let lastUrl='',lastText='',scheduled=false,generation=0,fallbackSent=false;
+function emit(type:string,payload:Record<string,unknown>={}){window.postMessage({source:SOURCE,type,...payload},location.origin);}
+function scan(){scheduled=false;if(!platform||platform==='youtube')return;const videoId=platformVideoId(platform);if(location.href!==lastUrl){lastUrl=location.href;lastText='';fallbackSent=false;const current=++generation;emit('VIDEO',{platform,videoId});setTimeout(()=>{if(current===generation&&!lastText)emit('NO_CAPTION',{platform,videoId});},5000);}const text=readPlatformCaption(platform);if(text&&text!==lastText){lastText=text;emit('CAPTION',{text,time:document.querySelector('video')?.currentTime??0,platform,videoId});}else if(!text&&!fallbackSent){fallbackSent=true;emit('FALLBACK',{platform,videoId});}}
+const observer=new MutationObserver(()=>{if(!scheduled){scheduled=true;requestAnimationFrame(scan);}});observer.observe(document.documentElement,{childList:true,subtree:true,characterData:true});scan();

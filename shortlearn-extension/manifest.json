@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "ShortLearn",
+  "version": "0.1.0",
+  "description": "Học tiếng Anh bằng phụ đề song ngữ ngay trên YouTube.",
+  "permissions": ["storage", "activeTab", "tabCapture", "offscreen"],
+  "host_permissions": ["https://www.youtube.com/*", "https://www.tiktok.com/*", "https://www.instagram.com/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_popup": "popup.html", "default_title": "ShortLearn" },
+  "web_accessible_resources": [],
+  "content_scripts": [
+    { "matches": ["https://www.youtube.com/*"], "js": ["page.js"], "run_at": "document_idle", "world": "MAIN" },
+    { "matches": ["https://www.youtube.com/*", "https://www.tiktok.com/*", "https://www.instagram.com/*"], "js": ["content.js"], "run_at": "document_idle" },
+    { "matches": ["https://www.tiktok.com/*", "https://www.instagram.com/*"], "js": ["platform-page.js"], "run_at": "document_idle", "world": "MAIN" }
+  ]
+}

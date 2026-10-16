@@ -1,0 +1,6 @@
+export {};
+declare const chrome:{runtime:{onMessage:{addListener(callback:(message:{type?:string;streamId?:string},sender:unknown,reply:(result:{ok:boolean;error?:string})=>void)=>boolean|void):void}}};
+let stream:MediaStream|null=null;let context:AudioContext|null=null;
+async function start(streamId:string){await stop();stream=await navigator.mediaDevices.getUserMedia({audio:{mandatory:{chromeMediaSource:'tab',chromeMediaSourceId:streamId}} as MediaTrackConstraints,video:false});context=new AudioContext();const source=context.createMediaStreamSource(stream);source.connect(context.destination);}
+async function stop(){stream?.getTracks().forEach(track=>track.stop());stream=null;if(context){await context.close();context=null;}}
+chrome.runtime.onMessage.addListener((message,_sender,reply)=>{void(async()=>{try{if(message.type==='CAPTURE_START'&&message.streamId)await start(message.streamId);else if(message.type==='CAPTURE_STOP')await stop();else return;reply({ok:true});}catch(error){reply({ok:false,error:error instanceof Error?error.message:'Không thể capture tab.'});}})();return true;});

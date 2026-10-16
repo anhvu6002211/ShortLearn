@@ -1,0 +1,18 @@
+import{loadSession,login,logout}from'../services/auth/index.js';import{dueCards,reviewWord,saveWord}from'../services/vocabulary/index.js';import type{BackgroundRequest,BackgroundResponse}from'../shared/messages.js';
+declare const chrome:{runtime:{onInstalled:{addListener(cb:()=>void):void};onSuspend:{addListener(cb:()=>void):void};onMessage:{addListener(cb:(message:unknown,sender:unknown,reply:(value:BackgroundResponse)=>void)=>boolean|void):void};sendMessage(message:unknown):Promise<BackgroundResponse>};tabs:{onRemoved:{addListener(cb:(tabId:number)=>void):void}};offscreen:{hasDocument():Promise<boolean>;createDocument(options:{url:string;reasons:string[];justification:string}):Promise<void>;closeDocument():Promise<void>};tabCapture:{getMediaStreamId(options:{targetTabId:number}):Promise<string>}};
+const PLATFORMS=new Set(['youtube','tiktok','instagram']);let capturedTabId:number|null=null;
+function bounded(value:unknown,max:number):value is string{return typeof value==='string'&&value.trim().length>0&&value.length<=max;}
+async function stopCapture():Promise<BackgroundResponse>{let result:BackgroundResponse={ok:true};if(await chrome.offscreen.hasDocument()){result=await chrome.runtime.sendMessage({type:'CAPTURE_STOP'});await chrome.offscreen.closeDocument();}capturedTabId=null;return result;}
+chrome.runtime.onInstalled.addListener(()=>console.info('ShortLearn Extension installed'));
+chrome.tabs.onRemoved.addListener(tabId=>{if(tabId===capturedTabId)void stopCapture();});
+chrome.runtime.onSuspend.addListener(()=>{void stopCapture();});
+chrome.runtime.onMessage.addListener((raw,_sender,reply)=>{const message=raw as Partial<BackgroundRequest>;void(async()=>{try{switch(message.type){
+case'AUTH_STATUS':reply({ok:true,data:await loadSession()});break;
+case'AUTH_LOGIN':if(!bounded(message.email,254)||!bounded(message.password,512)||!bounded(message.apiUrl,2048))throw new Error('Dữ liệu đăng nhập không hợp lệ.');reply({ok:true,data:await login(message.apiUrl,message.email,message.password)});break;
+case'AUTH_LOGOUT':await logout();reply({ok:true});break;
+case'CAPTURE_START':if(!Number.isInteger(message.tabId)||(message.tabId as number)<=0)throw new Error('Không tìm thấy tab video cần capture.');if(!await chrome.offscreen.hasDocument())await chrome.offscreen.createDocument({url:'offscreen.html',reasons:['USER_MEDIA'],justification:'Nhận dạng phụ đề từ âm thanh tab theo yêu cầu người dùng.'});{const tabId=message.tabId as number;const result=await chrome.runtime.sendMessage({type:'CAPTURE_START',streamId:await chrome.tabCapture.getMediaStreamId({targetTabId:tabId})});if(result.ok)capturedTabId=tabId;reply(result);}break;
+case'CAPTURE_STOP':reply(await stopCapture());break;
+case'DUE_CARDS':reply({ok:true,data:await dueCards()});break;
+case'REVIEW_WORD':if(!bounded(message.word,100)||![1,2,3,4].includes(message.rating as number))throw new Error('Đánh giá FSRS không hợp lệ.');reply({ok:true,data:await reviewWord(message.word,message.rating as 1|2|3|4)});break;
+case'SAVE_WORD':if(!bounded(message.word,100)||!bounded(message.meaning,1000)||typeof message.context!=='string'||message.context.length>4000||!PLATFORMS.has(message.platform??'')||(message.videoId!==null&&(typeof message.videoId!=='string'||message.videoId.length>128))||(message.timestamp!==null&&(typeof message.timestamp!=='number'||!Number.isFinite(message.timestamp)||message.timestamp<0)))throw new Error('Dữ liệu từ vựng không hợp lệ.');reply({ok:true,data:await saveWord(message as Extract<BackgroundRequest,{type:'SAVE_WORD'}>)});break;
+default:throw new Error('Message không được hỗ trợ.');}}catch(error){reply({ok:false,error:error instanceof Error?error.message:'Lỗi không xác định.'});}})();return true;});

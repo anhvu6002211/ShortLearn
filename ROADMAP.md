@@ -144,6 +144,49 @@
   - Chỉ giảm interval/DOM scan khi số liệu chứng minh bottleneck; không phá bridge, swipe, auto-unmute hoặc caption detection.
   - DoD: có baseline và regression YouTube/TikTok; CPU/RAM không tăng theo số lần đổi video/tab.
 
+### Browser Extension — học trực tiếp trên website gốc
+
+> Nhánh triển khai: `feat/browser-extension-mvp`. Module độc lập [`shortlearn-extension/`](shortlearn-extension/) dùng TypeScript, Manifest V3; không sửa Android app. Ưu tiên caption có sẵn, quyền tối thiểu, không đọc cookie nền tảng hoặc nhúng secret. asbplayer là AGPL-3.0 nên chỉ tham khảo ý tưởng; yt-dual-subs là MIT; live-captions-extension chưa khai báo license nên không sao chép mã.
+
+#### EXT-1 — Audit, kiến trúc và scaffold
+
+- [x] Tạo module, manifest MV3, service worker, content scripts hai world, popup, TypeScript strict, esbuild và unit test; exact allowlist hiện gồm `storage`, `activeTab`, `tabCapture`, `offscreen` và ba host adapter.
+- [x] Chốt boundary: MAIN-world adapters chỉ đọc video/caption và phát message; isolated-world content script validate `source/origin`, render Shadow DOM; token chỉ ở extension storage/service worker, không vào DOM.
+- [x] `npm run typecheck`, `npm run lint`, `npm test` và `npm run build` pass; bundle tự chứa, không tải mã thực thi từ xa.
+- [ ] Load unpacked: Chrome đã pass reload/update, Trusted Types CSP, service worker và permission UI; Edge cùng service-worker suspend/restart vẫn chưa kiểm tra.
+
+#### EXT-2 — YouTube/YouTube Shorts và caption có sẵn
+
+- [x] Phát hiện video ID thật từ `/watch?v=` và `/shorts/:id`; lấy English caption track từ player response, parse JSON3 và đồng bộ theo `video.currentTime` bằng binary search.
+- [x] Shadow DOM overlay không chặn pointer event; trạng thái hữu hạn khi đang tìm hoặc không đọc được caption; MutationObserver và sự kiện điều hướng xử lý SPA/đổi Shorts, không quét timer liên tục.
+- [ ] Runtime Chrome: Shorts signed-timedtext/DOM fallback, video thường Anh–Việt (`Me at the zoo`), fullscreen và reload pass; video không caption kết thúc hữu hạn với thông báo rõ. Còn chuyển Shorts liên tục bằng SPA gesture, caption manual và Edge.
+- [ ] Song ngữ/token click đã chạy; còn bật/tắt, kéo/thu gọn, font/màu/nền/vị trí và lookup panel thay `prompt()`.
+
+#### EXT-3 — ShortLearn account, dịch, tra từ và FSRS
+
+- [x] Tái sử dụng backend login/refresh rotation/logout, vocabulary save, due/review FSRS; translation có cache/dedup/timeout và giới hạn ba request đồng thời. Token chỉ ở `chrome.storage.local` và service worker. Overlay Chrome đã hiển thị Anh–Việt thật cùng token buttons.
+- [ ] Lưu context/platform/video ID thật hoặc `NULL`/timestamp đã có code và backend chống trùng; còn cần credential ShortLearn để nghiệm thu save → Android cùng tài khoản.
+- [ ] Popup login/logout, refresh retry và bốn rating FSRS đã build pass; Shadow DOM lookup panel Chrome đã tra `and` → `Và`, có label keyboard-accessible. Còn credential để nghiệm thu mất mạng, quota, lưu/review thật và đồng bộ Android.
+
+#### EXT-4 — TikTok Web và Instagram Reels
+
+- [x] Adapter riêng đã có cho video ID/navigation/caption DOM TikTok và Instagram; exact host allowlist chỉ gồm ba nền tảng. Không đọc cookie hoặc bypass login/DRM/CAPTCHA; ID không hợp lệ trả `null`.
+- [ ] Runtime Chrome TikTok public: video/overlay/fallback pass; caption DOM không đọc được nên trạng thái không-caption hữu hạn sau 5 giây. Instagram URL thử nghiệm trả `Post isn't available`; còn Reel public, chuyển video, reload, fullscreen, DOM/version/region và Edge.
+
+#### EXT-5 — AI Live Captions
+
+- [ ] User-gesture popup, `activeTab`/`tabCapture`, offscreen audio replay, Dừng và cleanup tracks/context/document/tab-close/suspend đã có code/build; test từ Chrome internal page bị từ chối đúng. Còn runtime từ popup thật trên tab video, mất quyền và audio nghe thật.
+- [ ] Chưa chọn STT. Benchmark gate local Whisper/WASM với worker đã ghi tại `docs/AI_LIVE_CAPTIONS_BENCHMARK.md`; không upload audio và không tuyên bố Live Captions hoàn chỉnh.
+- [ ] Smart Filter ba mức và classifier chưa triển khai vì chưa có STT benchmark/license. Không coi RMS/VAD là classifier hoàn chỉnh.
+- [ ] False rejection/acceptance corpus chưa đo.
+
+#### EXT-6 — QA, bảo mật và Chrome Web Store
+
+- [ ] Chrome Shorts caption/song ngữ/reload/CSP đã pass; phần còn lại của ma trận YouTube/TikTok/Instagram, Edge, capture, CPU/RAM và cleanup chưa pass.
+- [x] Boundary MAIN/isolated, source/origin validation, Trusted Types-safe DOM, exact permissions, extension storage token và no-remote-code đã được code review/build test; runtime security audit đầy đủ vẫn cần trước store.
+- [ ] README, permission rationale, Privacy và Terms đã có; ZIP `shortlearn-extension-0.1.0.zip` tạo thành công sau full test/build. Còn icons/options, accessibility đầy đủ, reproducible package script và Chrome Web Store checklist.
+- **DoD tổng:** cài extension → YouTube Shorts → phụ đề Anh–Việt → tra/lưu từ → Android thấy cùng Flashcard; AI Live Captions có báo cáo kiểm thử riêng.
+
 ### Web responsive/PWA — Client bổ sung sau khi P0 mobile ổn định
 
 - [ ] **WEB-1 — Chốt contract xử lý URL dùng chung.**
@@ -153,7 +196,7 @@
   - DoD: contract/test backend-worker pass; không tạo API song song hoặc phụ thuộc DOM feed/WebView.
 
 - [ ] **WEB-2 — MVP web responsive: dán URL → xử lý → học.**
-  - Tạo module `shortlearn-web/` sau khi WEB-1 ổn định; chạy trên desktop/mobile browser, có thể Add to Home Screen.
+  - Module `shortlearn-web/` chạy trên desktop/mobile browser, có thể Add to Home Screen.
   - Chỉ gồm đăng nhập, ô URL, trạng thái xử lý, video/embed khi được phép, phụ đề Anh–Việt và retry rõ ràng.
   - Không làm feed vuốt, browser extension, catalog, notification hoặc UI giả trong MVP.
   - DoD: URL hợp lệ/không hợp lệ, video có/không caption, worker fail và quota dịch đều có trạng thái hữu hạn; responsive và keyboard-accessible.
