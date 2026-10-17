@@ -159,23 +159,23 @@
 
 - [x] Phát hiện video ID thật từ `/watch?v=` và `/shorts/:id`; lấy English caption track từ player response, parse JSON3 và đồng bộ theo `video.currentTime` bằng binary search.
 - [x] Shadow DOM overlay không chặn pointer event; trạng thái hữu hạn khi đang tìm hoặc không đọc được caption; MutationObserver và sự kiện điều hướng xử lý SPA/đổi Shorts, không quét timer liên tục.
-- [ ] Runtime Chrome: Shorts signed-timedtext/DOM fallback, video thường Anh–Việt (`Me at the zoo`), fullscreen và reload pass; video không caption kết thúc hữu hạn với thông báo rõ. Còn chuyển Shorts liên tục bằng SPA gesture, caption manual và Edge.
-- [ ] Song ngữ/token click đã chạy; còn bật/tắt, kéo/thu gọn, font/màu/nền/vị trí và lookup panel thay `prompt()`.
+- [ ] Runtime Chrome: Shorts signed-timedtext/DOM fallback, video thường Anh–Việt, fullscreen/reload và video không caption pass. SPA gesture đổi liên tục `tP7UutItGs0` → `fEVyw8rPcmA` → `63YTVw2s5d0` đúng. Manual English caption `d0NHOpeczUU` được xác nhận bằng track `.en`, `kind = null`; overlay EN/VI, reload và fullscreen enter/exit đều pass. Chỉ còn Edge.
+- [x] Song ngữ/token click cùng toolbar keyboard-accessible đã pass runtime: bật/tắt, thu gọn, cỡ chữ, màu, nền và kéo vị trí; Shadow DOM lookup panel thay `prompt()`.
 
 #### EXT-3 — ShortLearn account, dịch, tra từ và FSRS
 
 - [x] Tái sử dụng backend login/refresh rotation/logout, vocabulary save, due/review FSRS; translation có cache/dedup/timeout và giới hạn ba request đồng thời. Token chỉ ở `chrome.storage.local` và service worker. Overlay Chrome đã hiển thị Anh–Việt thật cùng token buttons.
-- [ ] Lưu context/platform/video ID thật hoặc `NULL`/timestamp đã có code và backend chống trùng; còn cần credential ShortLearn để nghiệm thu save → Android cùng tài khoản.
-- [ ] Popup login/logout, refresh retry và bốn rating FSRS đã build pass; Shadow DOM lookup panel Chrome đã tra `and` → `Và`, có label keyboard-accessible. Còn credential để nghiệm thu mất mạng, quota, lưu/review thật và đồng bộ Android.
+- [ ] Save runtime qua tài khoản thật đã pass: YouTube lưu context/platform/video ID `TmANzo9kRbA`/timestamp `19.75`; Instagram map vào contract backend `external_capture` và raw DB xác nhận `video_id = NULL`, context/timestamp đúng. Local DB thiếu migration `004_vocabulary_external_capture.sql` đã được áp dụng. Còn xác nhận từ xuất hiện trên Android cùng tài khoản.
+- [x] Popup login thật pass; refresh rotation trả token mới và replay token cũ `401` (không log token). Logout `204`, xóa extension storage, refresh sau logout `401`; re-login pass. Bốn rating FSRS `Lại/Khó/Tốt/Dễ` pass. Mất mạng trả lỗi hữu hạn; general API limiter trả `429` từ request thứ 121. Shadow DOM lookup Chrome đã tra `and` → `Và`. Nghĩa `pido` mojibake tồn tại trong raw DB, không phải popup decode.
 
 #### EXT-4 — TikTok Web và Instagram Reels
 
 - [x] Adapter riêng đã có cho video ID/navigation/caption DOM TikTok và Instagram; exact host allowlist chỉ gồm ba nền tảng. Không đọc cookie hoặc bypass login/DRM/CAPTCHA; ID không hợp lệ trả `null`.
-- [ ] Runtime Chrome TikTok public: video/overlay/fallback pass; caption DOM không đọc được nên trạng thái không-caption hữu hạn sau 5 giây. Instagram URL thử nghiệm trả `Post isn't available`; còn Reel public, chuyển video, reload, fullscreen, DOM/version/region và Edge.
+- [ ] Runtime Chrome TikTok public và Instagram Reels load video/overlay/fallback hữu hạn. TikTok phiên đăng nhập cuộn For You thật đổi active video article 0 → 1; reload/fullscreen pass. Instagram phiên đăng nhập chuyển Reel thật `DYrBbU3xaI5` → `DelNNydyPSa`; active video `6` đang phát, overlay reset và trả fallback hữu hạn “không có phụ đề tiếng Anh”. Instagram fullscreen vẫn bị site policy từ chối `Permissions check failed`; false caption `6,299` đã sửa. Còn Instagram fullscreen, caption DOM thật và Edge.
 
 #### EXT-5 — AI Live Captions
 
-- [ ] User-gesture popup, `activeTab`/`tabCapture`, offscreen audio replay, Dừng và cleanup tracks/context/document/tab-close/suspend đã có code/build; test từ Chrome internal page bị từ chối đúng. Còn runtime từ popup thật trên tab video, mất quyền và audio nghe thật.
+- [ ] User-gesture popup, `activeTab`/`tabCapture`, offscreen audio replay, Dừng và cleanup tracks/context/document/tab-close/suspend/revoked-track đã có code/build; test từ Chrome internal page bị từ chối đúng. Còn runtime từ popup toolbar thật, mất quyền và audio nghe thật.
 - [ ] Chưa chọn STT. Benchmark gate local Whisper/WASM với worker đã ghi tại `docs/AI_LIVE_CAPTIONS_BENCHMARK.md`; không upload audio và không tuyên bố Live Captions hoàn chỉnh.
 - [ ] Smart Filter ba mức và classifier chưa triển khai vì chưa có STT benchmark/license. Không coi RMS/VAD là classifier hoàn chỉnh.
 - [ ] False rejection/acceptance corpus chưa đo.
@@ -184,7 +184,7 @@
 
 - [ ] Chrome Shorts caption/song ngữ/reload/CSP đã pass; phần còn lại của ma trận YouTube/TikTok/Instagram, Edge, capture, CPU/RAM và cleanup chưa pass.
 - [x] Boundary MAIN/isolated, source/origin validation, Trusted Types-safe DOM, exact permissions, extension storage token và no-remote-code đã được code review/build test; runtime security audit đầy đủ vẫn cần trước store.
-- [ ] README, permission rationale, Privacy và Terms đã có; ZIP `shortlearn-extension-0.1.0.zip` tạo thành công sau full test/build. Còn icons/options, accessibility đầy đủ, reproducible package script và Chrome Web Store checklist.
+- [ ] README, permission rationale, Privacy và Terms đã có; icon 16/32/48/128 và reproducible `npm run package` pass. ZIP SHA-256 `B3CC1093F93DD2C0AD3D719F7B6C8018AFAF2F01C469974ED5DAF149D57ADD65`. Còn public policy URLs, screenshots, accessibility/performance matrix và store submission review.
 - **DoD tổng:** cài extension → YouTube Shorts → phụ đề Anh–Việt → tra/lưu từ → Android thấy cùng Flashcard; AI Live Captions có báo cáo kiểm thử riêng.
 
 ### Web responsive/PWA — Client bổ sung sau khi P0 mobile ổn định

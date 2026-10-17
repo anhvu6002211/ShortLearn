@@ -15,4 +15,5 @@ await Promise.all([
   cp(new URL('manifest.json', root), new URL('dist/manifest.json', root)),
   cp(new URL('src/popup/index.html', root), new URL('dist/popup.html', root)),
   cp(new URL('src/offscreen/index.html', root), new URL('dist/offscreen.html', root)),
+  cp(new URL('assets/', root), new URL('dist/assets/', root), { recursive: true }),
 ]);
